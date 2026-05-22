@@ -1,0 +1,12 @@
+action,projectSlug,name,buyerTypeCode,rebatePercentage,cashBackAmount,validFrom,validTo,isActive
+create,m-grand-minori-pelangi,SPA REBATE -13%,,,,,,true
+create,m-grand-minori-pelangi,Free Legal Fees on SPA and LA,,,,,,true
+create,m-grand-minori-pelangi,Free Stamp Duty on Loan Agreement,,,,,,true
+create,m-grand-minori-pelangi,MOT shall paid by buyer (when CCC after 2 years),,,,,,true
+create,m-grand-minori-pelangi,Free Digital Lock Set,,,,,,true
+create,m-grand-minori-pelangi,Free Air-cond For Living and Bedroom,,,,,,true
+create,m-grand-minori-pelangi,Free Water Heater (Instant),,,,,,true
+create,m-grand-minori-pelangi,Free Kitchen Cabinet / Cooker Hood & Hob,,,,,,true
+create,m-grand-minori-pelangi,Free 2 in 1 Washer & Dryer,,,,,,true
+create,m-grand-minori-pelangi,Cash Buyer Rebate - Section 2(a) Early Bird 10%,,,,,,true
+create,m-grand-minori-pelangi,Cash Buyer Rebate - Section 2(a) Normal 8%,,,,,,true

@@ -1,0 +1,2 @@
+action,projectSlug,phaseName,towerNumber,towerName,floorCount,floorMin,floorMax
+create,paragon-signature-suite,Phase 1,TOWER-1,Tower 1,32,11,32

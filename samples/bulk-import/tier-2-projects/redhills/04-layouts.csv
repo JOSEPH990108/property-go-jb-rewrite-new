@@ -1,0 +1,2 @@
+action,projectSlug,layoutCode,layoutName,bedrooms,bathrooms,builtUpSqft,studyRooms,hasBalcony,hasYard,virtualTourUrl,isDualKey,ceilingHeightM,furnishingStatus
+create,redhills,A1,Type A1,3,2,1200,0,yes,no,,no,3.0,UNFURNISHED

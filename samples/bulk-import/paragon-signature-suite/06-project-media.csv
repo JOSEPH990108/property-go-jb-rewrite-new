@@ -1,0 +1,9 @@
+action,projectSlug,fileName,mediaTypeCode,caption,sortOrder
+create,paragon-signature-suite,paragon-exterior-01.jpg,PHOTO,Main Facade,1
+create,paragon-signature-suite,paragon-lobby.jpg,PHOTO,Grand Lobby,2
+create,paragon-signature-suite,paragon-pool-aerial.jpg,PHOTO,Infinity Pool with City View,3
+create,paragon-signature-suite,paragon-gym.jpg,PHOTO,State-of-the-art Gymnasium,4
+create,paragon-signature-suite,paragon-lounge.jpg,PHOTO,Executive Lounge,5
+create,paragon-signature-suite,paragon-floor-plan.pdf,FLOORPLAN,Typical Floor Layout,6
+create,paragon-signature-suite,paragon-site-plan.pdf,MASTERPLAN,Master Development Plan,7
+create,paragon-signature-suite,paragon-walkthrough-video.mp4,VIDEO,360° Virtual Walkthrough,8

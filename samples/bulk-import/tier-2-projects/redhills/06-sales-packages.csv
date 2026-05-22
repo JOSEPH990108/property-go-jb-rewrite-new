@@ -1,0 +1,2 @@
+action,projectSlug,name,buyerTypeCode,rebatePercentage,cashBackAmount,validFrom,validTo,isActive
+create,redhills,Launch Package,LOCAL,10.00,20000,2026-01-01,2026-12-31,true

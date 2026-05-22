@@ -1,0 +1,8 @@
+action,projectSlug,layoutCode,layoutName,bedrooms,bathrooms,builtUpSqft,studyRooms,hasBalcony,hasYard,virtualTourUrl,isDualKey,ceilingHeightM,furnishingStatus
+create,paragon-signature-suite,A1,Type A1 - Studio,0,1,650,0,yes,no,https://tours.paragon.my/a1,no,2.8,UNFURNISHED
+create,paragon-signature-suite,B1,Type B1 - 1+1,1,1,850,1,yes,no,https://tours.paragon.my/b1,yes,2.8,UNFURNISHED
+create,paragon-signature-suite,C1,Type C1 - 2+1,2,2,1200,1,yes,no,https://tours.paragon.my/c1,yes,2.8,UNFURNISHED
+create,paragon-signature-suite,D1,Type D1 - 3+1,3,3,1500,1,yes,no,https://tours.paragon.my/d1,no,3.0,UNFURNISHED
+create,paragon-signature-suite,D2,Type D2 - 3+2,3,2,1450,0,yes,no,https://tours.paragon.my/d2,no,2.8,UNFURNISHED
+create,paragon-signature-suite,E1,Type E1 - 4+2,4,3,1800,0,yes,no,https://tours.paragon.my/e1,no,3.0,UNFURNISHED
+create,paragon-signature-suite,PENT,Penthouse,3,3,2500,1,yes,yes,https://tours.paragon.my/pent,no,3.5,SEMI_FURNISHED

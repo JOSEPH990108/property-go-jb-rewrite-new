@@ -1,0 +1,11 @@
+action,projectSlug,name,buyerTypeCode,rebatePercentage,cashBackAmount,validFrom,validTo,isActive
+create,m-grand-minori,SPA Rebate 13%,LOCAL,13.00,,2026-01-01,,true
+create,m-grand-minori,Cash Buyer Early Bird Rebate 10%,LOCAL,10.00,,2026-01-01,2026-12-31,true
+create,m-grand-minori,Cash Buyer Normal Rebate 8%,LOCAL,8.00,,2026-01-01,,true
+create,m-grand-minori,Free Legal Fees on SPA and LA,LOCAL,0.00,,2026-01-01,,true
+create,m-grand-minori,Free Stamp Duty on Loan Agreement,LOCAL,0.00,,2026-01-01,,true
+create,m-grand-minori,Free Digital Lock Set,LOCAL,0.00,,2026-01-01,,true
+create,m-grand-minori,Free Air-Cond for Living and Bedroom,LOCAL,0.00,,2026-01-01,,true
+create,m-grand-minori,Free Instant Water Heater,LOCAL,0.00,,2026-01-01,,true
+create,m-grand-minori,Free Kitchen Cabinet with Hood and Hob,LOCAL,0.00,,2026-01-01,,true
+create,m-grand-minori,Free 2-in-1 Washer and Dryer,LOCAL,0.00,,2026-01-01,,true

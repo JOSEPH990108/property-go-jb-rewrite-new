@@ -1,0 +1,2 @@
+action,projectSlug,layoutCode,towerNumber,phaseName,unitNo,floor,stack,displaySequence,builtUpSqft,landAreaSqft,dimensionText,facing,positionType,carparkCount,carparkLotNo,carparkType,lotTypeCode,bookingStatusCode,basePrice,finalPrice
+create,redhills,A1,TOWER-A,Phase 1,01-01,1,1,1,1200,,20x70,NE,CORNER,2,CP-01|CP-02,covered,RESIDENTIAL,AVAILABLE,800000,760000

@@ -1,0 +1,7 @@
+action,projectSlug,layoutCode,layoutName,bedrooms,bathrooms,builtUpSqft,studyRooms,hasBalcony,hasYard,virtualTourUrl
+create,m-grand-minori-pelangi,TYPE_A,Studio + 1 Bathroom,1,1,403.00,0,,,
+create,m-grand-minori-pelangi,TYPE_B,1 Bedroom + 1 Bathroom,1,1,496.00,0,,,
+create,m-grand-minori-pelangi,TYPE_C,1 Bedroom + 2 Bathroom,1,2,624.00,0,,,
+create,m-grand-minori-pelangi,TYPE_D,1+1 Bedroom + 1 Bathroom,1,1,630.00,1,,,
+create,m-grand-minori-pelangi,TYPE_D1,1+1 Bedroom + 1 Bathroom,1,1,630.00,1,,,
+create,m-grand-minori-pelangi,TYPE_E,3 Bedroom + 2 Bathroom,3,2,835.00,0,,,

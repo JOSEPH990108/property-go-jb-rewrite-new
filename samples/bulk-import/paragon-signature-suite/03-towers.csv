@@ -1,0 +1,6 @@
+action,projectSlug,phaseName,towerNumber,towerName,floorCount,floorMin,floorMax
+create,paragon-signature-suite,Phase 1 - Tower A & B,TOWER-A,Tower A - Horizon,45,3,47
+create,paragon-signature-suite,Phase 1 - Tower A & B,TOWER-B,Tower B - Signature,45,3,47
+create,paragon-signature-suite,Phase 2 - Tower C & D,TOWER-C,Tower C - Prestige,50,3,52
+create,paragon-signature-suite,Phase 2 - Tower C & D,TOWER-D,Tower D - Elite,50,3,52
+create,paragon-signature-suite,Phase 3 - Tower E,TOWER-E,Tower E - Pinnacle,55,3,57

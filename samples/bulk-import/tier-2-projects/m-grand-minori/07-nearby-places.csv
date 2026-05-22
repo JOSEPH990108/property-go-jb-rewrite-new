@@ -1,0 +1,18 @@
+action,projectSlug,name,category,distance_km,sortOrder
+create,m-grand-minori,Johor Causeway / CIQ,Transport,4.7,1
+create,m-grand-minori,RTS Station,Transport,3.0,2
+create,m-grand-minori,Larkin Sentral Bus Terminal,Transport,7.4,3
+create,m-grand-minori,Plaza Pelangi,Shopping,1.5,4
+create,m-grand-minori,KSL City Mall,Shopping,2.1,5
+create,m-grand-minori,RNF Mall,Shopping,4.1,6
+create,m-grand-minori,JB City Square,Shopping,4.4,7
+create,m-grand-minori,Mid Valley Southkey,Shopping,5.7,8
+create,m-grand-minori,Columbia Asia Hospital,Healthcare,4.5,9
+create,m-grand-minori,KPJ Johor Specialist Hospital,Healthcare,5.5,10
+create,m-grand-minori,Hospital Sultanah Aminah,Healthcare,5.7,11
+create,m-grand-minori,SMK Taman Pelangi,Education,1.4,12
+create,m-grand-minori,Foon Yew High School,Education,3.4,13
+create,m-grand-minori,Tiara Sport World,Recreation,2.8,14
+create,m-grand-minori,Istana Pasir Pelangi,Landmark,2.3,15
+create,m-grand-minori,Menara MBJB,Landmark,2.4,16
+create,m-grand-minori,Stulang Beach,Recreation,3.1,17

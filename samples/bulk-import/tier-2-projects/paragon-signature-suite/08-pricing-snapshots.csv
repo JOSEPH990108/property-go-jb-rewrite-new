@@ -1,0 +1,5 @@
+action,projectSlug,phaseName,towerNumber,layoutCode,buyerTypeCode,viewKey,spaPriceMin,spaPriceMax,nettPriceMin,nettPriceMax,rebatePercentTotal,snapshotDate,sourceNote
+create,paragon-signature-suite,Phase 1,TOWER-1,TYPE_A,LOCAL,golf_club_view,581400,602400,455817,472281,22.00,2025-08-01,Launch early bird 20%+2% rebate
+create,paragon-signature-suite,Phase 1,TOWER-1,TYPE_B,LOCAL,singapore_view,631285,648285,494927,508255,22.00,2025-08-01,Launch early bird 20%+2% rebate
+create,paragon-signature-suite,Phase 1,TOWER-1,TYPE_A,LOCAL,golf_club_view,581400,602400,465120,481920,20.00,2026-01-01,Standard 20% rebate
+create,paragon-signature-suite,Phase 1,TOWER-1,TYPE_B,LOCAL,singapore_view,631285,648285,505028,518628,20.00,2026-01-01,Standard 20% rebate

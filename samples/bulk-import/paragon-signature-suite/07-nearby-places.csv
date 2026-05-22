@@ -1,0 +1,11 @@
+action,projectSlug,name,category,distance_km,sortOrder
+create,paragon-signature-suite,Legoland Malaysia Resort,Entertainment,5.2,1
+create,paragon-signature-suite,Puteri Harbour Shopping Complex,Shopping,2.1,2
+create,paragon-signature-suite,Johor Medical Centre,Healthcare,3.5,3
+create,paragon-signature-suite,Iskandar Puteri International School,Education,1.8,4
+create,paragon-signature-suite,CIQ Checkpoint Johor Bahru,Transport,4.5,5
+create,paragon-signature-suite,Johor Premium Outlets,Shopping,8.2,6
+create,paragon-signature-suite,Forest City Golf Club,Recreation,2.0,7
+create,paragon-signature-suite,Medini Food Court,Dining,1.5,8
+create,paragon-signature-suite,Pantai Medini Beach,Recreation,1.8,9
+create,paragon-signature-suite,Performance Car Center,Dining,0.8,10

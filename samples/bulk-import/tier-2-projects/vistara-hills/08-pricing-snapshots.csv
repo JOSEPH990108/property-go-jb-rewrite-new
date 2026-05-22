@@ -1,0 +1,2 @@
+action,projectSlug,phaseName,towerNumber,layoutCode,buyerTypeCode,viewKey,spaPriceMin,spaPriceMax,nettPriceMin,nettPriceMax,rebatePercentTotal,snapshotDate,sourceNote
+create,vistara-hills,Phase 1,TOWER-A,A1,LOCAL,city_view,800000,800000,760000,760000,5.00,2026-01-01,Initial launch snapshot

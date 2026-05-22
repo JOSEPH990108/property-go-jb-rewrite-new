@@ -1,0 +1,4 @@
+action,projectSlug,phaseCode,phaseName,completionDate,constructionStatusCode
+create,paragon-signature-suite,P1,Phase 1 - Tower A & B,2026-12-31,ONGOING
+create,paragon-signature-suite,P2,Phase 2 - Tower C & D,2027-12-31,PLANNING
+create,paragon-signature-suite,P3,Phase 3 - Tower E,2028-06-30,NOT_STARTED

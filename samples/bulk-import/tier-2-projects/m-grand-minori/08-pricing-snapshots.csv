@@ -1,0 +1,13 @@
+action,projectSlug,phaseName,towerNumber,layoutCode,buyerTypeCode,viewKey,spaPriceMin,spaPriceMax,nettPriceMin,nettPriceMax,rebatePercentTotal,snapshotDate,sourceNote
+create,m-grand-minori,Phase 1,TOWER-A,TYPE_A,LOCAL,,390000,400000,339300,348000,13.00,2026-01-01,Tower A indicative launch pricing
+create,m-grand-minori,Phase 1,TOWER-A,TYPE_B,LOCAL,,465000,485000,404550,422050,13.00,2026-01-01,Tower A indicative launch pricing
+create,m-grand-minori,Phase 1,TOWER-A,TYPE_C,LOCAL,,591000,621000,514170,540270,13.00,2026-01-01,Tower A indicative launch pricing
+create,m-grand-minori,Phase 1,TOWER-A,TYPE_D,LOCAL,,609000,624000,529830,543120,13.00,2026-01-01,Tower A indicative launch pricing
+create,m-grand-minori,Phase 1,TOWER-A,TYPE_D1,LOCAL,,610000,630000,530700,548100,13.00,2026-01-01,Tower A indicative launch pricing
+create,m-grand-minori,Phase 1,TOWER-A,TYPE_E,LOCAL,,769000,800000,669030,696000,13.00,2026-01-01,Tower A indicative launch pricing
+create,m-grand-minori,Phase 1,TOWER-A,TYPE_A,BUMIPUTERA,,331500,340000,288405,295800,13.00,2026-01-01,Tower A Bumi pricing (15% discount on SPA)
+create,m-grand-minori,Phase 1,TOWER-A,TYPE_B,BUMIPUTERA,,395250,412250,343868,358658,13.00,2026-01-01,Tower A Bumi pricing (15% discount on SPA)
+create,m-grand-minori,Phase 1,TOWER-A,TYPE_C,BUMIPUTERA,,502350,527850,437045,459430,13.00,2026-01-01,Tower A Bumi pricing (15% discount on SPA)
+create,m-grand-minori,Phase 1,TOWER-A,TYPE_D,BUMIPUTERA,,517650,530400,450556,461448,13.00,2026-01-01,Tower A Bumi pricing (15% discount on SPA)
+create,m-grand-minori,Phase 1,TOWER-A,TYPE_D1,BUMIPUTERA,,518500,535500,451095,465885,13.00,2026-01-01,Tower A Bumi pricing (15% discount on SPA)
+create,m-grand-minori,Phase 1,TOWER-A,TYPE_E,BUMIPUTERA,,653650,680000,568676,591600,13.00,2026-01-01,Tower A Bumi pricing (15% discount on SPA)

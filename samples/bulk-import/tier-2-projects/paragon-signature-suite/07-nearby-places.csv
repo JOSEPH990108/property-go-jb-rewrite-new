@@ -1,0 +1,21 @@
+action,projectSlug,name,category,distance_km,sortOrder
+create,paragon-signature-suite,KPJ Johor Specialist Hospital,Healthcare,1.6,1
+create,paragon-signature-suite,Hospital Sultanah Aminah,Healthcare,3.3,2
+create,paragon-signature-suite,Big Pharmacy,Healthcare,3.0,3
+create,paragon-signature-suite,KPJ Puteri Specialist,Healthcare,6.4,4
+create,paragon-signature-suite,Columbia Asia Hospital Tebrau,Healthcare,6.6,5
+create,paragon-signature-suite,Plaza Pelangi,Shopping,3.5,6
+create,paragon-signature-suite,Johor Bahru City Square,Shopping,4.5,7
+create,paragon-signature-suite,KSL City Mall,Shopping,4.6,8
+create,paragon-signature-suite,Mid Valley Southkey,Shopping,5.0,9
+create,paragon-signature-suite,Paradigm Mall JB,Shopping,12.5,10
+create,paragon-signature-suite,SJK(C) Foon Yew 2,Education,1.9,11
+create,paragon-signature-suite,SMK Sultan Ismail,Education,2.2,12
+create,paragon-signature-suite,English College JB,Education,2.3,13
+create,paragon-signature-suite,Monash University Malaysia,Education,2.9,14
+create,paragon-signature-suite,Foon Yew High School,Education,5.4,15
+create,paragon-signature-suite,Johor Zoo,Recreation,4.0,16
+create,paragon-signature-suite,Johor Golf and Country Club,Recreation,6.3,17
+create,paragon-signature-suite,Beletime Danga Bay,Recreation,5.2,18
+create,paragon-signature-suite,Famous Cafe,Dining,0.1,19
+create,paragon-signature-suite,KFC Seri Gelam,Dining,0.7,20

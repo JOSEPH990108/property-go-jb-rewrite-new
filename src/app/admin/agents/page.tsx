@@ -1,0 +1,41 @@
+"use client";
+
+import type { ColumnDef } from "@tanstack/react-table";
+import { DynamicDataTable } from "@/components/admin/DynamicDataTable";
+import { agentRows, type AgentTableRow } from "@/lib/admin-mock-data";
+
+const columns: ColumnDef<AgentTableRow>[] = [
+  {
+    header: "Agent",
+    accessorKey: "name",
+    cell: ({ row }) => (
+      <div>
+        <p className="font-medium text-foreground">{row.original.name}</p>
+        <p className="mt-1 text-xs text-muted-foreground">{row.original.email}</p>
+      </div>
+    ),
+  },
+  { header: "Phone", accessorKey: "phone" },
+  {
+    header: "Status",
+    accessorKey: "status",
+    cell: ({ getValue }) => (
+      <span className="rounded-full border border-primary/20 bg-primary/12 px-3 py-1 text-xs font-medium text-primary">
+        {String(getValue())}
+      </span>
+    ),
+  },
+  { header: "Projects", accessorKey: "assignedProjects" },
+];
+
+export default function AgentsPage() {
+  return (
+    <DynamicDataTable
+      data={agentRows}
+      columns={columns}
+      title="Agent Operations"
+      description="Reusable CRUD view for agent management, assignment coverage, and contact updates."
+      addLabel="Add New Agent"
+    />
+  );
+}

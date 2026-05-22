@@ -1,0 +1,8 @@
+action,projectSlug,name,buyerTypeCode,rebatePercentage,cashBackAmount,validFrom,validTo,isActive
+create,paragon-signature-suites,Rebate -20%,,,,,,true
+create,paragon-signature-suites,Move in Bonus - 2% (until 31/8/2025),,,,,,true
+create,paragon-signature-suites,Free SPA & LA Legal Fee,,,,,,true
+create,paragon-signature-suites,Free Stamp Duty on LA,,,,,,true
+create,paragon-signature-suites,"Entitle RM 5,000 loyalty reward for REPEAT purchase (refund during VP)",,,,,,true
+create,paragon-signature-suites,Free two (2) years shuttle bus,,,,,,true
+create,paragon-signature-suites,Cash buyer extra 3% rebate if settle within 60 days,,,,,,true

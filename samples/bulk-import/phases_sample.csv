@@ -1,0 +1,6 @@
+action,projectSlug,phaseCode,phaseName,completionDate,constructionStatusCode
+create,project-sunset-garden,P1,Phase 1,2025-12-31,ongoing
+create,project-sunset-garden,P2,Phase 2,2026-06-30,planning
+create,project-sunset-garden,P3,Phase 3,2027-12-31,planning
+create,project-eden-springs,P1,Phase 1,2023-06-30,completed
+create,project-eden-springs,P2,Phase 2,2024-12-31,ongoing

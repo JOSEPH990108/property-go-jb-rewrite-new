@@ -1,0 +1,10 @@
+action,projectSlug,layoutCode,towerNumber,phaseName,unitNo,floor,stack,displaySequence,builtUpSqft,landAreaSqft,dimensionText,facing,positionType,carparkCount,carparkLotNo,carparkType,lotTypeCode,bookingStatusCode,basePrice,finalPrice
+create,paragon-signature-suite,A1,TOWER-A,Phase 1 - Tower A & B,01-01,1,A,1,650,,20x32,North,CORNER,1,CP-01,covered,RESIDENTIAL,AVAILABLE,450000,440000
+create,paragon-signature-suite,B1,TOWER-A,Phase 1 - Tower A & B,01-02,1,B,2,850,,24x35,East,MID,1,CP-02,covered,RESIDENTIAL,AVAILABLE,620000,610000
+create,paragon-signature-suite,C1,TOWER-A,Phase 1 - Tower A & B,01-03,1,C,3,1200,,30x40,North,CORNER,2,CP-03|CP-04,covered,RESIDENTIAL,AVAILABLE,880000,865000
+create,paragon-signature-suite,D1,TOWER-A,Phase 1 - Tower A & B,02-01,2,A,4,1500,,35x42,South,CORNER,2,CP-05|CP-06,covered,RESIDENTIAL,AVAILABLE,1150000,1125000
+create,paragon-signature-suite,E1,TOWER-A,Phase 1 - Tower A & B,02-02,2,B,5,1800,,40x45,West,END,3,CP-07|CP-08|CP-09,covered,RESIDENTIAL,SOLD,1450000,
+create,paragon-signature-suite,A1,TOWER-B,Phase 1 - Tower A & B,01-01,1,A,6,650,,20x32,South,MID,1,CP-10,covered,RESIDENTIAL,AVAILABLE,460000,450000
+create,paragon-signature-suite,B1,TOWER-B,Phase 1 - Tower A & B,01-02,1,B,7,850,,24x35,West,CORNER,1,CP-11,covered,RESIDENTIAL,RESERVED,625000,
+create,paragon-signature-suite,C1,TOWER-B,Phase 1 - Tower A & B,02-01,2,A,8,1200,,30x40,East,MID,2,CP-12|CP-13,covered,RESIDENTIAL,AVAILABLE,895000,880000
+create,paragon-signature-suite,PENT,TOWER-B,Phase 1 - Tower A & B,45-01,45,A,9,2500,,50x50,North,CORNER,3,CP-14|CP-15|CP-16,covered,RESIDENTIAL,AVAILABLE,2800000,2750000

@@ -1,0 +1,4 @@
+action,slug,name,legalName,description,isActive
+create,developer-paragon,Paragon Development,Paragon Development Holdings Sdn. Bhd.,Luxury residential and mixed-use developer,true
+create,developer-diamond,Diamond Properties,Diamond Properties Sdn. Bhd.,Premium township development company,true
+create,developer-grand,Grand Residences,Grand Residences Development Berhad,Mixed-use residential specialist,true

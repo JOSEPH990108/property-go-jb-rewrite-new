@@ -1,0 +1,4 @@
+action,projectSlug,name,category,distance_km,sortOrder
+create,redhills,City Mall,Shopping,4.5,1
+create,redhills,Hospital,Healthcare,3.0,2
+create,redhills,International School,Education,2.5,3

@@ -1,0 +1,278 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Building2, RefreshCcw, RotateCcw } from "lucide-react";
+import { UnitModal } from "@/components/shared/UnitModal";
+import {
+  deepCloneProjects,
+  randomizeProjectStatuses,
+  unitLayoutProjects,
+  type UnitNode,
+  type UnitStatus,
+} from "@/lib/unit-layout-data";
+import type { UnitRecord } from "@/lib/admin-mock-data";
+import { cn } from "@/lib/utils";
+
+const statusChipStyles: Record<UnitStatus, string> = {
+  available: "border-emerald-300/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-200",
+  reserved: "border-amber-300/30 bg-amber-500/10 text-amber-700 dark:text-amber-200",
+  sold: "border-rose-300/30 bg-rose-500/10 text-rose-700 dark:text-rose-200",
+};
+
+const statusNodeStyles: Record<UnitStatus, string> = {
+  available:
+    "border-emerald-300/30 bg-emerald-500/15 text-emerald-800 shadow-[0_0_16px_rgba(16,185,129,0.2)] dark:text-emerald-100 dark:shadow-[0_0_18px_rgba(52,211,153,0.28)]",
+  reserved:
+    "border-amber-300/30 bg-amber-500/15 text-amber-800 shadow-[0_0_16px_rgba(245,158,11,0.2)] dark:text-amber-100 dark:shadow-[0_0_18px_rgba(251,191,36,0.25)]",
+  sold:
+    "border-rose-300/30 bg-rose-500/15 text-rose-800 shadow-[0_0_16px_rgba(244,63,94,0.2)] dark:text-rose-100 dark:shadow-[0_0_18px_rgba(251,113,133,0.25)]",
+};
+
+export default function AdminUnitsPage() {
+  const [projectsData, setProjectsData] = useState(() => deepCloneProjects(unitLayoutProjects));
+  const [selectedProjectSlug, setSelectedProjectSlug] = useState(projectsData[0]?.slug ?? "");
+  const [selectedTowerId, setSelectedTowerId] = useState("all");
+  const [selectedUnitRecord, setSelectedUnitRecord] = useState<UnitRecord | null>(null);
+
+  const selectedProject = useMemo(
+    () => projectsData.find((project) => project.slug === selectedProjectSlug) ?? projectsData[0],
+    [projectsData, selectedProjectSlug]
+  );
+
+  const visibleTowers = useMemo(() => {
+    if (!selectedProject) return [];
+    if (selectedTowerId === "all") return selectedProject.towers;
+    return selectedProject.towers.filter((tower) => tower.towerId === selectedTowerId);
+  }, [selectedProject, selectedTowerId]);
+
+  const totals = useMemo(() => {
+    if (!selectedProject) {
+      return { available: 0, reserved: 0, sold: 0, units: 0 };
+    }
+
+    const counts = { available: 0, reserved: 0, sold: 0, units: 0 };
+
+    for (const tower of selectedProject.towers) {
+      for (const floor of tower.floors) {
+        for (const unit of floor.units) {
+          counts[unit.status] += 1;
+          counts.units += 1;
+        }
+      }
+    }
+
+    return counts;
+  }, [selectedProject]);
+
+  const refreshSelectedProject = () => {
+    if (!selectedProject) return;
+
+    setProjectsData((prev) =>
+      prev.map((project) =>
+        project.slug === selectedProject.slug ? randomizeProjectStatuses(project) : project
+      )
+    );
+  };
+
+  const resetAllProjects = () => {
+    setProjectsData(deepCloneProjects(unitLayoutProjects));
+    setSelectedTowerId("all");
+    setSelectedUnitRecord(null);
+  };
+
+  const onUnitClick = (towerLabel: string, floor: number, unit: UnitNode) => {
+    if (!selectedProject) return;
+
+    setSelectedUnitRecord({
+      projectName: `${selectedProject.name} - ${towerLabel}`,
+      unitId: unit.unitCode,
+      floor,
+      status: unit.status,
+      lotSize: unit.lotSize,
+      facing: unit.facing,
+      spaPrice: unit.spaPrice,
+    });
+  };
+
+  if (!selectedProject) {
+    return (
+      <section className="rounded-[28px] border border-border bg-card/95 p-6">
+        <h2 className="text-2xl font-semibold text-foreground">Unit Management</h2>
+        <p className="mt-3 text-sm text-foreground/70">No project data available.</p>
+      </section>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <section className="rounded-[28px] border border-border bg-card/95 p-5 shadow-[0_20px_60px_rgba(15,23,42,0.1)]">
+        <div className="flex flex-col gap-4 border-b border-border pb-5 xl:flex-row xl:items-end xl:justify-between">
+          <div>
+            <p className="text-xs uppercase tracking-[0.24em] text-primary/80">Unit page</p>
+            <h2 className="mt-2 text-3xl font-semibold text-foreground">Project Unit Control Center</h2>
+            <p className="mt-2 text-sm text-foreground/70">
+              Select a project and tower, then refresh live statuses to simulate incoming availability updates.
+            </p>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[220px_220px_auto_auto]">
+            <label className="text-sm font-medium text-foreground/75">
+              Project
+              <select
+                value={selectedProjectSlug}
+                onChange={(event) => {
+                  setSelectedProjectSlug(event.target.value);
+                  setSelectedTowerId("all");
+                }}
+                className="mt-2 h-11 w-full rounded-xl border border-border bg-background px-3 text-sm text-foreground"
+              >
+                {projectsData.map((project) => (
+                  <option key={project.slug} value={project.slug}>
+                    {project.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="text-sm font-medium text-foreground/75">
+              Tower
+              <select
+                value={selectedTowerId}
+                onChange={(event) => setSelectedTowerId(event.target.value)}
+                className="mt-2 h-11 w-full rounded-xl border border-border bg-background px-3 text-sm text-foreground"
+              >
+                <option value="all">All Towers</option>
+                {selectedProject.towers.map((tower) => (
+                  <option key={tower.towerId} value={tower.towerId}>
+                    {tower.towerLabel}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <button
+              type="button"
+              onClick={refreshSelectedProject}
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-primary/20 bg-primary/12 px-4 text-sm font-medium text-primary"
+            >
+              <RefreshCcw className="h-4 w-4" />
+              Refresh Units
+            </button>
+
+            <button
+              type="button"
+              onClick={resetAllProjects}
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-border bg-background px-4 text-sm font-medium text-foreground"
+            >
+              <RotateCcw className="h-4 w-4" />
+              Reset Data
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <span className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium uppercase tracking-[0.2em] text-foreground/70">
+            {selectedProject.location}
+          </span>
+          <span className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium uppercase tracking-[0.2em] text-foreground/70">
+            {totals.units} units
+          </span>
+          <span className={cn("rounded-full border px-3 py-1.5 text-xs font-medium uppercase tracking-[0.2em]", statusChipStyles.available)}>
+            {totals.available} available
+          </span>
+          <span className={cn("rounded-full border px-3 py-1.5 text-xs font-medium uppercase tracking-[0.2em]", statusChipStyles.reserved)}>
+            {totals.reserved} reserved
+          </span>
+          <span className={cn("rounded-full border px-3 py-1.5 text-xs font-medium uppercase tracking-[0.2em]", statusChipStyles.sold)}>
+            {totals.sold} sold
+          </span>
+        </div>
+
+        <div className="mt-4 rounded-2xl border border-border bg-background p-4">
+          <p className="text-sm text-foreground/80">
+            <span className="font-semibold">Data source note:</span>{" "}
+            {selectedProject.source.verifiedTowerBreakdown
+              ? "Tower breakdown verified from public source."
+              : "Tower/unit breakdown currently modeled for UI workflow testing."}
+          </p>
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-foreground/70">
+            {selectedProject.source.notes.map((note) => (
+              <li key={note}>{note}</li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section className="grid gap-5 xl:grid-cols-2">
+        <AnimatePresence mode="popLayout">
+          {visibleTowers.map((tower) => (
+            <motion.article
+              key={tower.towerId}
+              layout
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 12 }}
+              className="rounded-[26px] border border-border bg-card/95 p-5"
+            >
+              <div className="flex items-center justify-between gap-3 border-b border-border pb-4">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.22em] text-primary/80">Tower design</p>
+                  <h3 className="mt-2 text-2xl font-semibold text-foreground">{tower.towerLabel}</h3>
+                </div>
+
+                <div className="inline-flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground/75">
+                  <Building2 className="h-4 w-4 text-primary" />
+                  {tower.floors.length} floors
+                </div>
+              </div>
+
+              <div className="mt-4 space-y-3">
+                {tower.floors.map((floorRow) => (
+                  <div key={`${tower.towerId}-${floorRow.floor}`} className="grid gap-2 lg:grid-cols-[92px_1fr] lg:items-center">
+                    <div className="rounded-xl border border-border bg-background px-3 py-2 text-xs font-medium uppercase tracking-[0.2em] text-foreground/70">
+                      Floor {floorRow.floor}
+                    </div>
+
+                    <div
+                      className={cn(
+                        "grid gap-2",
+                        floorRow.units.length <= 5
+                          ? "grid-cols-5"
+                          : floorRow.units.length === 6
+                            ? "grid-cols-3 sm:grid-cols-6"
+                            : "grid-cols-4 sm:grid-cols-7"
+                      )}
+                    >
+                      {floorRow.units.map((unit) => (
+                        <button
+                          key={unit.unitCode}
+                          type="button"
+                          onClick={() => onUnitClick(tower.towerLabel, floorRow.floor, unit)}
+                          className={cn(
+                            "aspect-square rounded-xl border p-1.5 text-left transition hover:-translate-y-0.5",
+                            statusNodeStyles[unit.status]
+                          )}
+                        >
+                          <span className="block text-[10px] uppercase tracking-[0.15em] opacity-75">{unit.status}</span>
+                          <span className="mt-2 block text-[11px] font-semibold leading-4">{unit.unitCode}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.article>
+          ))}
+        </AnimatePresence>
+      </section>
+
+      <UnitModal
+        unitData={selectedUnitRecord}
+        viewMode="admin"
+        open={selectedUnitRecord !== null}
+        onClose={() => setSelectedUnitRecord(null)}
+      />
+    </div>
+  );
+}

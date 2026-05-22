@@ -1,0 +1,4 @@
+action,projectSlug,name,category,distance_km,sortOrder
+create,single-storey-alam-heights,City Mall,Shopping,4.5,1
+create,single-storey-alam-heights,Hospital,Healthcare,3.0,2
+create,single-storey-alam-heights,International School,Education,2.5,3

@@ -1,0 +1,15 @@
+action,code,name,category,icon,sortOrder
+create,POOL,Swimming Pool,Recreation,swimming,1
+create,GYM,Gymnasium,Recreation,dumbbell,2
+create,LOUNGE,Lounge,Social,sofa,3
+create,BBQAREA,BBQ Area,Recreation,grill,4
+create,BASKETCOURT,Basketball Court,Sports,basketball,5
+create,TENNISCOURT,Tennis Court,Sports,tennis,6
+create,GARDEN,Landscaped Garden,Outdoor,plant,7
+create,PLAYGROUND,Children Playground,Recreation,swing,8
+create,PARKING,Covered Parking,Amenity,parking,9
+create,SECURITY,24H Security,Safety,shield,10
+create,CCTV,CCTV Surveillance,Safety,camera,11
+create,GATEKEEPER,Gated Entry,Safety,gate,12
+create,LIFT,High-Speed Lift,Convenience,elevator,13
+create,CONCIERGE,Concierge Service,Service,bell,14

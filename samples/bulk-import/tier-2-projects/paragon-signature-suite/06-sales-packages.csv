@@ -1,0 +1,8 @@
+action,projectSlug,name,buyerTypeCode,rebatePercentage,cashBackAmount,validFrom,validTo,isActive
+create,paragon-signature-suite,SPA Rebate 20%,LOCAL,20.00,,2026-01-01,,true
+create,paragon-signature-suite,Move-In Bonus 2%,LOCAL,2.00,,2026-01-01,2025-08-31,true
+create,paragon-signature-suite,Cash Buyer Extra Rebate 3%,LOCAL,3.00,,2026-01-01,,true
+create,paragon-signature-suite,Free SPA and LA Legal Fees,LOCAL,0.00,,2026-01-01,,true
+create,paragon-signature-suite,Free Stamp Duty on LA,LOCAL,0.00,,2026-01-01,,true
+create,paragon-signature-suite,"Loyalty Reward RM5000 for Repeat Purchase",LOCAL,0.00,5000,2026-01-01,,true
+create,paragon-signature-suite,Free Two Years Shuttle Bus,LOCAL,0.00,,2026-01-01,,true

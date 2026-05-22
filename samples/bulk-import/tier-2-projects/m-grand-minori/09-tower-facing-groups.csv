@@ -1,0 +1,5 @@
+action,projectSlug,towerNumber,key,label,sortOrder
+create,m-grand-minori,TOWER-A,NE,NE,1
+create,m-grand-minori,TOWER-A,SW,SW,2
+create,m-grand-minori,TOWER-A,NW,NW,3
+create,m-grand-minori,TOWER-A,SE,SE,4

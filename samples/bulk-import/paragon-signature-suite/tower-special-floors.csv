@@ -1,0 +1,3 @@
+action,projectSlug,towerNumber,floorKind,floorNumber,floorLabel,facilityLabel,sortOrder
+create,paragon-signature-suites,TOWER-1,facility,9,Level 9,Recreation Facilities,1
+create,paragon-signature-suites,TOWER-1,facility,10,Level 10,Recreation Facilities,2

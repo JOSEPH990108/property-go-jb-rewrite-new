@@ -1,0 +1,2 @@
+action,slug,name,displayName,legalName,developerSlug,propertyCategoryCode,propertyTypeCode,projectStatusCode,tenureTypeCode,titleTypeCode,stateName,regionName,areaName,address,latitude,longitude,totalUnits,launchYear,bookingFee,maintenanceFeePerSqft,isPublished,isForeignerEligible
+create,paragon-signature-suites,Paragon Signature Suites,,,paragon-urban,,,FREEHOLD,,,,,"Jalan Abdul Samad, JB",,,484,,1000.00,,,yes

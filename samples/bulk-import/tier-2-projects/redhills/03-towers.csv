@@ -1,0 +1,2 @@
+action,projectSlug,phaseName,towerNumber,towerName,floorCount,floorMin,floorMax
+create,redhills,Phase 1,TOWER-A,Tower A,32,1,32

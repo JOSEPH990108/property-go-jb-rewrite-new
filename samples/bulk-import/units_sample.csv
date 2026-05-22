@@ -1,0 +1,9 @@
+action,projectSlug,unitNo,layoutCode,towerNumber,phaseName,floor,stack,displaySequence,builtUpSqft,landAreaSqft,dimensionText,facing,positionType,carparkCount,carparkLotNo,carparkType,lotTypeCode,bookingStatusCode,basePrice,finalPrice
+create,project-sunset-garden,01-01,1B1B,TOWER-A,PHASE-1,1,A,1,700.50,,12x4.5,North,High,1,P-01,covered,residential,available,280000.00,280000.00
+create,project-sunset-garden,01-02,1B1B,TOWER-A,PHASE-1,1,B,2,700.50,,12x4.5,South,High,1,P-02,covered,residential,available,280000.00,280000.00
+create,project-sunset-garden,02-01,2B2B,TOWER-A,PHASE-1,2,A,3,1050.50,,15x6.8,East,Mid,1,P-03,covered,residential,available,350000.00,350000.00
+create,project-sunset-garden,02-02,2B2B,TOWER-A,PHASE-1,2,B,4,1050.50,,15x6.8,West,Mid,1,P-04,covered,residential,reserved,350000.00,345000.00
+create,project-sunset-garden,03-01,3B2B,TOWER-B,PHASE-2,3,A,5,1350.75,,18x7.5,North,Low,2,P-05,covered,residential,available,425000.00,420000.00
+create,project-sunset-garden,03-02,3B2B,TOWER-B,PHASE-2,3,B,6,1350.75,,18x7.5,South,Low,2,P-06,covered,residential,available,425000.00,425000.00
+create,project-eden-springs,01-01,2B2B,TOWER-A,PHASE-1,1,A,1,950.00,,13x6,North,High,1,BP-01,covered,residential,available,325000.00,325000.00
+create,project-eden-springs,02-01,3B2B,TOWER-A,PHASE-1,2,A,2,1200.00,,16x7,East,Mid,2,BP-02,covered,residential,sold,400000.00,398000.00

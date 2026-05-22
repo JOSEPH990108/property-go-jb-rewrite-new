@@ -1,0 +1,5 @@
+action,projectSlug,towerNumber,key,label,sortOrder
+create,m-grand-minori-pelangi,TOWER-A,NE,NE,1
+create,m-grand-minori-pelangi,TOWER-A,SW,SW,2
+create,m-grand-minori-pelangi,TOWER-A,NW,NW,3
+create,m-grand-minori-pelangi,TOWER-A,SE,SE,4

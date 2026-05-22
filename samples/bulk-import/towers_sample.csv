@@ -1,0 +1,7 @@
+action,projectSlug,towerNumber,towerName,phaseName,floorCount
+create,project-sunset-garden,TOWER-A,Tower A,PHASE-1,25
+create,project-sunset-garden,TOWER-B,Tower B,PHASE-1,25
+create,project-sunset-garden,TOWER-C,Tower C,PHASE-2,30
+create,project-sunset-garden,TOWER-D,Tower D,PHASE-2,30
+create,project-eden-springs,TOWER-A,Tower A,PHASE-1,20
+create,project-eden-springs,TOWER-B,Tower B,PHASE-2,22

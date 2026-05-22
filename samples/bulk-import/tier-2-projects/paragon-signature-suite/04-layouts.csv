@@ -1,0 +1,3 @@
+action,projectSlug,layoutCode,layoutName,bedrooms,bathrooms,builtUpSqft,studyRooms,hasBalcony,hasYard,virtualTourUrl,isDualKey,ceilingHeightM,furnishingStatus
+create,paragon-signature-suite,TYPE_A,1+1 Bedroom + 1 Bathroom,1,1,646,1,yes,no,,no,3.0,SEMI_FURNISHED
+create,paragon-signature-suite,TYPE_B,1 Bedroom + 1 Bathroom,1,1,649,0,yes,no,,no,3.0,SEMI_FURNISHED

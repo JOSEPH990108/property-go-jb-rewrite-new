@@ -1,0 +1,7 @@
+action,projectSlug,layoutCode,layoutName,bedrooms,bathrooms,builtUpSqft,studyRooms,hasBalcony,hasYard,virtualTourUrl,isDualKey,ceilingHeightM,furnishingStatus
+create,m-grand-minori,TYPE_A,Studio,1,1,403,0,no,no,,no,3.0,UNFURNISHED
+create,m-grand-minori,TYPE_B,1 Bedroom + 1 Bathroom,1,1,496,0,no,no,,no,3.0,UNFURNISHED
+create,m-grand-minori,TYPE_C,1 Bedroom + 2 Bathroom (Dual Key),1,2,624,0,no,no,,yes,3.0,UNFURNISHED
+create,m-grand-minori,TYPE_D,1+1 Bedroom + 1 Bathroom,1,1,630,1,no,no,,no,3.0,UNFURNISHED
+create,m-grand-minori,TYPE_D1,1+1 Bedroom + 1 Bathroom (Corner),1,1,630,1,no,no,,no,3.0,UNFURNISHED
+create,m-grand-minori,TYPE_E,3 Bedroom + 2 Bathroom (Dual Key),3,2,835,0,no,no,,yes,3.0,UNFURNISHED

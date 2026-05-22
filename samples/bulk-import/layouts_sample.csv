@@ -1,0 +1,7 @@
+action,projectSlug,layoutCode,layoutName,bedrooms,bathrooms,builtUpSqft,studyRooms,hasBalcony,hasYard,virtualTourUrl
+create,project-sunset-garden,1B1B,1 Bedroom 1 Bathroom,1,1,700.50,0,yes,no,
+create,project-sunset-garden,2B2B,2 Bedroom 2 Bathroom,2,2,1050.50,0,yes,no,https://example.com/vt/2b2b
+create,project-sunset-garden,3B2B,3 Bedroom 2 Bathroom,3,2,1350.75,1,yes,yes,https://example.com/vt/3b2b
+create,project-sunset-garden,3B3B,3 Bedroom 3 Bathroom,3,3,1550.00,1,yes,yes,
+create,project-eden-springs,2B2B,2 Bedroom 2 Bathroom,2,2,950.00,0,yes,no,
+create,project-eden-springs,3B2B,3 Bedroom 2 Bathroom,3,2,1200.00,1,yes,yes,https://example.com/vt/eden-3b2b

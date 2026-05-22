@@ -1,0 +1,4 @@
+action,projectSlug,name,category,distance_km,sortOrder
+create,iib-elmora,City Mall,Shopping,4.5,1
+create,iib-elmora,Hospital,Healthcare,3.0,2
+create,iib-elmora,International School,Education,2.5,3

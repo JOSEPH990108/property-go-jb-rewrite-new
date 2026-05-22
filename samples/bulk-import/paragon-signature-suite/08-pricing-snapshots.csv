@@ -1,0 +1,11 @@
+action,projectSlug,phaseName,towerNumber,layoutCode,buyerTypeCode,viewKey,spaPriceMin,spaPriceMax,nettPriceMin,nettPriceMax,rebatePercentTotal,snapshotDate,sourceNote
+create,paragon-signature-suite,Phase 1 - Tower A & B,TOWER-A,A1,LOCAL,,450000,450000,440000,440000,2.00,2026-01-01,Launch pricing
+create,paragon-signature-suite,Phase 1 - Tower A & B,TOWER-A,B1,LOCAL,,620000,620000,610000,610000,1.50,2026-01-01,Launch pricing
+create,paragon-signature-suite,Phase 1 - Tower A & B,TOWER-A,C1,LOCAL,,880000,880000,865000,865000,1.70,2026-01-01,Launch pricing
+create,paragon-signature-suite,Phase 1 - Tower A & B,TOWER-A,D1,LOCAL,,1150000,1150000,1125000,1125000,2.00,2026-01-01,Launch pricing
+create,paragon-signature-suite,Phase 1 - Tower A & B,TOWER-A,E1,LOCAL,,1450000,1450000,1420000,1420000,2.00,2026-01-01,Launch pricing
+create,paragon-signature-suite,Phase 1 - Tower A & B,TOWER-A,A1,BUMIPUTERA,,450000,450000,430000,430000,5.00,2026-01-01,Bumiputera rate
+create,paragon-signature-suite,Phase 1 - Tower A & B,TOWER-A,B1,BUMIPUTERA,,620000,620000,590000,590000,5.00,2026-01-01,Bumiputera rate
+create,paragon-signature-suite,Phase 1 - Tower A & B,TOWER-B,A1,LOCAL,north,460000,460000,450000,450000,2.00,2026-02-01,Updated pricing - Tower B
+create,paragon-signature-suite,Phase 1 - Tower A & B,TOWER-B,B1,LOCAL,east,625000,625000,615000,615000,1.50,2026-02-01,Updated pricing - Tower B
+create,paragon-signature-suite,Phase 1 - Tower A & B,TOWER-A,PENT,LOCAL,city_view,2800000,2800000,2750000,2750000,1.80,2026-01-15,Penthouse Launch
