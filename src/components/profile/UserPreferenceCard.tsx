@@ -3,13 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { BaseCard } from "@/components/shared/base-card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -19,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { updatePreferences } from "@/app/actions/profile-actions";
+import { updatePreferences, type PreferencesFormValues } from "@/app/actions/profile-actions";
 import { toast } from "sonner";
 import { Moon, Sun, Monitor } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -47,25 +41,25 @@ export function UserPreferenceCard({ preferences }: UserPreferenceCardProps) {
   const [currency, setCurrency] = useState(preferences.currency || "MYR");
   const [notifications, setNotifications] = useState(preferences.notificationSettings || { email: true, whatsapp: true });
 
-  const handleUpdate = async (key: string, value: any) => {
-      let newPrefs: any = {
+  const handleUpdate = async (key: string, value: string | { email: boolean; whatsapp: boolean }) => {
+      const newPrefs: PreferencesFormValues = {
           language,
           currency,
           notificationSettings: notifications,
       };
 
       if (key === 'language') {
-          newPrefs.language = value;
-          setLanguage(value);
+          newPrefs.language = value as string;
+          setLanguage(value as string);
       } else if (key === 'currency') {
-          newPrefs.currency = value;
-          setCurrency(value);
+          newPrefs.currency = value as string;
+          setCurrency(value as string);
       } else if (key === 'notifications') {
-          newPrefs.notificationSettings = value;
-          setNotifications(value);
+          newPrefs.notificationSettings = value as { email: boolean; whatsapp: boolean };
+          setNotifications(value as { email: boolean; whatsapp: boolean });
       } else if (key === 'theme') {
           // Theme is handled by useTheme but we also save it to DB
-          newPrefs.theme = value;
+          newPrefs.theme = value as PreferencesFormValues['theme'];
       }
 
       // Save to DB
@@ -86,14 +80,13 @@ export function UserPreferenceCard({ preferences }: UserPreferenceCardProps) {
   };
 
   return (
-    <Card className="h-full">
-      <CardHeader>
-        <CardTitle className="text-xl font-bold">Preferences</CardTitle>
-        <CardDescription>
-          Customize your experience.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
+    <BaseCard
+      className="h-full"
+      title="Preferences"
+      titleClassName="text-xl font-bold"
+      description="Customize your experience."
+      contentClassName="space-y-6"
+    >
         {/* Appearance */}
         <div className="space-y-2">
             <Label className="text-base">Appearance</Label>
@@ -175,7 +168,6 @@ export function UserPreferenceCard({ preferences }: UserPreferenceCardProps) {
                 />
              </div>
         </div>
-      </CardContent>
-    </Card>
+    </BaseCard>
   );
 }

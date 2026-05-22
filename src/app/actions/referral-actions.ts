@@ -2,11 +2,14 @@
 'use server';
 
 import { db } from '@/db';
-import { user, referralRewards, redemptions } from '@/db/schema';
-import { eq, and, count, desc } from 'drizzle-orm';
+import { user, referralRewards, redemptions, rewardConfig, referralTiers, giftCatalog, voucherCatalog } from '@/db/schema';
+import { eq, and, count, desc, gt, lte, asc } from 'drizzle-orm';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { randomBytes } from 'crypto';
+import { z } from 'zod';
+
+const countRowSchema = z.array(z.object({ count: z.number() })).min(1);
 
 // --- HELPERS ---
 
@@ -97,19 +100,182 @@ export async function applyReferralOnSignup(userId: string, referralCode: string
             .set({ referredByUserId: referrer.id })
             .where(eq(user.id, userId));
 
-        // 2. Create Pending Reward
+        // 2. Look up active reward config for ON_REGISTRATION
+        const config = await db.query.rewardConfig.findFirst({
+            where: and(
+                eq(rewardConfig.triggerEvent, 'ON_REGISTRATION'),
+                eq(rewardConfig.isActive, true),
+            ),
+        });
+
+        // 3. Create Reward based on config
         await db.insert(referralRewards).values({
             referrerId: referrer.id,
             refereeId: userId,
-            status: 'PENDING',
+            status: 'ELIGIBLE',
             triggerEvent: 'ON_REGISTRATION',
-            rewardType: 'CASHBACK', // Default placeholder
+            rewardType: config?.rewardType ?? 'VOUCHER',
+            giftId: config?.giftId ?? null,
+            voucherId: config?.voucherId ?? null,
+            amount: config?.cashAmount ?? null,
+            rewardConfigId: config?.id ?? null,
         });
+
+        // 4. Check milestone rewards
+        await checkAndIssueMilestoneRewards(referrer.id);
 
         return { success: true };
     } catch (error) {
         console.error("Apply Referral Signup Error:", error);
         return { success: false, error: 'Failed to apply referral' };
+    }
+}
+
+/** Issue a referral reward when a referred user books an appointment. */
+export async function issueBookingReward(refereeId: string) {
+    try {
+        const referee = await db.query.user.findFirst({
+            where: eq(user.id, refereeId),
+            columns: { referredByUserId: true },
+        });
+
+        if (!referee?.referredByUserId) {
+            return { success: true, message: 'No referrer linked' };
+        }
+
+        // Prevent duplicate booking rewards for the same referee
+        const existing = await db.query.referralRewards.findFirst({
+            where: and(
+                eq(referralRewards.refereeId, refereeId),
+                eq(referralRewards.triggerEvent, 'ON_BOOKING'),
+            ),
+        });
+        if (existing) {
+            return { success: true, message: 'Booking reward already issued' };
+        }
+
+        const config = await db.query.rewardConfig.findFirst({
+            where: and(
+                eq(rewardConfig.triggerEvent, 'ON_BOOKING'),
+                eq(rewardConfig.isActive, true),
+            ),
+        });
+
+        await db.insert(referralRewards).values({
+            referrerId: referee.referredByUserId,
+            refereeId,
+            status: 'ELIGIBLE',
+            triggerEvent: 'ON_BOOKING',
+            rewardType: config?.rewardType ?? 'VOUCHER',
+            giftId: config?.giftId ?? null,
+            voucherId: config?.voucherId ?? null,
+            amount: config?.cashAmount ?? null,
+            rewardConfigId: config?.id ?? null,
+        });
+
+        return { success: true };
+    } catch (error) {
+        console.error("Issue Booking Reward Error:", error);
+        return { success: false, error: 'Failed to issue booking reward' };
+    }
+}
+
+/** Issue the highest-tier referral reward when a referred user signs SPA. */
+export async function issueSpaReward(refereeId: string) {
+    try {
+        const referee = await db.query.user.findFirst({
+            where: eq(user.id, refereeId),
+            columns: { referredByUserId: true },
+        });
+
+        if (!referee?.referredByUserId) {
+            return { success: true, message: 'No referrer linked' };
+        }
+
+        // Prevent duplicate SPA rewards for the same referee
+        const existing = await db.query.referralRewards.findFirst({
+            where: and(
+                eq(referralRewards.refereeId, refereeId),
+                eq(referralRewards.triggerEvent, 'ON_SPA_SIGNED'),
+            ),
+        });
+        if (existing) {
+            return { success: true, message: 'SPA reward already issued' };
+        }
+
+        const config = await db.query.rewardConfig.findFirst({
+            where: and(
+                eq(rewardConfig.triggerEvent, 'ON_SPA_SIGNED'),
+                eq(rewardConfig.isActive, true),
+            ),
+        });
+
+        await db.insert(referralRewards).values({
+            referrerId: referee.referredByUserId,
+            refereeId,
+            status: 'ELIGIBLE',
+            triggerEvent: 'ON_SPA_SIGNED',
+            rewardType: config?.rewardType ?? 'VOUCHER',
+            giftId: config?.giftId ?? null,
+            voucherId: config?.voucherId ?? null,
+            amount: config?.cashAmount ?? null,
+            rewardConfigId: config?.id ?? null,
+        });
+
+        return { success: true };
+    } catch (error) {
+        console.error("Issue SPA Reward Error:", error);
+        return { success: false, error: 'Failed to issue SPA reward' };
+    }
+}
+
+/**
+ * Check if the referrer has crossed any volume milestone thresholds
+ * and issue milestone rewards that haven't been issued yet.
+ */
+async function checkAndIssueMilestoneRewards(referrerId: string) {
+    // Count total registered referrals
+    const referralCountResult = await db
+        .select({ count: count() })
+        .from(user)
+        .where(eq(user.referredByUserId, referrerId));
+
+    const totalReferrals = countRowSchema.parse(referralCountResult)[0].count;
+
+    // Get all tiers the referrer now qualifies for (ordered by minReferrals ascending)
+    const qualifiedTiers = await db.query.referralTiers.findMany({
+        where: lte(referralTiers.minReferrals, totalReferrals),
+        orderBy: [asc(referralTiers.minReferrals)],
+    });
+
+    // Get existing milestone rewards for this referrer
+    const existingMilestones = await db.query.referralRewards.findMany({
+        where: and(
+            eq(referralRewards.referrerId, referrerId),
+            eq(referralRewards.triggerEvent, 'MILESTONE'),
+        ),
+        columns: { notes: true },
+    });
+
+    const issuedTierIds = new Set(
+        existingMilestones.map(m => m.notes).filter(Boolean)
+    );
+
+    // Issue any new milestone rewards
+    for (const tier of qualifiedTiers) {
+        if (issuedTierIds.has(tier.id)) continue;
+
+        await db.insert(referralRewards).values({
+            referrerId,
+            refereeId: referrerId, // Milestone is self-rewarding
+            status: 'ELIGIBLE',
+            triggerEvent: 'MILESTONE',
+            rewardType: tier.rewardType,
+            giftId: tier.giftId ?? null,
+            voucherId: tier.voucherId ?? null,
+            amount: tier.rewardAmount ?? null,
+            notes: tier.id, // Track which tier was issued
+        });
     }
 }
 
@@ -235,8 +401,9 @@ export async function getReferralStats() {
         const referralsCount = await db
             .select({ count: count() })
             .from(user)
-            .where(eq(user.referredByUserId, session.user.id))
-            .then(res => res[0].count);
+            .where(eq(user.referredByUserId, session.user.id));
+
+        const parsedReferralCount = countRowSchema.parse(referralsCount);
 
         // Count Rewards Earned (Eligible/Redeemed)
         // Note: For now, we just count 'ELIGIBLE' or 'REDEEMED' rewards?
@@ -248,16 +415,17 @@ export async function getReferralStats() {
              .where(and(
                  eq(referralRewards.referrerId, session.user.id),
                  eq(referralRewards.status, 'ELIGIBLE') // Or REDEEMED
-             ))
-             .then(res => res[0].count);
+             ));
+
+        const parsedRewardsCount = countRowSchema.parse(rewardsCount);
 
 
         return {
             success: true,
             data: {
                 referralCode,
-                referralsCount,
-                rewardsCount
+                referralsCount: parsedReferralCount[0].count,
+                rewardsCount: parsedRewardsCount[0].count
             }
         };
     } catch (error) {
@@ -281,9 +449,15 @@ export async function getReferralHistory() {
                     columns: {
                         name: true,
                         image: true,
-                        email: true // Optional, maybe hide partial
+                        email: true
                     }
-                }
+                },
+                gift: {
+                    columns: { name: true, imageUrl: true }
+                },
+                voucher: {
+                    columns: { name: true, type: true, denomination: true }
+                },
             },
             orderBy: [desc(referralRewards.createdAt)]
         });
@@ -308,4 +482,22 @@ export async function ensureReferralCode(userId: string) {
          return newCode;
      }
      return currentUser.referralCode;
+}
+
+/** Fetch all milestone tiers with their linked gift/voucher details. */
+export async function getMilestoneTiers() {
+    try {
+        const tiers = await db.query.referralTiers.findMany({
+            orderBy: [asc(referralTiers.minReferrals)],
+            with: {
+                gift: true,
+                voucher: true,
+            },
+        });
+
+        return { success: true, data: tiers };
+    } catch (error) {
+        console.error("Get Milestone Tiers Error:", error);
+        return { success: false, error: 'Failed to fetch tiers' };
+    }
 }

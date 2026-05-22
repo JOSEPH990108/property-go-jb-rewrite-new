@@ -1,17 +1,19 @@
 // src\components\profile\ReferralCodeCard.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2, CheckCircle2, XCircle } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { BaseCard } from "@/components/shared/base-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { verifyReferralCode, applyReferralOnSignup } from "@/app/actions/referral-actions";
-import { toast } from "sonner";
+import { ValidationStatus } from "@/components/shared/ValidationStatus";
+import { useReferralVerification } from "@/hooks/useReferralVerification";
+import { applyReferralOnSignup } from "@/app/actions/referral-actions";
+import { useAsyncAction } from "@/hooks/useAsyncAction";
 import { useRouter } from "next/navigation";
 
 const referralSchema = z.object({
@@ -25,17 +27,22 @@ interface ReferralCodeCardProps {
 }
 
 export function ReferralCodeCard({ userId }: ReferralCodeCardProps) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [referralStatus, setReferralStatus] = useState<{ valid: boolean; message?: string } | null>(null);
-  const [verifiedReferralCode, setVerifiedReferralCode] = useState<string | null>(null);
   const router = useRouter();
+  const { verify, status, verifiedCode, isLoading: isVerifying, handleInputChange } = useReferralVerification();
+
+  const { execute: applyReferral, isLoading: isApplying } = useAsyncAction(
+    (code: string) => applyReferralOnSignup(userId, code),
+    {
+      successMessage: "Referral code applied successfully!",
+      onSuccess: () => router.refresh(),
+    },
+  );
 
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
-    
   } = useForm<ReferralData>({
     resolver: zodResolver(referralSchema),
     defaultValues: {
@@ -45,66 +52,18 @@ export function ReferralCodeCard({ userId }: ReferralCodeCardProps) {
 
   const watchedReferralCode = watch("referralCode");
 
-  // Reset status when input changes
   useEffect(() => {
-    if (verifiedReferralCode && watchedReferralCode !== verifiedReferralCode) {
-        setReferralStatus(null);
-        setVerifiedReferralCode(null);
-    } else if (referralStatus && !watchedReferralCode) {
-        setReferralStatus(null);
-    }
-  }, [watchedReferralCode, referralStatus, verifiedReferralCode]);
-
-  const verifyReferral = async (code: string) => {
-    if (!code) return;
-    setIsLoading(true);
-    try {
-      const res = await verifyReferralCode(code);
-      if (res.valid) {
-        setReferralStatus({ valid: true, message: `Referred by ${res.referrerName}` });
-        setVerifiedReferralCode(code);
-      } else {
-        setReferralStatus({ valid: false, message: res.message || "Invalid code" });
-        setVerifiedReferralCode(null);
-      }
-    } catch (e) {
-      setReferralStatus({ valid: false, message: "Error verifying code" });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    handleInputChange(watchedReferralCode);
+  }, [watchedReferralCode, handleInputChange]);
 
   const onSubmit = async (data: ReferralData) => {
-    setIsLoading(true);
-
-    // Ensure verified
-    if (!verifiedReferralCode) {
-         const res = await verifyReferralCode(data.referralCode);
-         if (!res.valid) {
-             toast.error(res.message || "Invalid referral code");
-             setIsLoading(false);
-             return;
-         }
-         // Set verified code if successful so we can use it
-         setVerifiedReferralCode(data.referralCode);
+    if (!verifiedCode) {
+      await verify(data.referralCode);
     }
-
-    try {
-        // Reuse applyReferralOnSignup as it handles the logic for linking
-        const res = await applyReferralOnSignup(userId, data.referralCode);
-
-        if (res.success) {
-            toast.success("Referral code applied successfully!");
-            router.refresh(); // To hide the card
-        } else {
-            toast.error(res.error || "Failed to apply referral code");
-        }
-    } catch (error) {
-        toast.error("An unexpected error occurred");
-    } finally {
-        setIsLoading(false);
-    }
+    await applyReferral(data.referralCode);
   };
+
+  const isLoading = isVerifying || isApplying;
 
   return (
     <BaseCard
@@ -118,27 +77,22 @@ export function ReferralCodeCard({ userId }: ReferralCodeCardProps) {
                   <Input
                       {...register("referralCode")}
                       placeholder="Enter code"
-                      className={referralStatus?.valid ? "border-green-500 focus-visible:ring-green-500" : ""}
+                      className={status?.valid ? "border-green-500 focus-visible:ring-green-500" : ""}
                   />
                   <Button
                       type="button"
                       variant="outline"
-                      onClick={() => verifyReferral(watch("referralCode") || "")}
-                      disabled={isLoading || !watch("referralCode")}
+                      onClick={() => verify(watchedReferralCode || "")}
+                      disabled={isLoading || !watchedReferralCode}
                   >
                       Apply
                   </Button>
               </div>
-               {referralStatus && (
-                  <div className={`flex items-center gap-1.5 text-xs ${referralStatus.valid ? "text-green-600" : "text-destructive"}`}>
-                      {referralStatus.valid ? <CheckCircle2 className="w-3.5 h-3.5"/> : <XCircle className="w-3.5 h-3.5"/>}
-                      {referralStatus.message}
-                  </div>
-              )}
+              {status && <ValidationStatus valid={status.valid} message={status.message} />}
               {errors.referralCode && <p className="text-destructive text-xs">{errors.referralCode.message}</p>}
           </div>
 
-          <Button type="submit" disabled={isLoading || !referralStatus?.valid}>
+          <Button type="submit" disabled={isLoading || !status?.valid}>
               {isLoading ? <Loader2 className="animate-spin mr-2"/> : null}
               Save Referral
           </Button>

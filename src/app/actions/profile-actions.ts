@@ -59,7 +59,7 @@ export async function updateProfile(data: ProfileFormValues) {
   } catch (error) {
     console.error("Failed to update profile:", error);
     if (error instanceof z.ZodError) {
-      return { success: false, error: "Invalid data", details: (error as any).errors };
+      return { success: false, error: "Invalid data", details: error.issues };
     }
     return { success: false, error: "Failed to update profile" };
   }

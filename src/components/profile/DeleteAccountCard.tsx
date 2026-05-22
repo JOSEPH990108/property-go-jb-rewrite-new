@@ -4,18 +4,10 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Loader2, AlertTriangle } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { deleteUserAccount } from "@/app/actions/auth-actions";
 import { BaseCard } from "@/components/shared/base-card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { useUIStore } from "@/stores/ui-store";
@@ -28,11 +20,9 @@ export function DeleteAccountCard() {
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      // 1. Call server action to delete from DB
       const res = await deleteUserAccount();
 
       if (res.success) {
-        // 2. Client-side sign out to clear session cookies immediately
         await authClient.signOut({
             fetchOptions: {
                 onSuccess: () => {
@@ -73,29 +63,17 @@ export function DeleteAccountCard() {
             Permanently delete your account and all associated data.
           </p>
         </div>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button variant="destructive">Delete Account</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Are you absolutely sure?</DialogTitle>
-              <DialogDescription>
-                This action cannot be undone. This will permanently delete your
-                account and remove your data from our servers.
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setOpen(false)} disabled={isDeleting}>
-                Cancel
-              </Button>
-              <Button variant="destructive" onClick={handleDelete} disabled={isDeleting}>
-                {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Yes, Delete My Account
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <ConfirmDialog
+          open={open}
+          onOpenChange={setOpen}
+          title="Are you absolutely sure?"
+          description="This action cannot be undone. This will permanently delete your account and remove your data from our servers."
+          onConfirm={handleDelete}
+          isLoading={isDeleting}
+          confirmLabel="Yes, Delete My Account"
+          variant="destructive"
+          trigger={<Button variant="destructive">Delete Account</Button>}
+        />
       </div>
     </BaseCard>
   );

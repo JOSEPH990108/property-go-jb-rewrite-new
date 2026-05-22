@@ -1,22 +1,35 @@
-// src\components\custom\referral\ReferralHistory.tsx
+// src/components/custom/referral/ReferralHistory.tsx
 'use client';
-
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Gift, Ticket, Banknote, Trophy } from 'lucide-react';
+import type { ReferralReward } from '@/types/referral.types';
 
-interface ReferralReward {
-    id: string;
-    status: string;
-    triggerEvent: string;
-    createdAt: string; // Serialized date
-    referee: {
-        name: string | null;
-        image: string | null;
-        email: string | null;
-    } | null;
+const TRIGGER_LABELS: Record<string, string> = {
+  ON_REGISTRATION: 'Registered',
+  ON_BOOKING: 'Booked',
+  ON_SPA_SIGNED: 'SPA Signed',
+  ON_VISIT: 'Visited',
+  MILESTONE: 'Milestone',
+};
+
+function getRewardLabel(item: ReferralReward): string {
+  if (item.gift) return item.gift.name;
+  if (item.voucher) return `${item.voucher.name}`;
+  if (item.amount) return `RM${item.amount}`;
+  return item.rewardType ?? 'Reward';
+}
+
+function RewardIcon({ type }: { type: string | null }) {
+  switch (type) {
+    case 'PHYSICAL_GIFT': return <Gift className="h-3.5 w-3.5" />;
+    case 'VOUCHER': return <Ticket className="h-3.5 w-3.5" />;
+    case 'CASH': case 'CASHBACK': return <Banknote className="h-3.5 w-3.5" />;
+    default: return <Trophy className="h-3.5 w-3.5" />;
+  }
 }
 
 interface ReferralHistoryProps {
@@ -36,7 +49,7 @@ export function ReferralHistory({ history }: ReferralHistoryProps) {
     <Card>
       <CardHeader>
         <CardTitle>Referral History</CardTitle>
-        <CardDescription>Track the status of your invites.</CardDescription>
+        <CardDescription>Track the status of your invites and rewards.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {history.map((item, index) => (
@@ -53,7 +66,9 @@ export function ReferralHistory({ history }: ReferralHistoryProps) {
                     <AvatarFallback>{item.referee?.name?.charAt(0) || '?'}</AvatarFallback>
                  </Avatar>
                  <div>
-                     <p className="font-medium">{item.referee?.name || 'Unknown User'}</p>
+                     <p className="font-medium">
+                       {item.triggerEvent === 'MILESTONE' ? 'Milestone Bonus' : (item.referee?.name || 'Unknown User')}
+                     </p>
                      <p className="text-sm text-muted-foreground">
                          {new Date(item.createdAt).toLocaleDateString()}
                      </p>
@@ -64,14 +79,18 @@ export function ReferralHistory({ history }: ReferralHistoryProps) {
                  <Badge
                     variant={
                         item.status === 'ELIGIBLE' ? 'default' :
-                        item.status === 'REDEEMED' ? 'secondary' : 'outline'
+                        item.status === 'FULFILLED' ? 'secondary' : 'outline'
                     }
                     className="capitalize"
                  >
-                    {item.status.toLowerCase()}
+                    {item.status?.toLowerCase() ?? "unknown"}
                  </Badge>
+                 <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                     <RewardIcon type={item.rewardType} />
+                     {getRewardLabel(item)}
+                 </span>
                  <span className="text-xs text-muted-foreground">
-                     {item.triggerEvent === 'ON_REGISTRATION' ? 'Registered' : 'Booked'}
+                     {TRIGGER_LABELS[item.triggerEvent ?? ''] ?? item.triggerEvent}
                  </span>
               </div>
            </motion.div>

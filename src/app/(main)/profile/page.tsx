@@ -3,6 +3,8 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
+import { user } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 import { UserInfoCard } from "@/components/profile/UserInfoCard";
 import { UserAddressCard } from "@/components/profile/UserAddressCard";
@@ -12,6 +14,30 @@ import { ReferralCodeCard } from "@/components/profile/ReferralCodeCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ReferralDashboard from "@/components/custom/referral/ReferralDashboard";
 
+function parseGoogleEmailFromIdToken(idToken: string | null | undefined): string | null {
+  if (!idToken) {
+    return null;
+  }
+
+  try {
+    const parts = idToken.split(".");
+    if (parts.length < 2) {
+      return null;
+    }
+
+    const payloadRaw = Buffer.from(parts[1], "base64url").toString("utf8");
+    const payload = JSON.parse(payloadRaw) as { email?: string; email_verified?: boolean };
+
+    if (!payload.email || payload.email_verified !== true) {
+      return null;
+    }
+
+    return payload.email;
+  } catch {
+    return null;
+  }
+}
+
 export default async function ProfilePage() {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -19,6 +45,40 @@ export default async function ProfilePage() {
 
   if (!session) {
     redirect("/signin"); // Or wherever login is
+  }
+
+  // If a phone-created temp email account links Google, promote to verified Google email.
+  const currentUser = await db.query.user.findFirst({
+    where: (table, { eq }) => eq(table.id, session.user.id),
+    columns: { id: true, email: true },
+  });
+
+  if (currentUser?.email?.endsWith("@temp.propertygo.com")) {
+    const googleAccount = await db.query.account.findFirst({
+      where: (table, { and, eq }) =>
+        and(eq(table.userId, session.user.id), eq(table.providerId, "google")),
+      columns: { idToken: true },
+    });
+
+    const googleEmail = parseGoogleEmailFromIdToken(googleAccount?.idToken);
+
+    if (googleEmail && googleEmail !== currentUser.email) {
+      const existingOwner = await db.query.user.findFirst({
+        where: (table, { eq }) => eq(table.email, googleEmail),
+        columns: { id: true },
+      });
+
+      if (!existingOwner || existingOwner.id === session.user.id) {
+        await db
+          .update(user)
+          .set({
+            email: googleEmail,
+            emailVerified: true,
+            updatedAt: new Date(),
+          })
+          .where(eq(user.id, session.user.id));
+      }
+    }
   }
 
   // Fetch full user data to ensure we have latest fields (nationality, phone, etc.)
