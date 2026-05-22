@@ -1,19 +1,22 @@
 // src\db\index.ts
-import dotenv from "dotenv";
-dotenv.config({ path: ".env.local" });
-
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from './schema';
 
-let db: ReturnType<typeof drizzle> | any;
+const createDatabase = () => {
+  const queryClient = postgres(process.env.DATABASE_URL!, { max: 10 });
+  return drizzle(queryClient, { schema });
+};
+
+type Database = ReturnType<typeof createDatabase>;
+
+let db: Database;
 
 if (!process.env.DATABASE_URL) {
   console.warn('DATABASE_URL is not set. Using mock DB mode.');
-  db = null;
+  db = {} as Database;
 } else {
-  const queryClient = postgres(process.env.DATABASE_URL);
-  db = drizzle(queryClient, { schema });
+  db = createDatabase();
 }
 
 export { db };

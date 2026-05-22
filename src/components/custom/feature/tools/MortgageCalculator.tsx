@@ -316,7 +316,16 @@ export default function ProMortgageCalculator() {
 
 // --- Helper Components ---
 
-const InputGroup = ({ label, suffix, value, onChange, step=1, max }: any) => (
+interface InputGroupProps {
+    label: string;
+    suffix: string;
+    value: number;
+    onChange: (v: number) => void;
+    step?: number;
+    max?: number;
+}
+
+const InputGroup = ({ label, suffix, value, onChange, step = 1, max }: InputGroupProps) => (
     <div className="space-y-1">
         <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">{label}</label>
         <div className="relative">

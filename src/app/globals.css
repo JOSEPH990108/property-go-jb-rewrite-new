@@ -111,42 +111,34 @@
 }
 
 /* ================================
-   LIGHT MODE — BLUE, WHITE & BLACK
-   Clean, elegant, professional
+  LIGHT MODE — ROYAL RESERVE
 ================================ */
 :root {
-  /* Base Colors - Pure white background */
-  --background: hsl(0 0% 100%);
-  --foreground: hsl(220 25% 8%);
+  /* Base Colors */
+  --background: #f9f6f0;
+  --foreground: #002544;
 
-  /* Card - White surfaces with subtle depth */
-  --card: hsl(0 0% 100%);
-  --card-foreground: hsl(220 25% 8%);
+  --card: #fffdf8;
+  --card-foreground: #002544;
 
-  /* Popover - Floating elements */
-  --popover: hsl(0 0% 100%);
-  --popover-foreground: hsl(220 25% 8%);
+  --popover: #fffdf8;
+  --popover-foreground: #002544;
 
-  /* Primary - Classic blue */
-  --primary: hsl(217 91% 50%);
-  --primary-foreground: hsl(0 0% 100%);
+  --primary: #002544;
+  --primary-foreground: #f9f6f0;
 
-  /* Secondary - Light gray-blue */
-  --secondary: hsl(214 32% 91%);
-  --secondary-foreground: hsl(220 25% 12%);
+  --secondary: #c5ad59;
+  --secondary-foreground: #1f1a0b;
 
-  /* Accent - Vibrant blue (same family as primary) */
-  --accent: hsl(217 91% 60%);
-  --accent-foreground: hsl(0 0% 100%);
+  --accent: #353333;
+  --accent-foreground: #f9f6f0;
 
-  /* Muted - Subtle gray backgrounds */
-  --muted: hsl(210 20% 96%);
-  --muted-foreground: hsl(215 16% 47%);
+  --muted: #efe9dc;
+  --muted-foreground: #6a655a;
 
-  /* Borders - Subtle gray */
-  --border: hsl(214 32% 91%);
-  --input: hsl(214 32% 91%);
-  --ring: hsl(217 91% 50%);
+  --border: #ddd2ba;
+  --input: #ddd2ba;
+  --ring: #c5ad59;
 
   /* Destructive */
   --destructive: hsl(0 72% 51%);
@@ -154,28 +146,24 @@
 
   --radius: 0.75rem;
 
-  /* Premium Shadows - Soft depth */
-  --shadow-xs: 0 1px 2px hsl(220 25% 8% / 0.04);
-  --shadow-sm: 0 2px 8px hsl(220 25% 8% / 0.06), 0 1px 2px hsl(220 25% 8% / 0.04);
-  --shadow-md: 0 4px 16px hsl(220 25% 8% / 0.10), 0 2px 4px hsl(220 25% 8% / 0.05);
-  --shadow-lg: 0 8px 32px hsl(220 25% 8% / 0.12), 0 4px 8px hsl(220 25% 8% / 0.06);
-  --shadow-xl: 0 16px 48px hsl(220 25% 8% / 0.14), 0 8px 16px hsl(220 25% 8% / 0.08);
+  --shadow-xs: 0 1px 2px rgb(0 37 68 / 0.06);
+  --shadow-sm: 0 2px 8px rgb(0 37 68 / 0.08), 0 1px 2px rgb(0 37 68 / 0.05);
+  --shadow-md: 0 4px 16px rgb(0 37 68 / 0.12), 0 2px 4px rgb(0 37 68 / 0.07);
+  --shadow-lg: 0 8px 32px rgb(0 37 68 / 0.14), 0 4px 8px rgb(0 37 68 / 0.08);
+  --shadow-xl: 0 16px 48px rgb(0 37 68 / 0.16), 0 8px 16px rgb(0 37 68 / 0.10);
 
-  /* Blue Glow Effects */
-  --glow-accent: 0 0 25px hsl(217 91% 60% / 0.25), 0 0 50px hsl(217 91% 60% / 0.12);
-  --glow-primary: 0 0 25px hsl(217 91% 50% / 0.25), 0 0 50px hsl(217 91% 50% / 0.12);
-  --glow-soft: 0 0 50px hsl(217 91% 50% / 0.06);
+  --glow-accent: 0 0 25px rgb(197 173 89 / 0.28), 0 0 50px rgb(197 173 89 / 0.14);
+  --glow-primary: 0 0 25px rgb(0 37 68 / 0.20), 0 0 50px rgb(0 37 68 / 0.10);
+  --glow-soft: 0 0 50px rgb(0 37 68 / 0.08);
 
-  /* Glass Surface Styles */
-  --surface-base: hsl(0 0% 100%);
-  --surface-raised: hsl(0 0% 100%);
-  --surface-overlay: hsl(0 0% 100% / 0.85);
-  --surface-glass: hsl(0 0% 100% / 0.75);
+  --surface-base: #f9f6f0;
+  --surface-raised: #fffdf8;
+  --surface-overlay: rgb(249 246 240 / 0.9);
+  --surface-glass: rgb(255 253 248 / 0.78);
 
-  /* Blue Gradient Accents */
-  --gradient-primary: linear-gradient(135deg, hsl(217 91% 50%) 0%, hsl(217 91% 65%) 100%);
-  --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(214 32% 98%) 100%);
-  --gradient-shine: linear-gradient(90deg, transparent 0%, hsl(0 0% 100% / 0.7) 50%, transparent 100%);
+  --gradient-primary: linear-gradient(135deg, #002544 0%, #1b4568 100%);
+  --gradient-subtle: linear-gradient(180deg, #fffdf8 0%, #f9f6f0 100%);
+  --gradient-shine: linear-gradient(90deg, transparent 0%, rgb(255 255 255 / 0.6) 50%, transparent 100%);
 
   /* Typography */
   --font-playfair: "Playfair Display", serif;
@@ -185,69 +173,56 @@
 }
 
 /* ================================
-   DARK MODE — ELEGANT BLACK & BLUE
-   Deep black with blue accents
+  DARK MODE — AETHELGARD
 ================================ */
 .dark {
-  /* Base Colors - True black background */
-  --background: hsl(220 20% 4%);
-  --foreground: hsl(0 0% 98%);
+  --background: #000000;
+  --foreground: #f5f5f5;
 
-  /* Card - Elevated dark surfaces */
-  --card: hsl(220 20% 8%);
-  --card-foreground: hsl(0 0% 98%);
+  --card: #0f0f10;
+  --card-foreground: #f5f5f5;
 
-  /* Popover - Floating dark glass */
-  --popover: hsl(220 20% 10%);
-  --popover-foreground: hsl(0 0% 98%);
+  --popover: #111214;
+  --popover-foreground: #f5f5f5;
 
-  /* Primary - Bright blue */
-  --primary: hsl(217 91% 60%);
-  --primary-foreground: hsl(0 0% 100%);
+  --primary: #c0c0c0;
+  --primary-foreground: #0f0f10;
 
-  /* Secondary - Dark gray-blue */
-  --secondary: hsl(220 15% 14%);
-  --secondary-foreground: hsl(0 0% 95%);
+  --secondary: #1a1b1d;
+  --secondary-foreground: #f5f5f5;
 
-  /* Accent - Vibrant blue */
-  --accent: hsl(217 91% 65%);
-  --accent-foreground: hsl(0 0% 100%);
+  --accent: #8e8e93;
+  --accent-foreground: #f5f5f5;
 
-  /* Muted - Dark surfaces */
-  --muted: hsl(220 15% 12%);
-  --muted-foreground: hsl(215 16% 57%);
+  --muted: #161719;
+  --muted-foreground: #d8d8dc;
 
-  /* Borders - Subtle dark edges */
-  --border: hsl(220 15% 18%);
-  --input: hsl(220 15% 18%);
-  --ring: hsl(217 91% 60%);
+  --border: #2c2c2f;
+  --input: #2c2c2f;
+  --ring: #d8d8dc;
 
   /* Destructive */
   --destructive: hsl(0 72% 50%);
   --destructive-foreground: hsl(0 0% 100%);
 
-  /* Premium Shadows - Deep, dramatic */
-  --shadow-xs: 0 1px 2px hsl(220 50% 2% / 0.4);
-  --shadow-sm: 0 2px 8px hsl(220 50% 2% / 0.5);
-  --shadow-md: 0 4px 16px hsl(220 50% 2% / 0.6);
-  --shadow-lg: 0 8px 32px hsl(220 50% 2% / 0.7);
-  --shadow-xl: 0 16px 48px hsl(220 50% 2% / 0.8);
+  --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.45);
+  --shadow-sm: 0 2px 8px rgb(0 0 0 / 0.55);
+  --shadow-md: 0 4px 16px rgb(0 0 0 / 0.65);
+  --shadow-lg: 0 8px 32px rgb(0 0 0 / 0.75);
+  --shadow-xl: 0 16px 48px rgb(0 0 0 / 0.82);
 
-  /* Blue Glow Effects - Neon style */
-  --glow-accent: 0 0 40px hsl(217 91% 65% / 0.35), 0 0 80px hsl(217 91% 65% / 0.15);
-  --glow-primary: 0 0 40px hsl(217 91% 60% / 0.35), 0 0 80px hsl(217 91% 60% / 0.15);
-  --glow-soft: 0 0 80px hsl(217 91% 60% / 0.08);
+  --glow-accent: 0 0 35px rgb(216 216 220 / 0.22), 0 0 70px rgb(216 216 220 / 0.1);
+  --glow-primary: 0 0 25px rgb(192 192 192 / 0.2), 0 0 60px rgb(192 192 192 / 0.1);
+  --glow-soft: 0 0 60px rgb(216 216 220 / 0.08);
 
-  /* Glass Surface Styles */
-  --surface-base: hsl(220 20% 8%);
-  --surface-raised: hsl(220 20% 12%);
-  --surface-overlay: hsl(220 20% 10% / 0.95);
-  --surface-glass: hsl(220 20% 12% / 0.70);
+  --surface-base: #0f0f10;
+  --surface-raised: #161719;
+  --surface-overlay: rgb(17 18 20 / 0.94);
+  --surface-glass: rgb(22 23 25 / 0.72);
 
-  /* Blue Gradient Accents */
-  --gradient-primary: linear-gradient(135deg, hsl(217 91% 55%) 0%, hsl(217 91% 70%) 100%);
-  --gradient-subtle: linear-gradient(180deg, hsl(220 20% 10%) 0%, hsl(220 20% 4%) 100%);
-  --gradient-shine: linear-gradient(90deg, transparent 0%, hsl(0 0% 100% / 0.06) 50%, transparent 100%);
+  --gradient-primary: linear-gradient(135deg, #f1f1f1 0%, #8e8e93 100%);
+  --gradient-subtle: linear-gradient(180deg, #161719 0%, #000000 100%);
+  --gradient-shine: linear-gradient(90deg, transparent 0%, rgb(245 245 245 / 0.08) 50%, transparent 100%);
 }
 
 /* ================================

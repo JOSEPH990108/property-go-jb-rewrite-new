@@ -1,5 +1,12 @@
-// src\types\index.ts
-import { LucideIcon } from "lucide-react";
+// src/types/index.ts
+// Central re-export barrel for all shared types.
+
+export * from "./auth.types";
+export * from "./bulk-import.types";
+export * from "./navigation.types";
+export * from "./referral.types";
+
+import type { LucideIcon } from "lucide-react";
 import React from "react";
 
 // --- Navigation & Dropdowns ---

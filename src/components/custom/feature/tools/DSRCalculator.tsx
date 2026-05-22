@@ -1,7 +1,7 @@
 // src\components\custom\feature\tools\DSRCalculator.tsx
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, type ElementType } from 'react';
 import { motion } from 'framer-motion';
 import { 
   CreditCard, 
@@ -406,7 +406,7 @@ export default function DsrCalculatorLive() {
 
 // --- Sub-Components ---
 
-const SectionHeader = ({ icon: Icon, title }: { icon: any, title: string }) => (
+const SectionHeader = ({ icon: Icon, title }: { icon: ElementType, title: string }) => (
   <div className="flex items-center gap-3 border-b border-zinc-800 pb-4">
     <div className="p-2.5 bg-zinc-900 rounded-xl border border-zinc-800 shadow-sm">
       <Icon className="w-5 h-5 text-zinc-400" />

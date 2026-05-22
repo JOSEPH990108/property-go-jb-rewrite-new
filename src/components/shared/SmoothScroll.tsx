@@ -19,6 +19,7 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Exponential easing
       orientation: "vertical",
       gestureOrientation: "vertical",
+      allowNestedScroll: true,
       smoothWheel: true,
       touchMultiplier: 2,
     });

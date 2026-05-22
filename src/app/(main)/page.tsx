@@ -79,7 +79,7 @@ export default function Home() {
           >
             <Link
               href="/projects"
-              className="group relative inline-flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-primary to-accent text-white font-semibold text-lg shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 hover:-translate-y-0.5"
+              className="group relative inline-flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold text-lg shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 hover:-translate-y-0.5"
             >
               <span>Explore Properties</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -89,7 +89,7 @@ export default function Home() {
 
             <Link
               href="/tools"
-              className="group inline-flex items-center gap-2 px-8 py-4 rounded-full border-2 border-border hover:border-accent bg-background/50 backdrop-blur-sm font-semibold text-lg transition-all duration-300 hover:shadow-lg hover:shadow-accent/10"
+              className="group inline-flex items-center gap-2 px-8 py-4 rounded-full border-2 border-border hover:border-accent bg-background/50 text-foreground backdrop-blur-sm font-semibold text-lg transition-all duration-300 hover:shadow-lg hover:shadow-accent/10"
             >
               <span>Financial Tools</span>
               <TrendingUp className="w-5 h-5 group-hover:scale-110 transition-transform" />

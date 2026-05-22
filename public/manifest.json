@@ -1,0 +1,27 @@
+{
+  "name": "PropertyGoJB",
+  "short_name": "PropertyGoJB",
+  "description": "Premier Johor Bahru real estate platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/images/logo/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/logo/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "lifestyle"],
+  "lang": "en",
+  "dir": "ltr"
+}
