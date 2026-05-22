@@ -76,6 +76,12 @@ const LOOKUPS = {
     { code: 'INTERNATIONAL', name: 'International' },
     { code: 'MIXED', name: 'Mixed' }
   ],
+  unitPositions: [
+    { code: 'INTER', name: 'Intermediate' },
+    { code: 'COR', name: 'Corner Lot' },
+    { code: 'EU', name: 'End Lot' },
+    { code: 'EUL', name: 'End Lot (Extra Land)' }
+  ],
   buyerTypes: [
     { code: 'MALAYSIAN_CITIZEN', name: 'Citizen' }, 
     { code: 'FOREIGNER', name: 'Foreigner' }, 
@@ -229,11 +235,12 @@ async function seed() {
     // --- A. Roles & Lookups ---
     await seedSimple(schema.roles, LOOKUPS.roles);
     const statusMap = await seedSimple(schema.projectStatuses, LOOKUPS.projectStatuses);
-    await seedSimple(schema.bookingStatuses, LOOKUPS.bookingStatuses);
+    const bookingStatusMap = await seedSimple(schema.bookingStatuses, LOOKUPS.bookingStatuses);
     await seedSimple(schema.tenureTypes, LOOKUPS.tenureTypes);
     await seedSimple(schema.mediaTypes, LOOKUPS.mediaTypes);
     await seedSimple(schema.buyerTypes, LOOKUPS.buyerTypes);
-    await seedSimple(schema.lotTypes, LOOKUPS.lotTypes);
+    const lotTypeMap = await seedSimple(schema.lotTypes, LOOKUPS.lotTypes);
+    const unitPositionMap = await seedSimple(schema.unitPositions, LOOKUPS.unitPositions);
     await seedSimple(schema.promotionTypes, LOOKUPS.promotionTypes);
     await seedSimple(schema.appointmentStatuses, LOOKUPS.appointmentStatuses);
     
@@ -290,7 +297,9 @@ async function seed() {
         { slug: 'sunway-developer', name: 'Sunway Developer', countryCode: '+60', isFeatured: true },
         { slug: 'ctc-development', name: 'CTC Development Malaysia Sdn Bhd', countryCode: '+60' },
         { slug: 'paragon-urban', name: 'Paragon Urban Sdn Bhd', countryCode: '+60' },
-        { slug: 'city-centre-transformation', name: 'City Centre Transformation (JB) Sdn Bhd', countryCode: '+60' }
+      { slug: 'city-centre-transformation', name: 'City Centre Transformation (JB) Sdn Bhd', countryCode: '+60' },
+      { slug: 'alam-heights', name: 'Alam Heights Sdn. Bhd.', legalName: 'Alam Heights Sdn. Bhd. (1180698A/201601009770)', countryCode: '+60' },
+      { slug: 'ksl-holdings', name: 'KSL Holdings', legalName: 'Wawari Sdn Bhd', countryCode: '+60' }
     ];
 
     const devMap = new Map();
@@ -303,12 +312,45 @@ async function seed() {
     // --- E. Projects ---
     console.log('... Seeding Projects');
 
-    // --- F. Referral Tiers ---
+    // --- F. Gift Catalog ---
+    console.log('... Seeding Gift Catalog');
+    const [giftUmbrella] = await tx.insert(schema.giftCatalog).values([
+        { name: 'Branded Umbrella', description: 'PropertyGo JB branded umbrella', imageUrl: 'https://images.unsplash.com/photo-1534309466160-70b22cc6254d?w=400&h=400&fit=crop', estimatedValue: '8.00', stockQty: 100, isActive: true },
+        { name: 'Ceramic Mug', description: 'PropertyGo JB ceramic mug', imageUrl: 'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=400&h=400&fit=crop', estimatedValue: '5.00', stockQty: 200, isActive: true },
+        { name: 'Premium Keychain', description: 'Metal keychain with PropertyGo logo', imageUrl: 'https://images.unsplash.com/photo-1622434641406-a158123450f9?w=400&h=400&fit=crop', estimatedValue: '3.00', stockQty: 300, isActive: true },
+        { name: 'Tote Bag', description: 'Canvas tote bag with PropertyGo branding', imageUrl: 'https://images.unsplash.com/photo-1597484661973-ee6cd0b6482c?w=400&h=400&fit=crop', estimatedValue: '10.00', stockQty: 100, isActive: true },
+        { name: 'Power Bank', description: '5000mAh portable charger', imageUrl: 'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=400&h=400&fit=crop', estimatedValue: '25.00', stockQty: 50, isActive: true },
+    ]).returning();
+
+    // --- G. Voucher Catalog ---
+    console.log('... Seeding Voucher Catalog');
+    const [vTng5, vTng10, vTng30, vTng50] = await tx.insert(schema.voucherCatalog).values([
+        { name: 'TnG RM5 Top-Up', type: 'TNG_TOPUP', denomination: '5.00', description: 'Touch n Go eWallet RM5 top-up', imageUrl: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=400&fit=crop', stockQty: 200, isActive: true },
+        { name: 'TnG RM10 Voucher', type: 'TNG_VOUCHER', denomination: '10.00', description: 'Touch n Go RM10 voucher', imageUrl: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=400&fit=crop', stockQty: 150, isActive: true },
+        { name: 'TnG RM30 Voucher', type: 'TNG_VOUCHER', denomination: '30.00', description: 'Touch n Go RM30 voucher', imageUrl: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=400&fit=crop', stockQty: 100, isActive: true },
+        { name: 'TnG RM50 Voucher', type: 'TNG_VOUCHER', denomination: '50.00', description: 'Touch n Go RM50 voucher', imageUrl: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=400&fit=crop', stockQty: 50, isActive: true },
+        { name: 'Grab RM10 Voucher', type: 'GRAB_VOUCHER', denomination: '10.00', description: 'Grab RM10 promo code', imageUrl: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=400&fit=crop', stockQty: 100, isActive: true },
+        { name: 'Grab RM20 Voucher', type: 'GRAB_VOUCHER', denomination: '20.00', description: 'Grab RM20 promo code', imageUrl: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=400&fit=crop', stockQty: 80, isActive: true },
+        { name: 'Shopee RM10 Voucher', type: 'SHOPEE_VOUCHER', denomination: '10.00', description: 'Shopee RM10 voucher code', imageUrl: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=400&fit=crop', stockQty: 100, isActive: true },
+    ]).returning();
+
+    // --- H. Reward Config (per-event rewards for referrer) ---
+    console.log('... Seeding Reward Config');
+    await tx.insert(schema.rewardConfig).values([
+        // When referred user registers → referrer gets small TnG top-up
+        { name: 'Registration Reward', triggerEvent: 'ON_REGISTRATION', rewardType: 'VOUCHER', voucherId: vTng5.id, description: 'RM5 TnG top-up when referred friend registers', isActive: true },
+        // When referred user books appointment → referrer gets RM10 voucher
+        { name: 'Booking Reward', triggerEvent: 'ON_BOOKING', rewardType: 'VOUCHER', voucherId: vTng10.id, description: 'RM10 TnG voucher when referred friend books appointment', isActive: true },
+        // When referred user signs SPA → referrer gets RM50 voucher (highest)
+        { name: 'SPA Signing Reward', triggerEvent: 'ON_SPA_SIGNED', rewardType: 'VOUCHER', voucherId: vTng50.id, description: 'RM50 TnG voucher when referred friend signs SPA', isActive: true },
+    ]).onConflictDoNothing();
+
+    // --- I. Referral Tiers (volume milestones) ---
     console.log('... Seeding Referral Tiers');
     await tx.insert(schema.referralTiers).values([
-        { name: 'Bronze', minReferrals: 0, rewardAmount: '10.00', description: 'Standard Reward' },
-        { name: 'Silver', minReferrals: 3, rewardAmount: '20.00', description: 'Boost after 3 referrals' },
-        { name: 'Gold', minReferrals: 6, rewardAmount: '50.00', description: 'Super boost after 6 referrals' },
+        { name: 'First Referral', minReferrals: 1, rewardType: 'PHYSICAL_GIFT', giftId: giftUmbrella.id, description: 'Free umbrella for first sign-up referral' },
+        { name: 'Triple Bonus', minReferrals: 3, rewardType: 'VOUCHER', voucherId: vTng30.id, rewardAmount: '30.00', description: 'RM30 TnG voucher after 3 registered referrals' },
+        { name: 'Super Referrer', minReferrals: 6, rewardType: 'VOUCHER', voucherId: vTng50.id, rewardAmount: '50.00', description: 'RM50 TnG voucher after 6 registered referrals' },
     ]).onConflictDoNothing();
     
     // Helper accessors
@@ -447,32 +489,145 @@ async function seed() {
         isPublished: true
     }).onConflictDoNothing().returning();
 
-    // --- G. Star Agent (Sarah Tan) ---
-    console.log('... Seeding Star Agent (Sarah Tan)');
-    const agentRole = await tx.query.roles.findFirst({
-        where: (r, { eq }) => eq(r.code, 'AGENT')
+    // ==========================================
+    // 6. ALAM HEIGHTS (RED HILL)
+    // ==========================================
+    const [redHill] = await tx.insert(schema.projects).values({
+      slug: 'alam-heights-red-hill',
+      name: 'Alam Heights (Red Hill)',
+      developerId: getDev('alam-heights'),
+      propertyCategoryId: getCat('landed'),
+      propertyTypeId: getType('terrace-house'),
+      tenureTypeId: tenureFreeholdId!,
+      projectStatusId: getStatus('UNDER_CONSTRUCTION'),
+      regionId: regionMap.get('pasir-gudang-corridor')!,
+      areaId: areaMap.get('bandar-seri-alam')!,
+      address: '47, Jalan Tasek 44, Bandar Baru Seri Alam',
+      bookingFee: '2000.00',
+      totalUnits: 113,
+      launchYear: 2026,
+      isPublished: true
+    }).onConflictDoNothing().returning();
+
+    if (redHill) {
+      const [ph1] = await tx.insert(schema.projectPhases).values({
+        projectId: redHill.id, name: 'Phase 1', phaseCode: 'PH1', completionDate: '2028-03-31'
+      }).onConflictDoNothing().returning();
+
+      const [layout20x70] = await tx.insert(schema.projectLayouts).values({
+        projectId: redHill.id, code: 'TYPE_A', name: '20x70 Terrace', builtUpSqft: '1951.39', bedrooms: 4, bathrooms: 4,
+      }).onConflictDoNothing().returning();
+
+      if (ph1 && layout20x70) {
+        await tx.insert(schema.units).values([
+          {
+            projectId: redHill.id, phaseId: ph1.id, layoutId: layout20x70.id,
+            unitNo: '230732', displaySequence: 1,
+            builtUpSqft: '2002.20', landAreaSqft: '3041.00', facing: 'NE',
+            positionTypeId: unitPositionMap.get('COR'), lotTypeId: lotTypeMap.get('NON_BUMIPUTERA'), bookingStatusId: bookingStatusMap.get('AVAILABLE'),
+            basePrice: '1084100.00', finalPrice: '975690.00',
+          },
+          {
+            projectId: redHill.id, phaseId: ph1.id, layoutId: layout20x70.id,
+            unitNo: '230733', displaySequence: 2,
+            builtUpSqft: '1951.39', landAreaSqft: '1446.00', facing: 'NE',
+            positionTypeId: unitPositionMap.get('INTER'), lotTypeId: lotTypeMap.get('NON_BUMIPUTERA'), bookingStatusId: bookingStatusMap.get('RESERVED'),
+            basePrice: '798000.00', finalPrice: '718200.00',
+          }
+        ]).onConflictDoNothing();
+      }
+    }
+
+    // ==========================================
+    // 7. KSL RIVERHAUS
+    // ==========================================
+    const [riverhaus] = await tx.insert(schema.projects).values({
+      slug: 'ksl-riverhaus',
+      name: 'KSL Riverhaus',
+      developerId: getDev('ksl-holdings'),
+      propertyCategoryId: getCat('high-rise'),
+      propertyTypeId: getType('serviced-apartment'),
+      tenureTypeId: tenureFreeholdId!,
+      projectStatusId: getStatus('NEW_LAUNCH'),
+      regionId: regionMap.get('iskandar-puteri')!,
+      areaId: areaMap.get('bukit-indah')!,
+      address: 'Bukit Indah, Iskandar Puteri, Johor',
+      bookingFee: '1000.00',
+      totalUnits: 2160,
+      isPublished: true
+    }).onConflictDoNothing().returning();
+
+    if (riverhaus) {
+      const [towerA] = await tx.insert(schema.projectTowers).values([
+        { projectId: riverhaus.id, towerNumber: 'A', name: 'Tower A' }
+      ]).onConflictDoNothing().returning();
+
+      const [layoutStudio, layout2Bed] = await tx.insert(schema.projectLayouts).values([
+        { projectId: riverhaus.id, code: 'TYPE_A', name: 'Studio 1B', builtUpSqft: '501.00', bedrooms: 1, bathrooms: 1 },
+        { projectId: riverhaus.id, code: 'TYPE_B', name: '2 Bedroom', builtUpSqft: '649.00', bedrooms: 2, bathrooms: 2 }
+      ]).onConflictDoNothing().returning();
+
+      if (towerA && layoutStudio && layout2Bed) {
+        await tx.insert(schema.units).values([
+          {
+            projectId: riverhaus.id, layoutId: layoutStudio.id, towerId: towerA.id,
+            unitNo: 'A-15-01', floor: 15, stack: '01',
+            builtUpSqft: '501.00', facing: 'City View',
+            positionTypeId: unitPositionMap.get('INTER'), lotTypeId: lotTypeMap.get('NON_BUMIPUTERA'), bookingStatusId: bookingStatusMap.get('AVAILABLE'),
+            basePrice: '450000.00',
+          },
+          {
+            projectId: riverhaus.id, layoutId: layout2Bed.id, towerId: towerA.id,
+            unitNo: 'A-15-02', floor: 15, stack: '02',
+            builtUpSqft: '649.00', facing: 'Pool View',
+            positionTypeId: unitPositionMap.get('INTER'), lotTypeId: lotTypeMap.get('NON_BUMIPUTERA'), bookingStatusId: bookingStatusMap.get('AVAILABLE'),
+            basePrice: '580000.00',
+          }
+        ]).onConflictDoNothing();
+      }
+    }
+
+    // --- G. Master Admin ---
+    console.log('... Seeding Master Admin');
+    const superAdminRole = await tx.query.roles.findFirst({
+        where: (r, { eq }) => eq(r.code, 'SUPER_ADMIN')
     });
 
-    if (agentRole) {
+    if (superAdminRole) {
+        const adminEmail = 'admin@propertygo.com';
+
+        // Upsert the admin user
         await tx.insert(schema.user).values({
-            id: 'agent-sarah-tan',
-            name: 'Sarah Tan',
-            email: 'sarah.tan@propertygo.com',
-            phoneNumber: '+60123456789',
-            roleId: agentRole.id,
+            id: 'master-admin',
+            name: 'Master Admin',
+            email: adminEmail,
+            roleId: superAdminRole.id,
             emailVerified: true,
-            phoneNumberVerified: true,
-            agencyName: 'PropertyGo Elite Team',
-            renNumber: 'REN 12345',
-            image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=256&h=256&auto=format&fit=crop'
+            phoneNumberVerified: false,
+            onboardingCompleted: true,
         }).onConflictDoUpdate({
             target: schema.user.email,
             set: {
-                name: 'Sarah Tan',
-                roleId: agentRole.id,
-                image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=256&h=256&auto=format&fit=crop'
+                name: 'Master Admin',
+                roleId: superAdminRole.id,
+                onboardingCompleted: true,
             }
         });
+
+        // Hash password using Better-Auth's own hashing (scrypt via @noble/hashes)
+        // Default password: Admin@1234 — change immediately after first login
+        const { hashPassword } = await import('better-auth/crypto');
+        const hashedPassword = await hashPassword('Admin@1234');
+
+        await tx.insert(schema.account).values({
+            id: 'master-admin-credential',
+            accountId: 'master-admin',
+            providerId: 'credential',
+            userId: 'master-admin',
+            password: hashedPassword,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        }).onConflictDoNothing();
     }
 
     console.log('✅ Seed Complete!');

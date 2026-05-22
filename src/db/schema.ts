@@ -12,6 +12,7 @@ import {
   unique,
   primaryKey,
   index,
+  type AnyPgColumn,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { randomUUID } from "crypto";
@@ -22,7 +23,7 @@ import { randomUUID } from "crypto";
 export const baseColumns = () => ({
   id: text("id").primaryKey().$defaultFn(() => randomUUID()),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull().$onUpdateFn(() => new Date()),
   deletedAt: timestamp('deleted_at'),
 });
 
@@ -178,6 +179,8 @@ export const files = pgTable('files', {
 export const developers = pgTable('developers', {
   ...slugFields(),
   legalName: varchar('legal_name', { length: 200 }),
+  countryCode: varchar('country_code', { length: 10 }),
+  isFeatured: boolean('is_featured').default(false).notNull(),
   logoFileId: text('logo_file_id').references(() => files.id),
 }, (t) => ({
   uniqSlug: unique().on(t.slug)
@@ -196,21 +199,29 @@ export const projects = pgTable('projects', {
   tenureTypeId: text('tenure_type_id').references(() => tenureTypes.id).notNull(),
   titleTypeId: text('title_type_id').references(() => titleTypes.id),
   tenureExpiryDate: date('tenure_expiry_date'),
-  
+
   regionId: text('region_id').references(() => regions.id),
   areaId: text('area_id').references(() => areas.id),
   address: text('address'),
   latitude: decimal('latitude', { precision: 10, scale: 8 }),
   longitude: decimal('longitude', { precision: 11, scale: 8 }),
 
+  landAreaAcres: decimal('land_area_acres', { precision: 10, scale: 4 }),
+
   bookingFee: decimal('booking_fee', { precision: 10, scale: 2 }).default('1000.00'),
+  bookingFeeBumi: decimal('booking_fee_bumi', { precision: 10, scale: 2 }),
   maintenanceFeePerSqft: decimal('maintenance_fee_per_sqft', { precision: 10, scale: 2 }),
+  sinkingFundPerSqft: decimal('sinking_fund_per_sqft', { precision: 10, scale: 2 }),
   isForeignerEligible: boolean('is_foreigner_eligible').default(true),
   foreignerEligibility: jsonb('foreigner_eligibility'),
+
+  isGatedCommunity: boolean('is_gated_community').default(false),
+  greenCertification: varchar('green_certification', { length: 100 }),
   
   totalUnits: integer('total_units').default(0),
   launchYear: integer('launch_year'),
   featuredFileId: text('featured_file_id').references(() => files.id),
+  isHotDeal: boolean('is_hot_deal').default(false).notNull(),
   isPublished: boolean('is_published').default(false),
 }, (t) => ({
   uniqSlug: unique().on(t.slug),
@@ -229,7 +240,11 @@ export const projectPhases = pgTable('project_phases', {
   phaseCode: varchar('phase_code', { length: 50 }),
   completionDate: date('completion_date'),
   constructionStatusId: text('construction_status_id').references(() => constructionStatuses.id),
-});
+}, (t) => ({
+  uniqProjectPhaseName: unique().on(t.projectId, t.name),
+  uniqProjectPhaseCode: unique().on(t.projectId, t.phaseCode),
+  projectIdx: index('pp_project_idx').on(t.projectId),
+}));
 
 export const projectTowers = pgTable('project_towers', {
   ...baseColumns(),
@@ -238,7 +253,63 @@ export const projectTowers = pgTable('project_towers', {
   towerNumber: varchar('tower_number', { length: 50 }),
   name: varchar('name', { length: 100 }),
   floorCount: integer('floor_count'),
-});
+  // Floor range for chart grid iteration (replaces deriving from floorCount alone)
+  floorMin: integer('floor_min'),   // e.g. 3  (lowest residential floor)
+  floorMax: integer('floor_max'),   // e.g. 45 (highest residential floor)
+}, (t) => ({
+  uniqProjectTowerNumber: unique().on(t.projectId, t.towerNumber),
+  projectIdx: index('pt_project_idx').on(t.projectId),
+  phaseIdx: index('pt_phase_idx').on(t.phaseId),
+}));
+
+// Facing group definitions per tower — drives the column-header grouping in the unit chart
+// Each row = one coloured band header (e.g. "Lake, Golf & City View" spanning stacks 01-04)
+export const towerFacingGroups = pgTable('tower_facing_groups', {
+  ...baseColumns(),
+  towerId: text('tower_id').references(() => projectTowers.id, { onDelete: 'cascade' }).notNull(),
+  key: varchar('key', { length: 50 }).notNull(),      // slug used as FK from towerStacks.facingGroupKey
+  label: varchar('label', { length: 200 }).notNull(), // display text shown in chart header
+  sortOrder: integer('sort_order').default(0).notNull(),
+}, (t) => ({
+  uniqTowerKey: unique().on(t.towerId, t.key),
+  towerIdx: index('tfg_tower_idx').on(t.towerId),
+}));
+
+// Stack definitions per tower — one row per physical column in the unit chart grid
+// Decoupled from the units table so the grid shape is known even before units are imported
+export const towerStacks = pgTable('tower_stacks', {
+  ...baseColumns(),
+  towerId: text('tower_id').references(() => projectTowers.id, { onDelete: 'cascade' }).notNull(),
+  stackNo: varchar('stack_no', { length: 10 }).notNull(),   // "01", "02", ...
+  layoutId: text('layout_id').references(() => projectLayouts.id), // canonical layout (for sqft, code)
+  // Denormalised for chart query speed — kept in sync with projectLayouts
+  layoutCode: varchar('layout_code', { length: 50 }),       // "B1", "P3", "D1", ...
+  builtUpSqft: decimal('built_up_sqft', { precision: 10, scale: 2 }),
+  facingGroupKey: varchar('facing_group_key', { length: 50 }), // matches towerFacingGroups.key
+  sortOrder: integer('sort_order').default(0).notNull(),
+}, (t) => ({
+  uniqTowerStack: unique().on(t.towerId, t.stackNo),
+  towerIdx: index('ts_tower_idx').on(t.towerId),
+}));
+
+// Non-residential floor rows — breaktank (mechanical) and facility/podium levels
+// These rows appear in the chart but have no units behind them
+export const towerSpecialFloors = pgTable('tower_special_floors', {
+  ...baseColumns(),
+  towerId: text('tower_id').references(() => projectTowers.id, { onDelete: 'cascade' }).notNull(),
+  // 'breaktank' = mechanical floor that displaces a residential floor number
+  // 'facility'  = podium / basement / amenity deck row at the bottom of the chart
+  floorKind: varchar('floor_kind', { length: 20 }).notNull(),
+  // For breaktank: the residential floor number it replaces (e.g. 33)
+  // For facility : null (ordering is driven by sortOrder)
+  floorNumber: integer('floor_number'),
+  floorLabel: varchar('floor_label', { length: 50 }).notNull(),   // "BREAKTANK", "Pd GF", "Pd LG1"
+  facilityLabel: varchar('facility_label', { length: 200 }),      // "LOBBY, DROP OFF, PARKING"
+  // Lower sortOrder = closer to residential floors; rendered bottom-up after all residential rows
+  sortOrder: integer('sort_order').default(0).notNull(),
+}, (t) => ({
+  towerIdx: index('tsf_tower_idx').on(t.towerId),
+}));
 
 export const projectLayouts = pgTable('project_layouts', {
   ...baseColumns(),
@@ -251,9 +322,15 @@ export const projectLayouts = pgTable('project_layouts', {
   studyRooms: integer('study_rooms').default(0),
   hasBalcony: boolean('has_balcony').default(false),
   hasYard: boolean('has_yard').default(false),
+  isDualKey: boolean('is_dual_key').default(false),
+  ceilingHeightM: decimal('ceiling_height_m', { precision: 4, scale: 2 }),
+  furnishingStatus: varchar('furnishing_status', { length: 20 }).default('UNFURNISHED'),
   floorPlanFileId: text('floor_plan_file_id').references(() => files.id),
   virtualTourUrl: varchar('virtual_tour_url', { length: 1000 }),
-});
+}, (t) => ({
+  uniqProjectLayoutCode: unique().on(t.projectId, t.code),
+  projectIdx: index('pl_project_idx').on(t.projectId),
+}));
 
 // ============================================
 // 6. THE UNIVERSAL UNIT TABLE
@@ -267,12 +344,15 @@ export const units = pgTable('units', {
   
   unitNo: varchar('unit_no', { length: 50 }).notNull(),
   floor: integer('floor'),
+  stack: varchar('stack', { length: 10 }),
   streetName: varchar('street_name', { length: 100 }),
+  displaySequence: integer('display_sequence').default(0),
   
   builtUpSqft: decimal('built_up_sqft', { precision: 10, scale: 2 }),
   landAreaSqft: decimal('land_area_sqft', { precision: 10, scale: 2 }),
   dimensionText: varchar('dimension_text', { length: 50 }),
   
+  // Should match towerFacingGroups.key for high-rise units; free text for landed
   facing: varchar('facing', { length: 100 }),
   positionTypeId: text('position_type_id').references(() => unitPositions.id),
   
@@ -287,7 +367,54 @@ export const units = pgTable('units', {
   finalPrice: decimal('final_price', { precision: 15, scale: 2 }),
   
   assignedLawyerId: text('assigned_lawyer_id').references(() => panelLawyers.id),
-});
+}, (t) => ({
+  uniqProjectUnitNo: unique().on(t.projectId, t.unitNo),
+  projectIdx: index('u_project_idx').on(t.projectId),
+  towerIdx: index('u_tower_idx').on(t.towerId),
+  layoutIdx: index('u_layout_idx').on(t.layoutId),
+  bookingStatusIdx: index('u_booking_status_idx').on(t.bookingStatusId),
+  towerFloorStackIdx: index('u_tower_floor_stack_idx').on(t.towerId, t.floor, t.stack),
+}));
+
+// Historical status transitions for auditable unit pipeline (booked/approved/spa signed)
+export const unitStatusHistory = pgTable('unit_status_history', {
+  ...baseColumns(),
+  unitId: text('unit_id').references(() => units.id, { onDelete: 'cascade' }).notNull(),
+  fromStatusId: text('from_status_id').references(() => bookingStatuses.id),
+  toStatusId: text('to_status_id').references(() => bookingStatuses.id).notNull(),
+  changedAt: timestamp('changed_at').defaultNow().notNull(),
+  changedById: text('changed_by_id').references(() => user.id),
+  sourceNote: text('source_note'),
+}, (t) => ({
+  unitIdx: index('ush_unit_idx').on(t.unitId),
+  changedAtIdx: index('ush_changed_at_idx').on(t.changedAt),
+  unitChangedAtIdx: index('ush_unit_changed_at_idx').on(t.unitId, t.changedAt),
+}));
+
+// Snapshot table for price bands across project/phase/tower/layout dimensions
+export const pricingSnapshots = pgTable('pricing_snapshots', {
+  ...baseColumns(),
+  projectId: text('project_id').references(() => projects.id, { onDelete: 'cascade' }).notNull(),
+  phaseId: text('phase_id').references(() => projectPhases.id),
+  towerId: text('tower_id').references(() => projectTowers.id),
+  layoutId: text('layout_id').references(() => projectLayouts.id),
+  buyerTypeId: text('buyer_type_id').references(() => buyerTypes.id),
+  viewKey: varchar('view_key', { length: 100 }),
+  spaPriceMin: decimal('spa_price_min', { precision: 15, scale: 2 }),
+  spaPriceMax: decimal('spa_price_max', { precision: 15, scale: 2 }),
+  nettPriceMin: decimal('nett_price_min', { precision: 15, scale: 2 }),
+  nettPriceMax: decimal('nett_price_max', { precision: 15, scale: 2 }),
+  rebatePercentTotal: decimal('rebate_percent_total', { precision: 6, scale: 2 }),
+  snapshotDate: date('snapshot_date').notNull(),
+  sourceNote: text('source_note'),
+}, (t) => ({
+  projectIdx: index('ps_project_idx').on(t.projectId),
+  phaseIdx: index('ps_phase_idx').on(t.phaseId),
+  towerIdx: index('ps_tower_idx').on(t.towerId),
+  layoutIdx: index('ps_layout_idx').on(t.layoutId),
+  snapshotDateIdx: index('ps_snapshot_date_idx').on(t.snapshotDate),
+  queryIdx: index('ps_query_idx').on(t.projectId, t.phaseId, t.towerId, t.layoutId, t.buyerTypeId, t.snapshotDate),
+}));
 
 // ============================================
 // 7. SALES & MARKETING (Rebates & Inventory)
@@ -321,10 +448,54 @@ export const packageInventory = pgTable('package_inventory', {
   quantity: integer('quantity').default(1),
 }, (t) => ({ pk: primaryKey({ columns: [t.packageId, t.inventoryItemId] }) }));
 
+// ============================================
+// 7b. REFERRAL CATALOGS & CONFIG
+// ============================================
+
+// Physical gift catalog — umbrella, mug, keychain, etc.
+export const giftCatalog = pgTable('gift_catalog', {
+  ...baseColumns(),
+  name: varchar('name', { length: 100 }).notNull(),
+  description: text('description'),
+  imageUrl: varchar('image_url', { length: 1000 }),
+  estimatedValue: decimal('estimated_value', { precision: 10, scale: 2 }),
+  stockQty: integer('stock_qty').default(0),
+  isActive: boolean('is_active').default(true).notNull(),
+});
+
+// Voucher catalog — TnG, Grab, Shopee, etc.
+export const voucherCatalog = pgTable('voucher_catalog', {
+  ...baseColumns(),
+  name: varchar('name', { length: 100 }).notNull(),
+  type: varchar('type', { length: 50 }).notNull(),          // TNG_TOPUP, TNG_VOUCHER, GRAB, SHOPEE, etc.
+  denomination: decimal('denomination', { precision: 10, scale: 2 }).notNull(), // e.g. 5.00, 10.00, 50.00
+  description: text('description'),
+  imageUrl: varchar('image_url', { length: 1000 }),
+  stockQty: integer('stock_qty').default(0),
+  isActive: boolean('is_active').default(true).notNull(),
+});
+
+// Reward config — maps triggerEvent to what the referrer gets
+export const rewardConfig = pgTable('reward_config', {
+  ...baseColumns(),
+  name: varchar('name', { length: 100 }).notNull(),
+  triggerEvent: varchar('trigger_event', { length: 50 }).notNull(), // ON_REGISTRATION, ON_BOOKING, ON_SPA_SIGNED
+  rewardType: varchar('reward_type', { length: 50 }).notNull(),     // PHYSICAL_GIFT, VOUCHER, CASH
+  giftId: text('gift_id').references(() => giftCatalog.id),
+  voucherId: text('voucher_id').references(() => voucherCatalog.id),
+  cashAmount: decimal('cash_amount', { precision: 10, scale: 2 }),
+  description: text('description'),
+  isActive: boolean('is_active').default(true).notNull(),
+});
+
+// Volume milestone tiers — bonus rewards when referrer hits N sign-ups
 export const referralTiers = pgTable('referral_tiers', {
   ...baseColumns(),
   name: varchar('name', { length: 100 }).notNull(),
   minReferrals: integer('min_referrals').default(0),
+  rewardType: varchar('reward_type', { length: 50 }).notNull().default('VOUCHER'), // PHYSICAL_GIFT, VOUCHER, CASH
+  giftId: text('gift_id').references(() => giftCatalog.id),
+  voucherId: text('voucher_id').references(() => voucherCatalog.id),
   rewardAmount: decimal('reward_amount', { precision: 10, scale: 2 }),
   description: text('description'),
 });
@@ -358,7 +529,7 @@ export const user = pgTable("users", {
   agencyName: varchar('agency_name', { length: 100 }),
   
   referralCode: varchar('referral_code', { length: 20 }).unique(),
-  referredByUserId: text('referred_by_user_id'),
+  referredByUserId: text('referred_by_user_id').references((): AnyPgColumn => user.id, { onDelete: 'set null' }),
 });
 
 export const session = pgTable("session", {
@@ -418,11 +589,18 @@ export const referralRewards = pgTable('referral_rewards', {
   id: text('id').primaryKey().$defaultFn(() => randomUUID()),
   referrerId: text('referrer_id').references(() => user.id).notNull(),
   refereeId: text('referee_id').references(() => user.id).notNull(),
-  status: varchar('status', { length: 50 }).default('PENDING'),
-  rewardType: varchar('reward_type', { length: 50 }).default('CASH'),
+  status: varchar('status', { length: 50 }).default('PENDING'),     // PENDING, ELIGIBLE, FULFILLED, MANUAL_REVIEW
+  rewardType: varchar('reward_type', { length: 50 }).default('CASH'), // PHYSICAL_GIFT, VOUCHER, CASH
   amount: decimal('amount', { precision: 10, scale: 2 }),
-  triggerEvent: varchar('trigger_event', { length: 50 }),
+  triggerEvent: varchar('trigger_event', { length: 50 }),             // ON_REGISTRATION, ON_BOOKING, ON_SPA_SIGNED, MILESTONE
+  giftId: text('gift_id').references(() => giftCatalog.id),
+  voucherId: text('voucher_id').references(() => voucherCatalog.id),
+  rewardConfigId: text('reward_config_id').references(() => rewardConfig.id),
+  fulfilledAt: timestamp('fulfilled_at'),
+  fulfilledBy: text('fulfilled_by').references(() => user.id),       // Admin who fulfilled
+  notes: text('notes'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull().$onUpdateFn(() => new Date()),
 });
 
 export const redemptions = pgTable('redemptions', {
@@ -447,7 +625,44 @@ export const userPreferences = pgTable('user_preferences', {
 });
 
 // ============================================
-// 10. RELATIONS
+// 10. PROJECT MEDIA & FAVORITES
+// ============================================
+export const projectMedia = pgTable('project_media', {
+  ...baseColumns(),
+  projectId: text('project_id').references(() => projects.id, { onDelete: 'cascade' }).notNull(),
+  fileId: text('file_id').references(() => files.id).notNull(),
+  mediaTypeId: text('media_type_id').references(() => mediaTypes.id),
+  caption: varchar('caption', { length: 300 }),
+  sortOrder: integer('sort_order').default(0).notNull(),
+}, (t) => ({
+  projectIdx: index('pm_project_idx').on(t.projectId),
+}));
+
+export const favorites = pgTable('favorites', {
+  ...baseColumns(),
+  userId: text('user_id').references(() => user.id, { onDelete: 'cascade' }).notNull(),
+  projectId: text('project_id').references(() => projects.id, { onDelete: 'cascade' }).notNull(),
+}, (t) => ({
+  uniq: unique().on(t.userId, t.projectId),
+  userIdx: index('fav_user_idx').on(t.userId),
+}));
+
+// Nearby places (shopping, schools, hospitals, transport, etc.) with distances
+// Category values: SHOPPING, EDUCATION, HEALTHCARE, TRANSPORT, RECREATION, POLICE, OTHERS
+export const projectNearbyPlaces = pgTable('project_nearby_places', {
+  ...baseColumns(),
+  projectId: text('project_id').references(() => projects.id, { onDelete: 'cascade' }).notNull(),
+  name: varchar('name', { length: 200 }).notNull(),
+  category: varchar('category', { length: 50 }).notNull(),
+  distanceKm: decimal('distance_km', { precision: 6, scale: 2 }),
+  sortOrder: integer('sort_order').default(0),
+}, (t) => ({
+  projectIdx: index('pnp_project_idx').on(t.projectId),
+  categoryIdx: index('pnp_category_idx').on(t.projectId, t.category),
+}));
+
+// ============================================
+// 11. RELATIONS (Join Tables)
 // ============================================
 export const projectAmenities = pgTable('project_amenities', {
   projectId: text('project_id').references(() => projects.id).notNull(),
@@ -480,18 +695,47 @@ export const projectBankersRelations = relations(projectBankers, ({ one }) => ({
   banker: one(panelBankers, { fields: [projectBankers.bankerId], references: [panelBankers.id], relationName: 'project_bankers' }),
 }));
 
+export const towerFacingGroupsRelations = relations(towerFacingGroups, ({ one }) => ({
+  tower: one(projectTowers, { fields: [towerFacingGroups.towerId], references: [projectTowers.id] }),
+}));
+
+export const towerStacksRelations = relations(towerStacks, ({ one }) => ({
+  tower: one(projectTowers, { fields: [towerStacks.towerId], references: [projectTowers.id] }),
+  layout: one(projectLayouts, { fields: [towerStacks.layoutId], references: [projectLayouts.id] }),
+}));
+
+export const towerSpecialFloorsRelations = relations(towerSpecialFloors, ({ one }) => ({
+  tower: one(projectTowers, { fields: [towerSpecialFloors.towerId], references: [projectTowers.id] }),
+}));
+
+export const projectTowersRelations = relations(projectTowers, ({ one, many }) => ({
+  project: one(projects, { fields: [projectTowers.projectId], references: [projects.id] }),
+  phase: one(projectPhases, { fields: [projectTowers.phaseId], references: [projectPhases.id] }),
+  facingGroups: many(towerFacingGroups),
+  stacks: many(towerStacks),
+  specialFloors: many(towerSpecialFloors),
+  units: many(units),
+}));
+
 export const projectRelations = relations(projects, ({ one, many }) => ({
   developer: one(developers, { fields: [projects.developerId], references: [developers.id] }),
   category: one(propertyCategories, { fields: [projects.propertyCategoryId], references: [propertyCategories.id] }),
   type: one(propertyTypes, { fields: [projects.propertyTypeId], references: [propertyTypes.id] }),
   status: one(projectStatuses, { fields: [projects.projectStatusId], references: [projectStatuses.id] }),
+  tenure: one(tenureTypes, { fields: [projects.tenureTypeId], references: [tenureTypes.id] }),
+  region: one(regions, { fields: [projects.regionId], references: [regions.id] }),
+  area: one(areas, { fields: [projects.areaId], references: [areas.id] }),
   towers: many(projectTowers),
   phases: many(projectPhases),
   units: many(units),
   amenities: many(projectAmenities, { relationName: 'project_amenities' }),
   tags: many(projectTags, { relationName: 'project_tags' }),
   bankers: many(projectBankers, { relationName: 'project_bankers' }),
+  pricingSnapshots: many(pricingSnapshots),
   salesPackages: many(salesPackages),
+  media: many(projectMedia),
+  nearbyPlaces: many(projectNearbyPlaces),
+  favorites: many(favorites),
 }));
 
 export const unitRelations = relations(units, ({ one }) => ({
@@ -503,6 +747,21 @@ export const unitRelations = relations(units, ({ one }) => ({
   assignedLawyer: one(panelLawyers, { fields: [units.assignedLawyerId], references: [panelLawyers.id] }),
 }));
 
+export const unitStatusHistoryRelations = relations(unitStatusHistory, ({ one }) => ({
+  unit: one(units, { fields: [unitStatusHistory.unitId], references: [units.id] }),
+  fromStatus: one(bookingStatuses, { fields: [unitStatusHistory.fromStatusId], references: [bookingStatuses.id] }),
+  toStatus: one(bookingStatuses, { fields: [unitStatusHistory.toStatusId], references: [bookingStatuses.id] }),
+  changedBy: one(user, { fields: [unitStatusHistory.changedById], references: [user.id] }),
+}));
+
+export const pricingSnapshotsRelations = relations(pricingSnapshots, ({ one }) => ({
+  project: one(projects, { fields: [pricingSnapshots.projectId], references: [projects.id] }),
+  phase: one(projectPhases, { fields: [pricingSnapshots.phaseId], references: [projectPhases.id] }),
+  tower: one(projectTowers, { fields: [pricingSnapshots.towerId], references: [projectTowers.id] }),
+  layout: one(projectLayouts, { fields: [pricingSnapshots.layoutId], references: [projectLayouts.id] }),
+  buyerType: one(buyerTypes, { fields: [pricingSnapshots.buyerTypeId], references: [buyerTypes.id] }),
+}));
+
 export const userRelations = relations(user, ({ one, many }) => ({
   role: one(roles, { fields: [user.roleId], references: [roles.id] }),
   referrer: one(user, { fields: [user.referredByUserId], references: [user.id], relationName: 'referral' }),
@@ -510,13 +769,41 @@ export const userRelations = relations(user, ({ one, many }) => ({
   appointments: many(appointments, { relationName: 'customer_appointments' }),
   agentAppointments: many(appointments, { relationName: 'agent_appointments' }),
   rewardsReceived: many(referralRewards, { relationName: 'referrer_rewards' }),
+  fulfilledRewards: many(referralRewards, { relationName: 'fulfilled_rewards' }),
   redemptions: many(redemptions),
   preferences: one(userPreferences),
+  favorites: many(favorites),
+}));
+
+export const giftCatalogRelations = relations(giftCatalog, ({ many }) => ({
+  rewardConfigs: many(rewardConfig, { relationName: 'gift_reward_configs' }),
+  referralTiers: many(referralTiers, { relationName: 'gift_referral_tiers' }),
+  referralRewards: many(referralRewards, { relationName: 'gift_referral_rewards' }),
+}));
+
+export const voucherCatalogRelations = relations(voucherCatalog, ({ many }) => ({
+  rewardConfigs: many(rewardConfig, { relationName: 'voucher_reward_configs' }),
+  referralTiers: many(referralTiers, { relationName: 'voucher_referral_tiers' }),
+  referralRewards: many(referralRewards, { relationName: 'voucher_referral_rewards' }),
+}));
+
+export const rewardConfigRelations = relations(rewardConfig, ({ one }) => ({
+  gift: one(giftCatalog, { fields: [rewardConfig.giftId], references: [giftCatalog.id], relationName: 'gift_reward_configs' }),
+  voucher: one(voucherCatalog, { fields: [rewardConfig.voucherId], references: [voucherCatalog.id], relationName: 'voucher_reward_configs' }),
+}));
+
+export const referralTiersRelations = relations(referralTiers, ({ one }) => ({
+  gift: one(giftCatalog, { fields: [referralTiers.giftId], references: [giftCatalog.id], relationName: 'gift_referral_tiers' }),
+  voucher: one(voucherCatalog, { fields: [referralTiers.voucherId], references: [voucherCatalog.id], relationName: 'voucher_referral_tiers' }),
 }));
 
 export const referralRewardsRelations = relations(referralRewards, ({ one }) => ({
   referrer: one(user, { fields: [referralRewards.referrerId], references: [user.id], relationName: 'referrer_rewards' }),
   referee: one(user, { fields: [referralRewards.refereeId], references: [user.id], relationName: 'referee_rewards' }),
+  gift: one(giftCatalog, { fields: [referralRewards.giftId], references: [giftCatalog.id], relationName: 'gift_referral_rewards' }),
+  voucher: one(voucherCatalog, { fields: [referralRewards.voucherId], references: [voucherCatalog.id], relationName: 'voucher_referral_rewards' }),
+  config: one(rewardConfig, { fields: [referralRewards.rewardConfigId], references: [rewardConfig.id] }),
+  fulfilledByUser: one(user, { fields: [referralRewards.fulfilledBy], references: [user.id], relationName: 'fulfilled_rewards' }),
 }));
 
 export const redemptionsRelations = relations(redemptions, ({ one }) => ({
@@ -532,4 +819,19 @@ export const appointmentRelations = relations(appointments, ({ one }) => ({
   agent: one(user, { fields: [appointments.agentId], references: [user.id], relationName: 'agent_appointments' }),
   project: one(projects, { fields: [appointments.projectId], references: [projects.id] }),
   status: one(appointmentStatuses, { fields: [appointments.statusId], references: [appointmentStatuses.id] }),
+}));
+
+export const projectMediaRelations = relations(projectMedia, ({ one }) => ({
+  project: one(projects, { fields: [projectMedia.projectId], references: [projects.id] }),
+  file: one(files, { fields: [projectMedia.fileId], references: [files.id] }),
+  mediaType: one(mediaTypes, { fields: [projectMedia.mediaTypeId], references: [mediaTypes.id] }),
+}));
+
+export const favoritesRelations = relations(favorites, ({ one }) => ({
+  user: one(user, { fields: [favorites.userId], references: [user.id] }),
+  project: one(projects, { fields: [favorites.projectId], references: [projects.id] }),
+}));
+
+export const projectNearbyPlacesRelations = relations(projectNearbyPlaces, ({ one }) => ({
+  project: one(projects, { fields: [projectNearbyPlaces.projectId], references: [projects.id] }),
 }));

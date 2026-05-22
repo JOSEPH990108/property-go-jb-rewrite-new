@@ -39,7 +39,7 @@ async function seedNewProjects() {
     await db.transaction(async (tx) => {
         // 1. Ensure Categories & Types exist (using existing seed logic references)
         const cats = await tx.query.propertyCategories.findMany();
-        // propertyCategories uses `lookupFields` (code + name). Use `code` as key.
+        // propertyCategories uses `lookupFields` (ctilode + name). Use `code` as key.
         const catMap = new Map(cats.map(c => [c.code, c.id]));
         cats.forEach(c => catMap.set(c.code, c.id));
 

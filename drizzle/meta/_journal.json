@@ -5,8 +5,29 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1771746061931,
-      "tag": "0000_public_vision",
+      "when": 1774595012066,
+      "tag": "0000_elite_virginia_dare",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1777630514894,
+      "tag": "0001_supreme_cassandra_nova",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1777633650613,
+      "tag": "0002_clear_paibok",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1777633872238,
+      "tag": "0003_cuddly_switch",
       "breakpoints": true
     }
   ]

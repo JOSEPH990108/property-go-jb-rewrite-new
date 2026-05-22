@@ -128,6 +128,8 @@ CREATE TABLE "developers" (
 	"description" text,
 	"is_active" boolean DEFAULT true NOT NULL,
 	"legal_name" varchar(200),
+	"country_code" varchar(10),
+	"is_featured" boolean DEFAULT false NOT NULL,
 	"logo_file_id" text,
 	CONSTRAINT "developers_slug_unique" UNIQUE("slug")
 );
@@ -306,7 +308,9 @@ CREATE TABLE "project_towers" (
 	"phase_id" text,
 	"tower_number" varchar(50),
 	"name" varchar(100),
-	"floor_count" integer
+	"floor_count" integer,
+	"floor_min" integer,
+	"floor_max" integer
 );
 --> statement-breakpoint
 CREATE TABLE "projects" (
@@ -339,6 +343,7 @@ CREATE TABLE "projects" (
 	"total_units" integer DEFAULT 0,
 	"launch_year" integer,
 	"featured_file_id" text,
+	"is_hot_deal" boolean DEFAULT false NOT NULL,
 	"is_published" boolean DEFAULT false,
 	CONSTRAINT "projects_slug_unique" UNIQUE("slug")
 );
@@ -411,7 +416,8 @@ CREATE TABLE "referral_rewards" (
 	"reward_type" varchar(50) DEFAULT 'CASH',
 	"amount" numeric(10, 2),
 	"trigger_event" varchar(50),
-	"created_at" timestamp DEFAULT now() NOT NULL
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "referral_tiers" (
@@ -533,6 +539,46 @@ CREATE TABLE "title_types" (
 	CONSTRAINT "title_types_code_unique" UNIQUE("code")
 );
 --> statement-breakpoint
+CREATE TABLE "tower_facing_groups" (
+	"id" text PRIMARY KEY NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"deleted_at" timestamp,
+	"tower_id" text NOT NULL,
+	"key" varchar(50) NOT NULL,
+	"label" varchar(200) NOT NULL,
+	"sort_order" integer DEFAULT 0 NOT NULL,
+	CONSTRAINT "tower_facing_groups_tower_id_key_unique" UNIQUE("tower_id","key")
+);
+--> statement-breakpoint
+CREATE TABLE "tower_special_floors" (
+	"id" text PRIMARY KEY NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"deleted_at" timestamp,
+	"tower_id" text NOT NULL,
+	"floor_kind" varchar(20) NOT NULL,
+	"floor_number" integer,
+	"floor_label" varchar(50) NOT NULL,
+	"facility_label" varchar(200),
+	"sort_order" integer DEFAULT 0 NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "tower_stacks" (
+	"id" text PRIMARY KEY NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"deleted_at" timestamp,
+	"tower_id" text NOT NULL,
+	"stack_no" varchar(10) NOT NULL,
+	"layout_id" text,
+	"layout_code" varchar(50),
+	"built_up_sqft" numeric(10, 2),
+	"facing_group_key" varchar(50),
+	"sort_order" integer DEFAULT 0 NOT NULL,
+	CONSTRAINT "tower_stacks_tower_id_stack_no_unique" UNIQUE("tower_id","stack_no")
+);
+--> statement-breakpoint
 CREATE TABLE "unit_positions" (
 	"id" text PRIMARY KEY NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
@@ -559,7 +605,9 @@ CREATE TABLE "units" (
 	"phase_id" text,
 	"unit_no" varchar(50) NOT NULL,
 	"floor" integer,
+	"stack" varchar(10),
 	"street_name" varchar(100),
+	"display_sequence" integer DEFAULT 0,
 	"built_up_sqft" numeric(10, 2),
 	"land_area_sqft" numeric(10, 2),
 	"dimension_text" varchar(50),
@@ -657,6 +705,10 @@ ALTER TABLE "regions" ADD CONSTRAINT "regions_state_id_states_id_fk" FOREIGN KEY
 ALTER TABLE "sales_packages" ADD CONSTRAINT "sales_packages_project_id_projects_id_fk" FOREIGN KEY ("project_id") REFERENCES "public"."projects"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sales_packages" ADD CONSTRAINT "sales_packages_buyer_type_id_buyer_types_id_fk" FOREIGN KEY ("buyer_type_id") REFERENCES "public"."buyer_types"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "session" ADD CONSTRAINT "session_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "tower_facing_groups" ADD CONSTRAINT "tower_facing_groups_tower_id_project_towers_id_fk" FOREIGN KEY ("tower_id") REFERENCES "public"."project_towers"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "tower_special_floors" ADD CONSTRAINT "tower_special_floors_tower_id_project_towers_id_fk" FOREIGN KEY ("tower_id") REFERENCES "public"."project_towers"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "tower_stacks" ADD CONSTRAINT "tower_stacks_tower_id_project_towers_id_fk" FOREIGN KEY ("tower_id") REFERENCES "public"."project_towers"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "tower_stacks" ADD CONSTRAINT "tower_stacks_layout_id_project_layouts_id_fk" FOREIGN KEY ("layout_id") REFERENCES "public"."project_layouts"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "units" ADD CONSTRAINT "units_project_id_projects_id_fk" FOREIGN KEY ("project_id") REFERENCES "public"."projects"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "units" ADD CONSTRAINT "units_layout_id_project_layouts_id_fk" FOREIGN KEY ("layout_id") REFERENCES "public"."project_layouts"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "units" ADD CONSTRAINT "units_tower_id_project_towers_id_fk" FOREIGN KEY ("tower_id") REFERENCES "public"."project_towers"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
@@ -666,10 +718,14 @@ ALTER TABLE "units" ADD CONSTRAINT "units_lot_type_id_lot_types_id_fk" FOREIGN K
 ALTER TABLE "units" ADD CONSTRAINT "units_booking_status_id_booking_statuses_id_fk" FOREIGN KEY ("booking_status_id") REFERENCES "public"."booking_statuses"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "units" ADD CONSTRAINT "units_assigned_lawyer_id_panel_lawyers_id_fk" FOREIGN KEY ("assigned_lawyer_id") REFERENCES "public"."panel_lawyers"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "users" ADD CONSTRAINT "users_role_id_roles_id_fk" FOREIGN KEY ("role_id") REFERENCES "public"."roles"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "users" ADD CONSTRAINT "users_referred_by_user_id_users_id_fk" FOREIGN KEY ("referred_by_user_id") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_preferences" ADD CONSTRAINT "user_preferences_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "is_published_idx" ON "projects" USING btree ("is_published");--> statement-breakpoint
 CREATE INDEX "category_id_idx" ON "projects" USING btree ("property_category_id");--> statement-breakpoint
 CREATE INDEX "type_id_idx" ON "projects" USING btree ("property_type_id");--> statement-breakpoint
 CREATE INDEX "status_id_idx" ON "projects" USING btree ("project_status_id");--> statement-breakpoint
 CREATE INDEX "region_id_idx" ON "projects" USING btree ("region_id");--> statement-breakpoint
-CREATE INDEX "area_id_idx" ON "projects" USING btree ("area_id");
+CREATE INDEX "area_id_idx" ON "projects" USING btree ("area_id");--> statement-breakpoint
+CREATE INDEX "tfg_tower_idx" ON "tower_facing_groups" USING btree ("tower_id");--> statement-breakpoint
+CREATE INDEX "tsf_tower_idx" ON "tower_special_floors" USING btree ("tower_id");--> statement-breakpoint
+CREATE INDEX "ts_tower_idx" ON "tower_stacks" USING btree ("tower_id");
