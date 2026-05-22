@@ -5,27 +5,15 @@ import { Badge } from "@/components/ui/badge";
 import { CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { BaseCard } from "@/components/shared/base-card";
 import { MapPin, BedDouble, Bath, Ruler, ArrowRight } from "lucide-react";
+import { formatPriceRange } from "@/lib/format";
+import { FavoriteButton } from "@/components/properties/FavoriteButton";
 
 interface PropertyCardProps {
   project: PublicProject;
+  isFavorite?: boolean;
 }
 
-export function PropertyCard({ project }: PropertyCardProps) {
-  // Format price
-  const formatPrice = (min: number | null, max: number | null) => {
-    if (!min && !max) return "Price on Request";
-    const formatter = new Intl.NumberFormat("en-MY", {
-      style: "currency",
-      currency: "MYR",
-      maximumFractionDigits: 0,
-    });
-
-    if (min && max && min !== max) {
-      return `${formatter.format(min)} - ${formatter.format(max)}`;
-    }
-    return formatter.format(min || max || 0);
-  };
-
+export function PropertyCard({ project, isFavorite = false }: PropertyCardProps) {
   return (
     <BaseCard
       className="overflow-hidden group"
@@ -56,6 +44,10 @@ export function PropertyCard({ project }: PropertyCardProps) {
             <Badge variant="tech">
                 {project.status}
             </Badge>
+        </div>
+
+        <div className="absolute top-3 right-3" onClick={(e) => e.preventDefault()}>
+          <FavoriteButton projectId={project.id} initialIsFavorite={isFavorite} />
         </div>
       </Link>
 
@@ -109,7 +101,7 @@ export function PropertyCard({ project }: PropertyCardProps) {
         <div className="flex flex-col">
             <span className="text-xs text-muted-foreground">Starting from</span>
             <span className="font-semibold text-lg gradient-text">
-                {formatPrice(project.price.min, project.price.max)}
+                {formatPriceRange(project.price.min, project.price.max)}
             </span>
         </div>
         <Link

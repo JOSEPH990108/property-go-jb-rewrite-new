@@ -14,9 +14,10 @@ import {
   projectLayouts,
   files,
   projectAmenities,
-  projectTags
+  projectTags,
+  projectMedia,
 } from '@/db/schema';
-import { eq, and, asc, inArray, desc, sql } from 'drizzle-orm';
+import { eq, and, asc, inArray, desc, sql, or, ilike, type SQL } from 'drizzle-orm';
 // --- Types ---
 
 export interface PropertyLookups {
@@ -61,7 +62,7 @@ export interface PublicProject {
   };
   images: {
     featured: string | null;
-    gallery: string[];
+    gallery: { url: string; caption: string | null }[];
   };
   amenities: string[];
   tags: string[];
@@ -92,6 +93,8 @@ export interface GetPropertiesParams {
   minPrice?: number;
   maxPrice?: number;
   isHotDeal?: boolean;
+  search?: string;
+  sort?: 'newest' | 'oldest' | 'name_asc' | 'name_desc';
 }
 
 export interface GetPropertiesResult {
@@ -108,16 +111,20 @@ async function resolveFiles(fileIds: Set<string>) {
   if (fileIds.size === 0) return new Map<string, typeof files.$inferSelect>();
   const allFiles = await db.query.files.findMany({
     where: inArray(files.id, Array.from(fileIds))
-  });
-  return new Map(allFiles.map(f => [f.id, f]));
+  }) as typeof files.$inferSelect[];
+  return new Map(allFiles.map((f) => [f.id, f] as [string, typeof files.$inferSelect]));
 }
 
 async function resolveLocations() {
     const [statesData, regionsData, areasData] = await Promise.all([
-        db.query.states.findMany(),
-        db.query.regions.findMany(),
-        db.query.areas.findMany(),
-    ]);
+      db.query.states.findMany(),
+      db.query.regions.findMany(),
+      db.query.areas.findMany(),
+    ]) as [
+      typeof states.$inferSelect[],
+      typeof regions.$inferSelect[],
+      typeof areas.$inferSelect[]
+    ];
 
     const stateMap = new Map(statesData.map(s => [s.id, s.name]));
     const regionMap = new Map(regionsData.map(r => [r.id, { name: r.name, stateId: r.stateId }]));
@@ -178,12 +185,14 @@ export async function getProperties({
   stateId,
   regionId,
   areaId,
-  isHotDeal
+  isHotDeal,
+  search,
+  sort = 'newest',
 }: GetPropertiesParams = {}): Promise<GetPropertiesResult> {
   try {
     const offset = (page - 1) * limit;
 
-    const conditions: any[] = [
+    const conditions: SQL<unknown>[] = [
       eq(projects.isPublished, true),
     ];
 
@@ -191,6 +200,21 @@ export async function getProperties({
     if (typeId) conditions.push(eq(projects.propertyTypeId, typeId));
     if (regionId) conditions.push(eq(projects.regionId, regionId));
     if (areaId) conditions.push(eq(projects.areaId, areaId));
+    if (isHotDeal) conditions.push(eq(projects.isHotDeal, true));
+
+    // Full-text search across name, displayName, description, and address
+    if (search && search.trim()) {
+      const term = `%${search.trim()}%`;
+      conditions.push(
+        or(
+          ilike(projects.name, term),
+          ilike(projects.slug, term),
+          sql`${projects.displayName} ILIKE ${term}`,
+          sql`${projects.description} ILIKE ${term}`,
+          sql`${projects.address} ILIKE ${term}`,
+        )!,
+      );
+    }
 
     // If caller requested state-level filtering, expand regions
     if (stateId && !regionId && !areaId) {
@@ -198,7 +222,7 @@ export async function getProperties({
            where: eq(regions.stateId, stateId),
            columns: { id: true }
        });
-       const regionIds = regionsInState.map(r => r.id);
+       const regionIds = regionsInState.map((r) => r.id);
        if (regionIds.length > 0) {
            conditions.push(inArray(projects.regionId, regionIds));
        } else {
@@ -211,11 +235,22 @@ export async function getProperties({
     const totalRes = await db.select({ count: sql<number>`count(*)` }).from(projects).where(whereClause);
     const total = Number(totalRes[0].count);
 
+    // Determine sort order
+    const orderByClause = (() => {
+      switch (sort) {
+        case 'oldest': return [asc(projects.createdAt)];
+        case 'name_asc': return [asc(projects.name)];
+        case 'name_desc': return [desc(projects.name)];
+        case 'newest':
+        default: return [desc(projects.createdAt)];
+      }
+    })();
+
     const projectsData = await db.query.projects.findMany({
       where: whereClause,
       limit,
       offset,
-      orderBy: [desc(projects.createdAt)],
+      orderBy: orderByClause,
       with: {
         developer: true,
         category: true,
@@ -228,7 +263,7 @@ export async function getProperties({
         return { data: [], total, page, limit, totalPages: Math.ceil(total / limit) };
     }
 
-    const projectIds = projectsData.map(p => p.id);
+    const projectIds = projectsData.map((p: typeof projects.$inferSelect) => p.id);
     // Load join rows for amenities and tags instead of relying on relation inference
     const projectAmenityRows = projectIds.length
       ? await db.query.projectAmenities.findMany({ where: inArray(projectAmenities.projectId, projectIds) })
@@ -241,14 +276,14 @@ export async function getProperties({
     });
 
     const layoutsMap = new Map<string, typeof projectLayouts.$inferSelect[]>();
-    layoutsData.forEach(l => {
+    layoutsData.forEach((l: typeof projectLayouts.$inferSelect) => {
       const list = layoutsMap.get(l.projectId) || [];
       list.push(l);
       layoutsMap.set(l.projectId, list);
     });
 
     const fileIds = new Set<string>();
-    projectsData.forEach(p => {
+    projectsData.forEach((p) => {
       if (p.featuredFileId) fileIds.add(p.featuredFileId);
       if (p.developer?.logoFileId) fileIds.add(p.developer.logoFileId);
     });
@@ -256,31 +291,31 @@ export async function getProperties({
     const { areaMap, regionMap, stateMap } = await resolveLocations();
 
     const allAmenities = await db.query.amenities.findMany();
-    const amenityMap = new Map(allAmenities.map(a => [a.id, a.name]));
+    const amenityMap = new Map(allAmenities.map((a: typeof amenities.$inferSelect) => [a.id, a.name]));
     const allTags = await db.query.tags.findMany();
-    const tagMap = new Map(allTags.map(t => [t.id, t.name]));
+    const tagMap = new Map(allTags.map((t: typeof tags.$inferSelect) => [t.id, t.name]));
 
     const getUrl = (id: string | null) => id ? fileMap.get(id)?.url ?? null : null;
 
-    const publicProjects: PublicProject[] = projectsData.map(p => {
+    const publicProjects: PublicProject[] = projectsData.map((p) => {
       const layouts = layoutsMap.get(p.id) || [];
-      const bedrooms = layouts.map(l => l.bedrooms);
-      const bathrooms = layouts.map(l => l.bathrooms);
-      const builtUps = layouts.map(l => Number(l.builtUpSqft));
+      const bedrooms = layouts.map((l: typeof projectLayouts.$inferSelect) => l.bedrooms);
+      const bathrooms = layouts.map((l: typeof projectLayouts.$inferSelect) => l.bathrooms);
+      const builtUps = layouts.map((l: typeof projectLayouts.$inferSelect) => Number(l.builtUpSqft));
 
       const area = areaMap.get(p.areaId ?? '') || { name: "", regionId: "" };
       const region = regionMap.get(p.regionId ?? '') || { name: "", stateId: "" };
       const stateName = stateMap.get(region.stateId || "") || "";
 
       const projectAmenityNames = projectAmenityRows
-        .filter(r => r.projectId === p.id)
-        .map(r => amenityMap.get(r.amenityId))
-        .filter((name): name is string => !!name);
+        .filter((r: typeof projectAmenities.$inferSelect) => r.projectId === p.id)
+        .map((r: typeof projectAmenities.$inferSelect) => amenityMap.get(r.amenityId))
+        .filter((name: string | undefined): name is string => !!name);
 
       const projectTagNames = projectTagRows
-        .filter(r => r.projectId === p.id)
-        .map(r => tagMap.get(r.tagId))
-        .filter((name): name is string => !!name);
+        .filter((r: typeof projectTags.$inferSelect) => r.projectId === p.id)
+        .map((r: typeof projectTags.$inferSelect) => tagMap.get(r.tagId))
+        .filter((name: string | undefined): name is string => !!name);
 
       return {
         id: p.id,
@@ -366,14 +401,21 @@ export async function getPropertyBySlug(slug: string): Promise<PublicProject | n
         if (project.featuredFileId) fileIds.add(project.featuredFileId);
         if (project.developer?.logoFileId) fileIds.add(project.developer.logoFileId);
 
+        // Load gallery media
+        const mediaRows = await db.query.projectMedia.findMany({
+          where: eq(projectMedia.projectId, project.id),
+          orderBy: asc(projectMedia.sortOrder),
+        });
+        mediaRows.forEach((m: typeof projectMedia.$inferSelect) => fileIds.add(m.fileId));
+
         const fileMap = await resolveFiles(fileIds);
         const { areaMap, regionMap, stateMap } = await resolveLocations();
 
         const amenityRows = await db.query.projectAmenities.findMany({ where: eq(projectAmenities.projectId, project.id) });
         const tagRows = await db.query.projectTags.findMany({ where: eq(projectTags.projectId, project.id) });
 
-        const amenityIds = amenityRows.map(r => r.amenityId);
-        const tagIds = tagRows.map(r => r.tagId);
+        const amenityIds = amenityRows.map((r: typeof projectAmenities.$inferSelect) => r.amenityId);
+        const tagIds = tagRows.map((r: typeof projectTags.$inferSelect) => r.tagId);
 
         const [amenitiesData, tagsData] = await Promise.all([
           amenityIds.length ? db.query.amenities.findMany({ where: inArray(amenities.id, amenityIds) }) : [],
@@ -386,9 +428,9 @@ export async function getPropertyBySlug(slug: string): Promise<PublicProject | n
         const region = regionMap.get(project.regionId ?? '') || { name: "", stateId: "" };
         const stateName = stateMap.get(region.stateId || "") || "";
 
-        const bedrooms = layouts.map(l => l.bedrooms);
-        const bathrooms = layouts.map(l => l.bathrooms);
-        const builtUps = layouts.map(l => Number(l.builtUpSqft));
+        const bedrooms = layouts.map((l: typeof projectLayouts.$inferSelect) => l.bedrooms);
+        const bathrooms = layouts.map((l: typeof projectLayouts.$inferSelect) => l.bathrooms);
+        const builtUps = layouts.map((l: typeof projectLayouts.$inferSelect) => Number(l.builtUpSqft));
 
         return {
           id: project.id,
@@ -419,10 +461,15 @@ export async function getPropertyBySlug(slug: string): Promise<PublicProject | n
           },
           images: {
             featured: getUrl(project.featuredFileId),
-            gallery: [],
+            gallery: mediaRows
+              .map((m: typeof projectMedia.$inferSelect) => ({
+                url: fileMap.get(m.fileId)?.url ?? '',
+                caption: m.caption,
+              }))
+              .filter((img) => img.url),
           },
-          amenities: amenitiesData.map(a => a.name),
-          tags: tagsData.map(t => t.name),
+          amenities: amenitiesData.map((a: typeof amenities.$inferSelect) => a.name),
+          tags: tagsData.map((t: typeof tags.$inferSelect) => t.name),
           location: {
             lat: project.latitude?.toString() ?? null,
             lng: project.longitude?.toString() ?? null,

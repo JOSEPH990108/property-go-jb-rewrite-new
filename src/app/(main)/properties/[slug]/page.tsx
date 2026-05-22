@@ -3,10 +3,19 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { cache } from "react";
 import { getPropertyBySlug } from "@/app/actions/property-actions";
+import { getProjectUnitAvailability } from "@/app/actions/unit-availability-actions";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BedDouble, Bath, Ruler, MapPin, Calendar, CheckCircle2 } from "lucide-react";
+import { UnitAvailabilityChart } from "@/components/properties/UnitAvailabilityChart";
+import { ImageGallery } from "@/components/properties/ImageGallery";
+import { ShareButton } from "@/components/properties/ShareButton";
+import { ContactAgentCard } from "@/components/properties/ContactAgentCard";
+import { FavoriteButton } from "@/components/properties/FavoriteButton";
+import { DEMO_PROJECT } from "@/lib/unit-chart-data";
+import { formatPriceRange } from "@/lib/format";
+import { getFavoriteIds } from "@/app/actions/favorite-actions";
 
 // Deduplicate the DB call using React cache
 const getProject = cache(async (slug: string) => {
@@ -48,26 +57,18 @@ export default async function PropertyPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const project = await getProject(slug);
+  const [project, liveUnitData, favoriteIds] = await Promise.all([
+    getProject(slug),
+    getProjectUnitAvailability(slug),
+    getFavoriteIds(),
+  ]);
 
   if (!project) {
     notFound();
   }
 
-  // Helper for formatting price
-  const formatPrice = (min: number | null, max: number | null) => {
-    if (!min && !max) return "Price on Request";
-    const formatter = new Intl.NumberFormat("en-MY", {
-      style: "currency",
-      currency: "MYR",
-      maximumFractionDigits: 0,
-    });
-
-    if (min && max && min !== max) {
-      return `${formatter.format(min)} - ${formatter.format(max)}`;
-    }
-    return formatter.format(min || max || 0);
-  };
+  // Fall back to demo data when the project has no units in the DB yet
+  const unitChartData = liveUnitData ?? { ...DEMO_PROJECT, projectName: project.displayName || project.name };
 
   const formatRange = (min: number | null, max: number | null) => {
       if (!min && !max) return "-";
@@ -110,6 +111,17 @@ export default async function PropertyPage({
         <div className="container grid grid-cols-1 lg:grid-cols-3 gap-10 -mt-10 relative z-10">
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-8">
+                {/* Image Gallery */}
+                {project.images.gallery.length > 0 && (
+                  <div className="space-y-4">
+                    <h2 className="text-2xl font-bold font-serif">Gallery</h2>
+                    <ImageGallery
+                      images={project.images.gallery}
+                      alt={project.displayName || project.name}
+                    />
+                  </div>
+                )}
+
                 {/* Specs Card */}
                 <div className="bg-card rounded-xl p-6 shadow-sm border border-border">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -165,16 +177,25 @@ export default async function PropertyPage({
                 <div className="bg-card rounded-xl p-6 shadow-sm border border-border sticky top-24">
                     <h3 className="text-lg font-semibold mb-1">Starting Price</h3>
                     <div className="text-3xl font-bold text-primary mb-6">
-                        {formatPrice(project.price.min, project.price.max)}
+                        {formatPriceRange(project.price.min, project.price.max)}
                     </div>
 
                     <div className="space-y-4">
                         <Button size="lg" className="w-full text-lg font-semibold shadow-lg shadow-primary/20">
                             Book a Viewing
                         </Button>
-                        <Button size="lg" variant="outline" className="w-full">
-                            Request Brochure
-                        </Button>
+                        <div className="flex gap-2">
+                            <FavoriteButton
+                                projectId={project.id}
+                                initialIsFavorite={favoriteIds.includes(project.id)}
+                                variant="button"
+                                className="flex-1"
+                            />
+                            <ShareButton
+                                title={project.displayName || project.name}
+                                slug={project.slug}
+                            />
+                        </div>
                     </div>
 
                     <div className="mt-6 pt-6 border-t border-border">
@@ -190,8 +211,16 @@ export default async function PropertyPage({
                             </div>
                         </div>
                     </div>
+
+                    <div className="mt-6 pt-6 border-t border-border">
+                        <ContactAgentCard projectName={project.displayName || project.name} />
+                    </div>
                 </div>
             </div>
+        </div>
+        {/* Unit Availability Chart — full width below the 3-col layout */}
+        <div className="container mt-10 pb-10">
+          <UnitAvailabilityChart data={unitChartData} />
         </div>
       </div>
     </>

@@ -5,30 +5,16 @@ const dbMock = vi.hoisted(() => ({
   from: vi.fn().mockReturnThis(),
   where: vi.fn().mockResolvedValue([{ count: 0 }]),
   query: {
-    projects: {
-      findMany: vi.fn(),
-    },
-    files: {
-      findMany: vi.fn(),
-    },
-    states: {
-      findMany: vi.fn(),
-    },
-    regions: {
-      findMany: vi.fn(),
-    },
-    areas: {
-      findMany: vi.fn(),
-    },
-    amenities: {
-      findMany: vi.fn(),
-    },
-    tags: {
-      findMany: vi.fn(),
-    },
-    projectLayouts: {
-      findMany: vi.fn(),
-    }
+    projects: { findMany: vi.fn() },
+    files: { findMany: vi.fn() },
+    states: { findMany: vi.fn() },
+    regions: { findMany: vi.fn() },
+    areas: { findMany: vi.fn() },
+    amenities: { findMany: vi.fn() },
+    tags: { findMany: vi.fn() },
+    projectLayouts: { findMany: vi.fn() },
+    projectAmenities: { findMany: vi.fn() },
+    projectTags: { findMany: vi.fn() },
   }
 }));
 
@@ -56,6 +42,8 @@ describe('getProperties', () => {
     dbMock.query.amenities.findMany.mockResolvedValue([]);
     dbMock.query.tags.findMany.mockResolvedValue([]);
     dbMock.query.projectLayouts.findMany.mockResolvedValue([]);
+    dbMock.query.projectAmenities.findMany.mockResolvedValue([]);
+    dbMock.query.projectTags.findMany.mockResolvedValue([]);
   });
 
   it('should return empty result when no projects exist', async () => {

@@ -1,7 +1,9 @@
 // src\app\(main)\properties\page.tsx
 import { Metadata } from "next";
-import { getProperties } from "@/app/actions/property-actions";
+import { getProperties, getGlobalLookups } from "@/app/actions/property-actions";
+import { getFavoriteIds } from "@/app/actions/favorite-actions";
 import { PropertyGrid } from "@/components/properties/PropertyGrid";
+import { PropertyFilters } from "@/components/properties/PropertyFilters";
 import { Pagination } from "@/components/shared/Pagination";
 
 export const metadata: Metadata = {
@@ -17,20 +19,28 @@ export const metadata: Metadata = {
 export default async function PropertiesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; categoryId?: string; regionId?: string }>;
+  searchParams: Promise<{
+    page?: string;
+    categoryId?: string;
+    typeId?: string;
+    regionId?: string;
+    search?: string;
+    sort?: string;
+  }>;
 }) {
   const params = await searchParams;
   const page = Number(params.page) || 1;
   const categoryId = params.categoryId;
+  const typeId = params.typeId;
   const regionId = params.regionId;
+  const search = params.search;
+  const sort = (params.sort as 'newest' | 'oldest' | 'name_asc' | 'name_desc') || 'newest';
 
-  // We set limit to 9 for a 3x3 grid
-  const { data, totalPages } = await getProperties({
-      page,
-      limit: 9,
-      categoryId,
-      regionId
-  });
+  const [{ data, totalPages }, lookups, favoriteIds] = await Promise.all([
+    getProperties({ page, limit: 9, categoryId, typeId, regionId, search, sort }),
+    getGlobalLookups(),
+    getFavoriteIds(),
+  ]);
 
   return (
     <div className="container py-10 min-h-screen">
@@ -38,13 +48,16 @@ export default async function PropertiesPage({
         <div className="flex flex-col gap-2 pt-20 md:pt-10">
             <h1 className="text-4xl font-serif font-bold tracking-tight">Discover Properties</h1>
             <p className="text-muted-foreground text-lg max-w-2xl">
-                Explore our exclusive collection of residential and commercial properties in Johor's most prime locations.
+                Explore our exclusive collection of residential and commercial properties in Johor&apos;s most prime locations.
             </p>
         </div>
 
-        {/* Future: Filter Component here */}
+        <PropertyFilters
+          categories={lookups.categories.map(c => ({ id: c.id, name: c.name }))}
+          types={lookups.types.map(t => ({ id: t.id, name: t.name }))}
+        />
 
-        <PropertyGrid projects={data} />
+        <PropertyGrid projects={data} favoriteIds={favoriteIds} />
 
         <Pagination totalPages={totalPages} className="mt-8" />
       </div>
