@@ -1,17 +1,23 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import { getKLDate } from '@/lib/utils';
+// src/stores/ui-store.ts
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import { getKLDate } from "@/lib/utils";
+import type { AuthMode } from "@/types/auth.types";
 
 interface UIState {
   isLoginOpen: boolean;
   dismissedDate: string | null;
-  authMode: "signin" | "signup";
+  onboardingDismissedDate: string | null;
+  onboardingDismissedUserId: string | null;
+  authMode: AuthMode;
 
   // Actions
-  setLoginOpen: (open: boolean, mode?: "signin" | "signup") => void;
-  setAuthMode: (mode: "signin" | "signup") => void;
+  setLoginOpen: (open: boolean, mode?: AuthMode) => void;
+  setAuthMode: (mode: AuthMode) => void;
   dismissModal: () => void;
-  resetDismissed: () => void; // Optional helper
+  resetDismissed: () => void;
+  dismissOnboardingModal: (userId: string) => void;
+  resetOnboardingDismissed: () => void;
 }
 
 export const useUIStore = create<UIState>()(
@@ -19,28 +25,46 @@ export const useUIStore = create<UIState>()(
     (set) => ({
       isLoginOpen: false,
       dismissedDate: null,
+      onboardingDismissedDate: null,
+      onboardingDismissedUserId: null,
       authMode: "signin",
 
-      setLoginOpen: (open, mode) => set((state) => ({
-        isLoginOpen: open,
-        authMode: mode ?? state.authMode
-      })),
+      setLoginOpen: (open, mode) =>
+        set((state) => ({
+          isLoginOpen: open,
+          authMode: mode ?? state.authMode,
+        })),
 
       setAuthMode: (mode) => set({ authMode: mode }),
 
-      dismissModal: () => set({
-        isLoginOpen: false,
-        dismissedDate: getKLDate()
-      }),
+      dismissModal: () =>
+        set({
+          isLoginOpen: false,
+          dismissedDate: getKLDate(),
+        }),
 
       resetDismissed: () => set({ dismissedDate: null }),
+
+      dismissOnboardingModal: (userId) =>
+        set({
+          onboardingDismissedDate: getKLDate(),
+          onboardingDismissedUserId: userId,
+        }),
+
+      resetOnboardingDismissed: () =>
+        set({
+          onboardingDismissedDate: null,
+          onboardingDismissedUserId: null,
+        }),
     }),
     {
-      name: 'ui-storage', // key in localStorage
+      name: "ui-storage",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
-        dismissedDate: state.dismissedDate
-      }), // Only persist dismissedDate
+        dismissedDate: state.dismissedDate,
+        onboardingDismissedDate: state.onboardingDismissedDate,
+        onboardingDismissedUserId: state.onboardingDismissedUserId,
+      }),
     }
   )
 );

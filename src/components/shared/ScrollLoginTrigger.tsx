@@ -1,3 +1,4 @@
+// src\components\shared\ScrollLoginTrigger.tsx
 "use client";
 import { useEffect } from "react";
 import { useUIStore } from "@/stores/ui-store";

@@ -1,124 +1,156 @@
-// src\components\auth\OnboardingModal.tsx
+// src/components/auth/OnboardingModal.tsx
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2, CheckCircle2, XCircle } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { ReferralCodeInput } from "@/components/auth/shared/ReferralCodeInput";
 import { useGlobalLoaderStore } from "@/stores/global-loader-store";
-import { updateProfileAfterSignup, getOnboardingStatus } from "@/app/actions/auth-actions";
+import { useReferralVerification } from "@/hooks/useReferralVerification";
+import {
+  updateProfileAfterSignup,
+  getOnboardingStatus,
+  dismissOnboardingForToday as dismissOnboardingForTodayAction,
+} from "@/app/actions/auth-actions";
 import { verifyReferralCode } from "@/app/actions/referral-actions";
+import { getKLDate } from "@/lib/utils";
+import type { ReferralFormData } from "@/types/auth.types";
 
 const referralSchema = z.object({
   referralCode: z.string().optional(),
 });
 
-type ReferralStepData = z.infer<typeof referralSchema>;
+const ONBOARDING_DISMISSED_STORAGE_KEY = "onboarding-dismissed-today";
+
+function getOnboardingDismissedDate(): string | null {
+  try {
+    return window.localStorage.getItem(ONBOARDING_DISMISSED_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function persistOnboardingDismissal() {
+  try {
+    window.localStorage.setItem(ONBOARDING_DISMISSED_STORAGE_KEY, getKLDate());
+  } catch {
+    // Ignore storage failures.
+  }
+}
+
+function clearOnboardingDismissal() {
+  try {
+    window.localStorage.removeItem(ONBOARDING_DISMISSED_STORAGE_KEY);
+  } catch {
+    // Ignore storage failures.
+  }
+}
 
 export default function OnboardingModal() {
   const { data: session, isPending } = authClient.useSession();
   const [isOpen, setIsOpen] = useState(false);
+  const [isDismissedToday, setIsDismissedToday] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDismissing, setIsDismissing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [referralStatus, setReferralStatus] = useState<{ valid: boolean; message?: string } | null>(null);
-  const [verifiedReferralCode, setVerifiedReferralCode] = useState<string | null>(null);
-  const [userName, setUserName] = useState<string>("User");
+  const [userName, setUserName] = useState("User");
 
-  const pathname = usePathname();
   const router = useRouter();
   const { show, hide } = useGlobalLoaderStore();
+  const referral = useReferralVerification();
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { },
-  } = useForm<ReferralStepData>({
+  const { register, handleSubmit, watch } = useForm<ReferralFormData>({
     resolver: zodResolver(referralSchema),
-    defaultValues: {
-      referralCode: "",
-    },
+    defaultValues: { referralCode: "" },
   });
 
   const watchedReferralCode = watch("referralCode");
 
-  // Check if onboarding is needed via Server Action to ensure we have up-to-date DB status
+  // Sync dismissed state with session
   useEffect(() => {
-    if (isPending) return;
-
-    if (session?.user) {
-        // Fetch status
-        getOnboardingStatus().then((res) => {
-            // Only show modal if user is not completed AND has a name (Google flow).
-            // Phone flow users start with no name in DB and fill it in SignUpForm.
-            // This prevents the modal from overlapping the Phone SignUp flow.
-            if (res.success && res.completed === false && res.userName) {
-                 setUserName(res.userName);
-                 setIsOpen(true);
-            } else {
-                 setIsOpen(false);
-            }
-        });
-    } else {
-       setIsOpen(false);
+    if (!session?.user) {
+      setIsDismissedToday(false);
+      return;
     }
-  }, [session, isPending, pathname]);
+    setIsDismissedToday(getOnboardingDismissedDate() === getKLDate());
+  }, [session]);
 
-  // Reset status when input changes
+  // Check onboarding status from DB
   useEffect(() => {
-    if (verifiedReferralCode && watchedReferralCode !== verifiedReferralCode) {
-      setReferralStatus(null);
-      setVerifiedReferralCode(null);
-    } else if (referralStatus && !watchedReferralCode) {
-      setReferralStatus(null);
-    }
-  }, [watchedReferralCode, referralStatus, verifiedReferralCode]);
+    let isCancelled = false;
 
-  const verifyReferral = async (code: string) => {
-    if (!code) return;
-    setIsLoading(true);
-    try {
-      const res = await verifyReferralCode(code);
-      if (res.valid) {
-        setReferralStatus({ valid: true, message: `Referred by ${res.referrerName}` });
-        setVerifiedReferralCode(code);
-      } else {
-        setReferralStatus({ valid: false, message: res.message || "Invalid code" });
-        setVerifiedReferralCode(null);
+    if (isPending || isDismissedToday) {
+      if (isDismissedToday) setIsOpen(false);
+      return;
+    }
+
+    if (!session?.user) {
+      setIsOpen(false);
+      return;
+    }
+
+    const hasDismissedToday = getOnboardingDismissedDate() === getKLDate();
+    if (hasDismissedToday) {
+      setIsDismissedToday(true);
+      setIsOpen(false);
+      return () => { isCancelled = true; };
+    }
+
+    getOnboardingStatus().then((res) => {
+      if (isCancelled) return;
+
+      if (getOnboardingDismissedDate() === getKLDate()) {
+        setIsDismissedToday(true);
+        setIsOpen(false);
+        return;
       }
-    } catch (e) {
-      setReferralStatus({ valid: false, message: "Error verifying code" });
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
-  const onSubmit = async (data: ReferralStepData) => {
+      if (res.success && res.completed === false && res.userName && !res.dismissedToday) {
+        setUserName(res.userName);
+        setIsOpen(true);
+      } else {
+        setIsOpen(false);
+      }
+    });
+
+    return () => { isCancelled = true; };
+  }, [session, isPending, isDismissedToday]);
+
+  // Reset referral status when code changes
+  useEffect(() => {
+    referral.handleInputChange(watchedReferralCode);
+  }, [watchedReferralCode, referral.handleInputChange]);
+
+  const onSubmit = async (data: ReferralFormData) => {
     setIsLoading(true);
     setError(null);
     show("Finalizing...", "Setting up your account");
 
-    // Verify if entered but not applied
-    if (data.referralCode && !verifiedReferralCode) {
-        const res = await verifyReferralCode(data.referralCode);
-        if (!res.valid) {
-            setError(res.message || "Invalid referral code");
-            setIsLoading(false);
-            hide();
-            return;
-        }
+    if (data.referralCode && !referral.verifiedCode) {
+      const res = await verifyReferralCode(data.referralCode);
+      if (!res.valid) {
+        setError(res.message || "Invalid referral code");
+        setIsLoading(false);
+        hide();
+        return;
+      }
     }
 
     try {
       const updateRes = await updateProfileAfterSignup({
-        name: userName, // Use the fetched name from DB
+        name: userName,
         referralCode: data.referralCode,
       });
 
@@ -129,24 +161,61 @@ export default function OnboardingModal() {
         return;
       }
 
+      clearOnboardingDismissal();
+      setIsDismissedToday(false);
       setIsOpen(false);
       hide();
       router.refresh();
-    } catch (e) {
+    } catch {
       setError("Failed to complete setup.");
       setIsLoading(false);
       hide();
     }
   };
 
-  const handleSkip = async () => {
-      await onSubmit({ referralCode: "" });
+  const handleSkip = () => onSubmit({ referralCode: "" });
+
+  const handleDismiss = async () => {
+    setIsDismissedToday(true);
+    setIsOpen(false);
+    persistOnboardingDismissal();
+
+    if (session?.user) {
+      setIsDismissing(true);
+      try {
+        await dismissOnboardingForTodayAction();
+      } finally {
+        setIsDismissing(false);
+      }
+    }
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    if (open) {
+      setIsOpen(true);
+      return;
+    }
+    handleDismiss();
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-md" onInteractOutside={(e) => e.preventDefault()} onEscapeKeyDown={(e) => e.preventDefault()}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      <DialogContent
+        className="sm:max-w-md"
+        showCloseButton={false}
+        onInteractOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => e.preventDefault()}
+      >
         <DialogHeader>
+          <button
+            type="button"
+            aria-label="Close referral modal"
+            onClick={handleDismiss}
+            disabled={isDismissing}
+            className="absolute top-4 right-4 rounded-lg p-1.5 text-muted-foreground transition-all duration-200 hover:bg-secondary hover:text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 disabled:pointer-events-none"
+          >
+            <X className="h-4 w-4" />
+          </button>
           <DialogTitle>One Last Thing!</DialogTitle>
           <DialogDescription>
             Do you have a referral code? Enter it below to claim your rewards.
@@ -154,42 +223,35 @@ export default function OnboardingModal() {
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-4">
-            <div className="space-y-1.5">
-            <Label>Referral Code (Optional)</Label>
-            <div className="flex gap-2">
-                <Input
-                    {...register("referralCode")}
-                    placeholder="Enter code"
-                    className={referralStatus?.valid ? "border-green-500 focus-visible:ring-green-500" : ""}
-                />
-                <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => verifyReferral(watch("referralCode") || "")}
-                    disabled={isLoading || !watch("referralCode")}
-                >
-                    Apply
-                </Button>
-            </div>
-            {referralStatus && (
-                <div className={`flex items-center gap-1.5 text-xs ${referralStatus.valid ? "text-green-600" : "text-destructive"}`}>
-                    {referralStatus.valid ? <CheckCircle2 className="w-3.5 h-3.5"/> : <XCircle className="w-3.5 h-3.5"/>}
-                    {referralStatus.message}
-                </div>
-            )}
-            </div>
+          <ReferralCodeInput
+            inputProps={register("referralCode")}
+            value={watchedReferralCode}
+            onApply={() => referral.verify(watchedReferralCode || "")}
+            isLoading={referral.isLoading}
+            status={referral.status}
+          />
 
-            {error && <p className="text-destructive text-sm bg-destructive/10 p-2 rounded text-center">{error}</p>}
+          {error && (
+            <p className="text-destructive text-sm bg-destructive/10 p-2 rounded text-center">
+              {error}
+            </p>
+          )}
 
-            <div className="space-y-2 pt-2">
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? <Loader2 className="animate-spin mr-2" /> : null}
-                    {isLoading ? "Completing..." : "Complete Setup"}
-                </Button>
-                <Button type="button" variant="ghost" className="w-full" onClick={handleSkip} disabled={isLoading}>
-                    Skip for now
-                </Button>
-            </div>
+          <div className="space-y-2 pt-2">
+            <Button type="submit" className="w-full" disabled={isLoading || referral.isLoading}>
+              {isLoading && <Loader2 className="animate-spin mr-2 h-4 w-4" />}
+              {isLoading ? "Completing..." : "Complete Setup"}
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              className="w-full"
+              onClick={handleSkip}
+              disabled={isLoading || referral.isLoading}
+            >
+              Skip for now
+            </Button>
+          </div>
         </form>
       </DialogContent>
     </Dialog>

@@ -1,55 +1,40 @@
 // src\components\profile\LinkedAccounts.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import { Loader2, Check, X } from "lucide-react";
 import { getAccountMethods, unlinkGoogleAccount } from "@/app/actions/auth-actions";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
+import { useServerQuery } from "@/hooks/useServerQuery";
 
 export function LinkedAccounts() {
   const [isLinking, setIsLinking] = useState(false);
   const [isUnlinking, setIsUnlinking] = useState(false);
-  const [accountMethods, setAccountMethods] = useState<{
+  const [showUnlinkModal, setShowUnlinkModal] = useState(false);
+
+  const fetchMethods = useCallback(async () => {
+    const res = await getAccountMethods();
+    if (res.success && res.methods) {
+      return { success: true, data: res.methods };
+    }
+    return { success: false, error: "Failed to fetch account methods" };
+  }, []);
+
+  const { data: accountMethods, isLoading, refetch } = useServerQuery<{
     google: boolean;
     hasPassword: boolean;
     phone: boolean;
-  }>({ google: false, hasPassword: false, phone: false });
-  const [isLoading, setIsLoading] = useState(true);
-  const [showUnlinkModal, setShowUnlinkModal] = useState(false);
-
-  const fetchMethods = async () => {
-    try {
-      const res = await getAccountMethods();
-      if (res.success && res.methods) {
-        setAccountMethods(res.methods);
-      }
-    } catch (err) {
-      console.error("Failed to fetch account methods", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchMethods();
-  }, []);
+  }>(fetchMethods);
 
   const handleLinkGoogle = async () => {
     setIsLinking(true);
     try {
       const res = await authClient.linkSocial({
         provider: "google",
-        callbackURL: "/profile", // Redirect back to profile after linking
+        callbackURL: "/profile",
       });
 
       if (res.error) {
@@ -64,8 +49,7 @@ export function LinkedAccounts() {
   };
 
   const handleDisconnectClick = () => {
-    // Check if user has other methods
-    const hasOtherMethods = accountMethods.hasPassword || accountMethods.phone;
+    const hasOtherMethods = accountMethods?.hasPassword || accountMethods?.phone;
 
     if (!hasOtherMethods) {
         toast.error("You cannot disconnect your only login method. Please add a password or verified phone number first, or delete your account.", {
@@ -83,7 +67,7 @@ export function LinkedAccounts() {
         const res = await unlinkGoogleAccount();
         if (res.success) {
             toast.success("Google account disconnected successfully");
-            await fetchMethods(); // Refresh state
+            await refetch();
             setShowUnlinkModal(false);
         } else {
             toast.error(res.error || "Failed to disconnect Google account");
@@ -96,7 +80,7 @@ export function LinkedAccounts() {
     }
   };
 
-  const isGoogleLinked = accountMethods.google;
+  const isGoogleLinked = accountMethods?.google ?? false;
 
   return (
     <div className="space-y-4">
@@ -145,12 +129,10 @@ export function LinkedAccounts() {
                 </>
             ) : isGoogleLinked ? (
                 <>
-                 {/* Default State: Connected */}
                  <span className="flex items-center group-hover:hidden">
                     <Check className="mr-2 h-4 w-4" />
                     Connected
                  </span>
-                 {/* Hover State: Disconnect */}
                  <span className="hidden items-center group-hover:flex">
                     <X className="mr-2 h-4 w-4" />
                     Disconnect
@@ -164,25 +146,16 @@ export function LinkedAccounts() {
       </div>
 
       {/* Unlink Confirmation Modal */}
-      <Dialog open={showUnlinkModal} onOpenChange={setShowUnlinkModal}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Disconnect Google Account</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to disconnect your Google account? You will need to use your phone number or password to log in next time.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowUnlinkModal(false)} disabled={isUnlinking}>
-              Cancel
-            </Button>
-            <Button variant="destructive" onClick={confirmUnlink} disabled={isUnlinking}>
-              {isUnlinking && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Disconnect
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ConfirmDialog
+        open={showUnlinkModal}
+        onOpenChange={setShowUnlinkModal}
+        title="Disconnect Google Account"
+        description="Are you sure you want to disconnect your Google account? You will need to use your phone number or password to log in next time."
+        onConfirm={confirmUnlink}
+        isLoading={isUnlinking}
+        confirmLabel="Disconnect"
+        variant="destructive"
+      />
     </div>
   );
 }
