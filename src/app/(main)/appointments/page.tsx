@@ -1,6 +1,9 @@
+// src\app\(main)\appointments\page.tsx
 import { getUserAppointments } from "@/app/actions/appointment-actions";
 import { AppointmentManager } from "@/components/features/appointments/appointment-manager";
 import { Metadata } from "next";
+
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: "My Appointments | PropertyGo",

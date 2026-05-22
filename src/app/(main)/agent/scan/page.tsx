@@ -1,3 +1,4 @@
+// src\app\(main)\agent\scan\page.tsx
 import { AgentScanner } from "@/components/custom/appointment/AgentScanner";
 
 export default function AgentScanPage() {

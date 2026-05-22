@@ -21,10 +21,11 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { CalendarIcon, CheckCircle2, XCircle } from "lucide-react";
+import { CalendarIcon } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { createAppointment } from "@/app/actions/appointment-actions";
-import { verifyReferralCode } from "@/app/actions/referral-actions";
+import { useReferralVerification } from "@/hooks/useReferralVerification";
+import { ValidationStatus } from "@/components/shared/ValidationStatus";
 import { toast } from "sonner";
 
 const formSchema = z.object({
@@ -40,8 +41,7 @@ interface BookingFormProps {
 export function BookingForm({ projectId }: BookingFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [isReferralValid, setIsReferralValid] = useState<boolean | null>(null);
-  const [referralMessage, setReferralMessage] = useState<string>("");
+  const referral = useReferralVerification();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -57,20 +57,9 @@ export function BookingForm({ projectId }: BookingFormProps) {
     const refCode = searchParams.get("ref");
     if (refCode) {
       form.setValue("referralCode", refCode);
-      validateReferral(refCode);
+      referral.verify(refCode);
     }
-  }, [searchParams, form]);
-
-  const validateReferral = async (code: string) => {
-    if (!code) {
-      setIsReferralValid(null);
-      setReferralMessage("");
-      return;
-    }
-    const result = await verifyReferralCode(code);
-    setIsReferralValid(result.valid);
-    setReferralMessage(result.message || (result.valid ? `Referred by ${result.referrerName}` : "Invalid code"));
-  };
+  }, [searchParams, form, referral]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
@@ -146,28 +135,15 @@ export function BookingForm({ projectId }: BookingFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Referral Code (Optional)</FormLabel>
-              <div className="relative">
-                <FormControl>
-                  <Input
-                    placeholder="Enter code"
-                    {...field}
-                    onBlur={(e) => validateReferral(e.target.value)}
-                  />
-                </FormControl>
-                {isReferralValid !== null && (
-                    <div className="absolute right-3 top-2.5">
-                        {isReferralValid ? (
-                            <CheckCircle2 className="h-5 w-5 text-green-500" />
-                        ) : (
-                            <XCircle className="h-5 w-5 text-red-500" />
-                        )}
-                    </div>
-                )}
-              </div>
-              {referralMessage && (
-                  <p className={cn("text-sm mt-1", isReferralValid ? "text-green-600" : "text-red-500")}>
-                      {referralMessage}
-                  </p>
+              <FormControl>
+                <Input
+                  placeholder="Enter code"
+                  {...field}
+                  onBlur={(e) => referral.verify(e.target.value)}
+                />
+              </FormControl>
+              {referral.status && (
+                <ValidationStatus valid={referral.status.valid} message={referral.status.message} />
               )}
             </FormItem>
           )}

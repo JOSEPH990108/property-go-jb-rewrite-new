@@ -1,3 +1,4 @@
+// src\app\actions\appointment-actions.ts
 'use server';
 
 import { db } from '@/db';
@@ -18,8 +19,7 @@ async function getStatusId(code: string) {
 }
 
 // Mutable mock store for demo purposes when DB is missing
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let MOCK_STORE: any[] = [];
+let MOCK_STORE: typeof MOCK_DATA[number][] = [];
 
 const MOCK_DATA = [
     {
@@ -146,27 +146,52 @@ export async function generateDemoAppointments() {
                 where: eq(roles.code, 'AGENT')
             });
 
+            let agentRoleId: string;
             if (agentRole) {
-                // If ID 'agent-sarah-tan' is taken (unlikely if email check failed), randomUUID
-                // But let's try to stick to the ID
-                await db.insert(user).values({
-                    id: agentId,
-                    name: 'Sarah Tan',
-                    email: 'sarah.tan@propertygo.com',
-                    phoneNumber: '+60123456789',
-                    roleId: agentRole.id,
-                    emailVerified: true,
-                    phoneNumberVerified: true,
-                    agencyName: 'PropertyGo Elite Team',
-                    renNumber: 'REN 12345',
-                    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=256&h=256&auto=format&fit=crop'
-                }).onConflictDoNothing();
+                agentRoleId = agentRole.id;
             } else {
-                return { success: false, error: "System Error: AGENT role missing" };
+                // Create AGENT role if it doesn't exist (DB not fully seeded)
+                const newRoleId = randomUUID();
+                await db.insert(roles).values({
+                    id: newRoleId,
+                    code: 'AGENT',
+                    name: 'Agent',
+                    description: 'Verified Property Agent',
+                }).onConflictDoNothing();
+                agentRoleId = newRoleId;
+            }
+
+            await db.insert(user).values({
+                id: agentId,
+                name: 'Sarah Tan',
+                email: 'sarah.tan@propertygo.com',
+                phoneNumber: '+60123456789',
+                roleId: agentRoleId,
+                emailVerified: true,
+                phoneNumberVerified: true,
+                agencyName: 'PropertyGo Elite Team',
+                renNumber: 'REN 12345',
+                image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=256&h=256&auto=format&fit=crop'
+            }).onConflictDoNothing();
+        }
+
+        // 3. Get or Create Statuses
+        const statusDefs = [
+            { code: 'PENDING',   name: 'Pending',   description: 'User requested appointment' },
+            { code: 'CONFIRMED', name: 'Confirmed',  description: 'Agent confirmed appointment' },
+            { code: 'COMPLETED', name: 'Completed',  description: 'Visit verified via QR scan' },
+            { code: 'CANCELLED', name: 'Cancelled',  description: 'Cancelled by user' },
+            { code: 'REJECTED',  name: 'Rejected',   description: 'Rejected by agent' },
+        ];
+        for (const s of statusDefs) {
+            const exists = await db.query.appointmentStatuses.findFirst({
+                where: eq(appointmentStatuses.code, s.code)
+            });
+            if (!exists) {
+                await db.insert(appointmentStatuses).values({ ...s }).onConflictDoNothing();
             }
         }
 
-        // 3. Get Statuses
         const pending = await getStatusId('PENDING');
         const confirmed = await getStatusId('CONFIRMED');
         const completed = await getStatusId('COMPLETED');
