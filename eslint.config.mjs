@@ -5,15 +5,24 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
-  // Override default ignores of eslint-config-next.
   globalIgnores([
-    // Default ignores of eslint-config-next:
     "node_modules/**",
     ".next/**",
     "out/**",
     "build/**",
+    "coverage/**",
+    "playwright-report/**",
     "next-env.d.ts",
   ]),
+  {
+    rules: {
+      // Catch common bugs
+      "no-console": ["warn", { allow: ["warn", "error"] }],
+      // React best practices
+      "react/no-unescaped-entities": "off",
+      "react-hooks/exhaustive-deps": "warn",
+    },
+  },
 ]);
 
 export default eslintConfig;
