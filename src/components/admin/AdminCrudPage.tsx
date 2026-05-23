@@ -22,18 +22,11 @@ import { AdminRowActions } from "@/components/admin/shared/AdminRowActions";
 import { AdminTableShell } from "@/components/admin/shared/AdminTableShell";
 import { AdminTableToolbar } from "@/components/admin/shared/AdminTableToolbar";
 import { TABLE_REGISTRY } from "@/lib/admin-table-registry";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { AdminDeleteConfirmDialog } from "@/components/admin/shared/AdminDeleteConfirmDialog";
 import { AdminRecordFormDialog } from "@/components/admin/shared/AdminRecordFormDialog";
 import {
   Select,
@@ -538,34 +531,13 @@ export function AdminCrudPage({ tableName }: AdminCrudPageProps) {
       )}
 
       {/* ── Delete Confirmation ────────────────────────────────────────── */}
-      <Dialog open={deleteTarget !== null} onOpenChange={(open) => !open && setDeleteTarget(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Record</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete this record? This action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <button
-              type="button"
-              onClick={() => setDeleteTarget(null)}
-              className="border-border bg-background text-foreground hover:bg-muted/50 rounded-2xl border px-5 py-2.5 text-sm font-medium transition"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={handleDelete}
-              disabled={isSaving}
-              className="border-destructive/20 bg-destructive text-destructive-foreground hover:bg-destructive/90 inline-flex items-center gap-2 rounded-2xl border px-5 py-2.5 text-sm font-semibold transition disabled:opacity-50"
-            >
-              {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
-              Delete
-            </button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <AdminDeleteConfirmDialog
+        open={deleteTarget !== null}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={handleDelete}
+        isLoading={isSaving}
+      />
     </>
   );
 }
