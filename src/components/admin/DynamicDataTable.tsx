@@ -12,6 +12,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 
 import { AdminTableShell } from "@/components/admin/shared/AdminTableShell";
+import { AdminTableStateRow } from "@/components/admin/shared/AdminTableStateRow";
 import { AdminTableToolbar } from "@/components/admin/shared/AdminTableToolbar";
 
 type DynamicDataTableProps<TData extends Record<string, unknown>> = {
@@ -88,14 +89,10 @@ export function DynamicDataTable<TData extends Record<string, unknown>>({
           </thead>
           <tbody className="divide-border/70 divide-y">
             {table.getRowModel().rows.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={columns.length}
-                  className="text-foreground/60 px-4 py-10 text-center text-sm"
-                >
-                  No records match the current search.
-                </td>
-              </tr>
+              <AdminTableStateRow
+                colSpan={columns.length}
+                title="No records match the current search."
+              />
             ) : (
               table.getRowModel().rows.map((row) => (
                 <tr

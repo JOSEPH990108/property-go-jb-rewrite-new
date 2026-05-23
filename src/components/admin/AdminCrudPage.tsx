@@ -3,7 +3,7 @@
 
 import { useCallback, useEffect, useState, useTransition } from "react";
 import { flexRender, getCoreRowModel, useReactTable, type ColumnDef } from "@tanstack/react-table";
-import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -20,6 +20,7 @@ import {
 } from "@/app/actions/admin-crud-actions";
 import { AdminRowActions } from "@/components/admin/shared/AdminRowActions";
 import { AdminTableShell } from "@/components/admin/shared/AdminTableShell";
+import { AdminTableStateRow } from "@/components/admin/shared/AdminTableStateRow";
 import { AdminTableToolbar } from "@/components/admin/shared/AdminTableToolbar";
 import { TABLE_REGISTRY } from "@/lib/admin-table-registry";
 import { Input } from "@/components/ui/input";
@@ -486,20 +487,13 @@ export function AdminCrudPage({ tableName }: AdminCrudPageProps) {
           </thead>
           <tbody className="divide-border/70 divide-y">
             {isPending && !data ? (
-              <tr>
-                <td colSpan={tableColumns.length} className="px-4 py-10 text-center">
-                  <Loader2 className="text-primary mx-auto h-5 w-5 animate-spin" />
-                </td>
-              </tr>
+              <AdminTableStateRow
+                colSpan={tableColumns.length}
+                title="Loading records"
+                tone="loading"
+              />
             ) : table.getRowModel().rows.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={tableColumns.length}
-                  className="text-foreground/60 px-4 py-10 text-center text-sm"
-                >
-                  No records found.
-                </td>
-              </tr>
+              <AdminTableStateRow colSpan={tableColumns.length} title="No records found." />
             ) : (
               table.getRowModel().rows.map((row) => (
                 <tr key={row.id} className="hover:bg-primary/5 transition">
