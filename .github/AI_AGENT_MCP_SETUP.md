@@ -5,43 +5,64 @@ This document defines a professional baseline for Copilot agents and MCP servers
 ## What Is Configured
 
 ### Custom agents
+
 Located in .github/agents/:
+
 - codebase-analyst.agent.md
 - database.agent.md
+- decision.agent.md
+- developer.agent.md
+- documentation.agent.md
 - tester.agent.md
 - frontend.agent.md
 - auth.agent.md
+- observability.agent.md
+- project-manager.agent.md
+- qa-test-strategy.agent.md
+- release-manager.agent.md
+- security-environment.agent.md
 - server-actions.agent.md
+- ui-ux.agent.md
 
 Use these when you want specialized behavior instead of a general-purpose coding mode.
 
+For the full multi-agent SDLC, start with `AGENTS.md` and `docs/AI_AGENT_WORKFLOW.md`.
+
 ### MCP servers
+
 Workspace MCP config is in .vscode/mcp.json.
 Configured servers:
+
 - github: GitHub MCP server via @modelcontextprotocol/server-github
 - googleStitch: Google Stitch MCP proxy via google-stitch-mcp
 
 ## Secure Setup
 
 ### 1) GitHub PAT
+
 When prompted for github-pat, use a token with least privilege.
 Recommended scopes:
+
 - repo read access only unless you need write actions
 - no admin scopes
 
 ### 2) Validate MCP server startup
+
 In VS Code:
+
 - Open Command Palette
 - Run MCP: List Servers
 - Confirm github and googleStitch are healthy
 
 If a server fails, open the MCP output channel and verify package availability:
+
 - npx -y @modelcontextprotocol/server-github --help
 - npx -y google-stitch-mcp proxy --help
 
 ## Prompting Rules for Better Control
 
 To avoid unnecessary tool or MCP calls, be explicit in prompts:
+
 - "Conceptual answer only, do not use tools"
 - "Use workspace tools only, do not call MCP"
 - "Check real files and verify with tools"
@@ -57,6 +78,6 @@ To avoid unnecessary tool or MCP calls, be explicit in prompts:
 ## Maintenance Checklist
 
 - Keep .github/copilot-instructions.md updated with architecture changes
-- Keep .github/instructions/*.instructions.md aligned with current code patterns
+- Keep .github/instructions/\*.instructions.md aligned with current code patterns
 - Re-test MCP servers after Node/npm upgrades
 - Remove unused agent files to avoid mode confusion
