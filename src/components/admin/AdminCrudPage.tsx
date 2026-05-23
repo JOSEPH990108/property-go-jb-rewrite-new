@@ -34,6 +34,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { AdminRecordFormDialog } from "@/components/admin/shared/AdminRecordFormDialog";
 import {
   Select,
   SelectContent,
@@ -522,39 +523,19 @@ export function AdminCrudPage({ tableName }: AdminCrudPageProps) {
       </AdminTableShell>
 
       {/* ── Create / Edit Dialog ───────────────────────────────────────── */}
-      <Dialog open={dialogMode !== null} onOpenChange={(open) => !open && setDialogMode(null)}>
-        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>
-              {dialogMode === "create" ? "Create" : "Edit"} {config.label} Record
-            </DialogTitle>
-            <DialogDescription>Fill in the fields below and save.</DialogDescription>
-          </DialogHeader>
-
-          <div className="grid gap-4 py-4 sm:grid-cols-2">
-            {getFormFields().map(renderFormField)}
-          </div>
-
-          <DialogFooter>
-            <button
-              type="button"
-              onClick={() => setDialogMode(null)}
-              className="border-border bg-background text-foreground hover:bg-muted/50 rounded-2xl border px-5 py-2.5 text-sm font-medium transition"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={isSaving}
-              className="border-primary/20 bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center gap-2 rounded-2xl border px-5 py-2.5 text-sm font-semibold transition disabled:opacity-50"
-            >
-              {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
-              {dialogMode === "create" ? "Create" : "Save Changes"}
-            </button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {dialogMode && (
+        <AdminRecordFormDialog
+          open={dialogMode !== null}
+          onOpenChange={(open) => !open && setDialogMode(null)}
+          mode={dialogMode}
+          entityLabel={config.label}
+          onCancel={() => setDialogMode(null)}
+          onSave={handleSave}
+          isSaving={isSaving}
+        >
+          {getFormFields().map(renderFormField)}
+        </AdminRecordFormDialog>
+      )}
 
       {/* ── Delete Confirmation ────────────────────────────────────────── */}
       <Dialog open={deleteTarget !== null} onOpenChange={(open) => !open && setDeleteTarget(null)}>
