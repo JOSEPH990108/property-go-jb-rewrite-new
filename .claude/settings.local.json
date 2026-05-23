@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -E \"^\\\\S+/[^/]+$\")",
+      "Bash(grep -E \"\\\\.tsx?$\")",
+      "Bash(npx tsc:*)",
+      "Bash(grep -v \"^.*//.*BulkImportEntityType\")",
+      "Bash(grep -r \"import.*AdminPortal\\\\|from.*AdminPortal\" c:UserschongDesktopproperty-go-jbsrc --include=*.tsx --include=*.ts)"
+    ]
+  }
+}

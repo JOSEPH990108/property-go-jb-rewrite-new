@@ -1,0 +1,9 @@
+{
+    "chat.mcp.serverSampling": {
+        "property-go-jb/.vscode/mcp.json: googleStitch": {
+            "allowedModels": [
+                "copilotcli/claude-sonnet-4.6"
+            ]
+        }
+    }
+}
