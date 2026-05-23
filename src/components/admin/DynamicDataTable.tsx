@@ -11,6 +11,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 
+import { AdminTableShell } from "@/components/admin/shared/AdminTableShell";
 import { AdminTableToolbar } from "@/components/admin/shared/AdminTableToolbar";
 
 type DynamicDataTableProps<TData extends Record<string, unknown>> = {
@@ -58,63 +59,61 @@ export function DynamicDataTable<TData extends Record<string, unknown>>({
 
   return (
     <>
-      <section className="border-border bg-card/95 rounded-[28px] border p-5 shadow-[0_20px_60px_rgba(15,23,42,0.1)] backdrop-blur-md">
-        <AdminTableToolbar
-          eyebrow="Reusable CRUD table"
-          title={title}
-          description={description}
-          searchValue={globalFilter}
-          onSearchChange={setGlobalFilter}
-          createLabel={addLabel}
-          onCreate={onAddNew}
-        />
-
-        <div className="border-border bg-background mt-5 overflow-hidden rounded-[24px] border">
-          <div className="overflow-x-auto">
-            <table className="divide-border text-foreground min-w-full divide-y text-left text-sm">
-              <thead className="bg-muted/35 text-foreground/60 text-xs tracking-[0.24em] uppercase">
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <tr key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <th key={header.id} className="px-4 py-4 font-medium">
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(header.column.columnDef.header, header.getContext())}
-                      </th>
-                    ))}
-                  </tr>
+      <AdminTableShell
+        toolbar={
+          <AdminTableToolbar
+            eyebrow="Reusable CRUD table"
+            title={title}
+            description={description}
+            searchValue={globalFilter}
+            onSearchChange={setGlobalFilter}
+            createLabel={addLabel}
+            onCreate={onAddNew}
+          />
+        }
+      >
+        <table className="divide-border text-foreground min-w-full divide-y text-left text-sm">
+          <thead className="bg-muted/35 text-foreground/60 text-xs tracking-[0.24em] uppercase">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <th key={header.id} className="px-4 py-4 font-medium">
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(header.column.columnDef.header, header.getContext())}
+                  </th>
                 ))}
-              </thead>
-              <tbody className="divide-border/70 divide-y">
-                {table.getRowModel().rows.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan={columns.length}
-                      className="text-foreground/60 px-4 py-10 text-center text-sm"
-                    >
-                      No records match the current search.
+              </tr>
+            ))}
+          </thead>
+          <tbody className="divide-border/70 divide-y">
+            {table.getRowModel().rows.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={columns.length}
+                  className="text-foreground/60 px-4 py-10 text-center text-sm"
+                >
+                  No records match the current search.
+                </td>
+              </tr>
+            ) : (
+              table.getRowModel().rows.map((row) => (
+                <tr
+                  key={row.id}
+                  onClick={() => setSelectedRow(row.original)}
+                  className="hover:bg-primary/8 cursor-pointer transition"
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id} className="px-4 py-4 align-middle">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>
-                  </tr>
-                ) : (
-                  table.getRowModel().rows.map((row) => (
-                    <tr
-                      key={row.id}
-                      onClick={() => setSelectedRow(row.original)}
-                      className="hover:bg-primary/8 cursor-pointer transition"
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id} className="px-4 py-4 align-middle">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </td>
-                      ))}
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
+                  ))}
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </AdminTableShell>
 
       <AnimatePresence>
         {selectedRow ? (
