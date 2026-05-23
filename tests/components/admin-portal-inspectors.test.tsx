@@ -71,6 +71,7 @@ describe("admin portal inspectors", () => {
     fireEvent.click(screen.getByRole("button", { name: /Delete/i }));
 
     expect(screen.getByText("Vistara Hills")).toBeTruthy();
+    expect(screen.getByText("Published")).toBeTruthy();
     expect(screen.getByText("Landed / Terrace")).toBeTruthy();
     expect(onEdit).toHaveBeenCalledTimes(1);
     expect(onDelete).toHaveBeenCalledTimes(1);
@@ -104,6 +105,7 @@ describe("admin portal inspectors", () => {
 
     expect(screen.getByText("Acme Development")).toBeTruthy();
     expect(screen.getByText("Acme Development Sdn Bhd")).toBeTruthy();
+    expect(screen.getAllByText("Featured").length).toBeGreaterThan(1);
     expect(screen.getByText("Active")).toBeTruthy();
     expect(onEdit).toHaveBeenCalledTimes(1);
     expect(onDelete).toHaveBeenCalledTimes(1);
