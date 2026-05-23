@@ -2,7 +2,6 @@
 "use client";
 
 import { useState, Suspense, useEffect } from "react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,8 +11,12 @@ import { Loader2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { AuthStepShell } from "@/components/auth/shared/AuthStepShell";
+import {
+  AuthMethodDivider,
+  AuthModeSwitch,
+  RememberMeCheckbox,
+} from "@/components/auth/shared/AuthPhoneStepParts";
 import { PhoneNumberField } from "@/components/auth/shared/PhoneNumberField";
 import { OTPStep } from "@/components/auth/shared/OTPStep";
 import { ReferralCodeInput } from "@/components/auth/shared/ReferralCodeInput";
@@ -340,12 +343,7 @@ function SignUpFormContent({ isModal = false }: SignUpFormProps) {
       <div className="space-y-5">
         <GoogleSignInButton onClick={handleGoogleSignIn} label="Sign up with Google" />
 
-        <div className="text-muted-foreground relative py-2 text-center text-sm">
-          <span className="bg-background relative z-10 px-2">Or with Phone</span>
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t" />
-          </div>
-        </div>
+        <AuthMethodDivider />
 
         <form onSubmit={handleSubmitPhone(onRequestOtp)}>
           <div className="space-y-4">
@@ -368,19 +366,11 @@ function SignUpFormContent({ isModal = false }: SignUpFormProps) {
               requiredError={termsError}
             />
 
-            <div className="flex items-center space-x-2 py-2">
-              <Checkbox
-                id="signup-remember"
-                checked={isRememberMe}
-                onCheckedChange={(checked) => setIsRememberMe(checked as boolean)}
-              />
-              <Label
-                htmlFor="signup-remember"
-                className="text-muted-foreground cursor-pointer text-sm font-normal"
-              >
-                Keep me logged in
-              </Label>
-            </div>
+            <RememberMeCheckbox
+              id="signup-remember"
+              checked={isRememberMe}
+              onCheckedChange={setIsRememberMe}
+            />
 
             {error && (
               <p className="text-destructive bg-destructive/10 rounded p-2 text-center text-sm">
@@ -395,21 +385,13 @@ function SignUpFormContent({ isModal = false }: SignUpFormProps) {
           </div>
         </form>
 
-        <div className="text-muted-foreground text-center text-sm">
-          Already have an account?{" "}
-          {isModal ? (
-            <button
-              onClick={() => setAuthMode("signin")}
-              className="text-primary font-medium hover:underline focus:outline-none"
-            >
-              Sign In
-            </button>
-          ) : (
-            <Link href="/signin" className="text-primary font-medium">
-              Sign In
-            </Link>
-          )}
-        </div>
+        <AuthModeSwitch
+          prompt="Already have an account?"
+          actionLabel="Sign In"
+          href="/signin"
+          isModal={isModal}
+          onModalSwitch={() => setAuthMode("signin")}
+        />
       </div>
     </AuthStepShell>
   );
