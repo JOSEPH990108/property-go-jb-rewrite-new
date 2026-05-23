@@ -8,9 +8,7 @@ import { z } from "zod";
 import { Loader2 } from "lucide-react";
 import { BaseCard } from "@/components/shared/base-card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { ValidationStatus } from "@/components/shared/ValidationStatus";
+import { ReferralCodeInput } from "@/components/auth/shared/ReferralCodeInput";
 import { useReferralVerification } from "@/hooks/useReferralVerification";
 import { applyReferralOnSignup } from "@/app/actions/referral-actions";
 import { useAsyncAction } from "@/hooks/useAsyncAction";
@@ -77,28 +75,15 @@ export function ReferralCodeCard({ userId }: ReferralCodeCardProps) {
       description="Did someone refer you? Enter their code to link your account."
     >
       <form onSubmit={handleSubmit(onSubmit)} className="max-w-md space-y-4">
-        <div className="space-y-1.5">
-          <Label>Referral Code</Label>
-          <div className="flex gap-2">
-            <Input
-              {...register("referralCode")}
-              placeholder="Enter code"
-              className={status?.valid ? "border-green-500 focus-visible:ring-green-500" : ""}
-            />
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => verify(watchedReferralCode || "")}
-              disabled={isLoading || !watchedReferralCode}
-            >
-              Apply
-            </Button>
-          </div>
-          {status && <ValidationStatus valid={status.valid} message={status.message} />}
-          {errors.referralCode && (
-            <p className="text-destructive text-xs">{errors.referralCode.message}</p>
-          )}
-        </div>
+        <ReferralCodeInput
+          label="Referral Code"
+          inputProps={register("referralCode")}
+          value={watchedReferralCode}
+          onApply={() => verify(watchedReferralCode || "")}
+          isLoading={isLoading}
+          status={status}
+          error={errors.referralCode?.message}
+        />
 
         <Button type="submit" disabled={isLoading || !status?.valid}>
           {isLoading ? <Loader2 className="mr-2 animate-spin" /> : null}
