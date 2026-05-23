@@ -1,9 +1,7 @@
 "use client";
 
-import type { ComponentProps } from "react";
 import { useState, useCallback } from "react";
 import { Building2, X, Info, ChevronDown, ChevronUp } from "lucide-react";
-import { StatusBadge } from "@/components/shared/StatusBadge";
 import { cn } from "@/lib/utils";
 import { formatPrice } from "@/lib/format";
 import type {
@@ -13,36 +11,16 @@ import type {
   FloorRow,
   UnitStatus,
 } from "@/lib/unit-chart-data";
+import {
+  getUnitStatusLabel,
+  UnitAvailabilitySummary,
+  UNIT_STATUS_CELL_CLASS,
+  UNIT_STATUS_SELECTED_RING_CLASS,
+  UnitStatusBadge,
+  UnitStatusLegend,
+} from "@/components/properties/unit-availability/UnitAvailabilityStatus";
 
 // ─── Constants ──────────────────────────────────────────────────────────────
-
-const STATUS_CELL: Record<UnitStatus, string> = {
-  available:
-    "bg-emerald-100 hover:bg-emerald-200 border-emerald-300 text-emerald-800 cursor-pointer dark:bg-emerald-900/40 dark:hover:bg-emerald-800/60 dark:border-emerald-700 dark:text-emerald-200",
-  reserved:
-    "bg-amber-100 hover:bg-amber-200 border-amber-300 text-amber-800 cursor-pointer dark:bg-amber-900/40 dark:hover:bg-amber-800/60 dark:border-amber-700 dark:text-amber-200",
-  sold: "bg-rose-100 border-rose-300 text-rose-700 cursor-pointer dark:bg-rose-900/40 dark:border-rose-700 dark:text-rose-300",
-};
-
-const STATUS_SELECTED_RING: Record<UnitStatus, string> = {
-  available: "ring-2 ring-emerald-500 ring-offset-1",
-  reserved: "ring-2 ring-amber-500 ring-offset-1",
-  sold: "ring-2 ring-rose-500 ring-offset-1",
-};
-
-type UnitStatusTone = NonNullable<ComponentProps<typeof StatusBadge>["tone"]>;
-
-const STATUS_BADGE_TONE: Record<UnitStatus, UnitStatusTone> = {
-  available: "success",
-  reserved: "warning",
-  sold: "danger",
-};
-
-const STATUS_LABEL: Record<UnitStatus, string> = {
-  available: "Available",
-  reserved: "Reserved",
-  sold: "Sold",
-};
 
 // Unique facing-group colours for the header band
 const FACING_GROUP_COLOURS = [
@@ -92,11 +70,11 @@ function UnitButton({
       <button
         type="button"
         onClick={onClick}
-        title={`${cell.unitNo} · ${STATUS_LABEL[cell.status]} · ${cell.sqft.toLocaleString()} sqft`}
+        title={`${cell.unitNo} · ${getUnitStatusLabel(cell.status)} · ${cell.sqft.toLocaleString()} sqft`}
         className={cn(
           "flex h-9 w-14 flex-col items-start justify-center overflow-hidden rounded border px-1.5 transition-all duration-150",
-          STATUS_CELL[cell.status],
-          isSelected && STATUS_SELECTED_RING[cell.status],
+          UNIT_STATUS_CELL_CLASS[cell.status],
+          isSelected && UNIT_STATUS_SELECTED_RING_CLASS[cell.status],
         )}
       >
         <span className="block truncate text-[9px] leading-none font-semibold tracking-tight">
@@ -285,12 +263,7 @@ function UnitDetailPanel({ unit, onClose }: { unit: SelectedUnit; onClose: () =>
             {unit.towerName} · Floor {unit.floor}
           </p>
           <h4 className="text-foreground mt-1 text-2xl font-semibold">Unit {unit.unitNo}</h4>
-          <StatusBadge
-            status={unit.status}
-            label={STATUS_LABEL[unit.status]}
-            tone={STATUS_BADGE_TONE[unit.status]}
-            className="mt-2 px-3 py-1 text-xs tracking-wide uppercase"
-          />
+          <UnitStatusBadge status={unit.status} />
         </div>
 
         <button
@@ -349,39 +322,6 @@ function UnitDetailPanel({ unit, onClose }: { unit: SelectedUnit; onClose: () =>
           </button>
         </div>
       )}
-    </div>
-  );
-}
-
-// ─── Availability summary bar ─────────────────────────────────────────────────
-
-function AvailabilitySummary({ tower }: { tower: TowerAvailability }) {
-  const counts = { available: 0, reserved: 0, sold: 0, total: 0 };
-  for (const row of tower.floors) {
-    if (row.kind !== "residential") continue;
-    for (const cell of row.cells) {
-      if (cell.kind !== "unit") continue;
-      counts[cell.status]++;
-      counts.total++;
-    }
-  }
-
-  const pct = (n: number) => (counts.total ? Math.round((n / counts.total) * 100) : 0);
-
-  return (
-    <div className="flex flex-wrap items-center gap-2 text-xs">
-      <span className="rounded-full bg-emerald-100 px-3 py-1 font-medium text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-200">
-        {counts.available} Available ({pct(counts.available)}%)
-      </span>
-      <span className="rounded-full bg-amber-100 px-3 py-1 font-medium text-amber-800 dark:bg-amber-900/50 dark:text-amber-200">
-        {counts.reserved} Reserved ({pct(counts.reserved)}%)
-      </span>
-      <span className="rounded-full bg-rose-100 px-3 py-1 font-medium text-rose-700 dark:bg-rose-900/50 dark:text-rose-300">
-        {counts.sold} Sold ({pct(counts.sold)}%)
-      </span>
-      <span className="border-border bg-background text-muted-foreground rounded-full border px-3 py-1">
-        {counts.total} total units
-      </span>
     </div>
   );
 }
@@ -476,28 +416,11 @@ export function UnitAvailabilityChart({ data }: { data: ProjectUnitChart }) {
 
           {/* Availability summary */}
           <div className="mt-3">
-            <AvailabilitySummary tower={activeTower} />
+            <UnitAvailabilitySummary tower={activeTower} />
           </div>
 
           {/* Legend */}
-          <div className="text-muted-foreground mt-3 flex flex-wrap items-center gap-4 text-xs">
-            <div className="flex items-center gap-1.5">
-              <span className="h-3 w-7 rounded border border-emerald-300 bg-emerald-100 dark:border-emerald-700 dark:bg-emerald-900/40" />
-              Available
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="h-3 w-7 rounded border border-amber-300 bg-amber-100 dark:border-amber-700 dark:bg-amber-900/40" />
-              Reserved
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="h-3 w-7 rounded border border-rose-300 bg-rose-100 dark:border-rose-700 dark:bg-rose-900/40" />
-              Sold
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="border-border/40 bg-muted/20 h-3 w-7 rounded border border-dashed" />
-              Void / Not applicable
-            </div>
-          </div>
+          <UnitStatusLegend />
 
           {/* Hint for horizontal scroll on mobile */}
           <p className="text-muted-foreground/60 mt-2 text-[10px] italic sm:hidden">
