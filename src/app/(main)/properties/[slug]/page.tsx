@@ -7,12 +7,13 @@ import { getProjectUnitAvailability } from "@/app/actions/unit-availability-acti
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { BedDouble, Bath, Ruler, MapPin, Calendar, CheckCircle2 } from "lucide-react";
+import { MapPin, CheckCircle2 } from "lucide-react";
 import { UnitAvailabilityChart } from "@/components/properties/UnitAvailabilityChart";
 import { ImageGallery } from "@/components/properties/ImageGallery";
 import { ShareButton } from "@/components/properties/ShareButton";
 import { ContactAgentCard } from "@/components/properties/ContactAgentCard";
 import { FavoriteButton } from "@/components/properties/FavoriteButton";
+import { PropertySpecTiles } from "@/components/properties/PropertySpecTiles";
 import { DEMO_PROJECT } from "@/lib/unit-chart-data";
 import { formatPriceRange } from "@/lib/format";
 import { getFavoriteIds } from "@/app/actions/favorite-actions";
@@ -69,12 +70,6 @@ export default async function PropertyPage({ params }: { params: Promise<{ slug:
     projectName: project.displayName || project.name,
   };
 
-  const formatRange = (min: number | null, max: number | null) => {
-    if (!min && !max) return "-";
-    if (min === max) return min;
-    return `${min} - ${max}`;
-  };
-
   return (
     <>
       <JsonLd project={project} />
@@ -126,36 +121,7 @@ export default async function PropertyPage({ params }: { params: Promise<{ slug:
 
             {/* Specs Card */}
             <div className="bg-card border-border rounded-xl border p-6 shadow-sm">
-              <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
-                <div className="bg-muted/50 flex flex-col items-center justify-center rounded-lg p-4">
-                  <BedDouble className="text-primary mb-2 h-6 w-6" />
-                  <span className="text-muted-foreground text-sm">Bedrooms</span>
-                  <span className="text-lg font-semibold">
-                    {formatRange(project.specs.minBedrooms, project.specs.maxBedrooms)}
-                  </span>
-                </div>
-                <div className="bg-muted/50 flex flex-col items-center justify-center rounded-lg p-4">
-                  <Bath className="text-primary mb-2 h-6 w-6" />
-                  <span className="text-muted-foreground text-sm">Bathrooms</span>
-                  <span className="text-lg font-semibold">
-                    {formatRange(project.specs.minBathrooms, project.specs.maxBathrooms)}
-                  </span>
-                </div>
-                <div className="bg-muted/50 flex flex-col items-center justify-center rounded-lg p-4">
-                  <Ruler className="text-primary mb-2 h-6 w-6" />
-                  <span className="text-muted-foreground text-sm">Size (sqft)</span>
-                  <span className="text-lg font-semibold">
-                    {formatRange(project.specs.minSqft, project.specs.maxSqft)}
-                  </span>
-                </div>
-                <div className="bg-muted/50 flex flex-col items-center justify-center rounded-lg p-4">
-                  <Calendar className="text-primary mb-2 h-6 w-6" />
-                  <span className="text-muted-foreground text-sm">Tenure</span>
-                  <span className="text-lg font-semibold">
-                    {project.specs.tenure || "Freehold"}
-                  </span>
-                </div>
-              </div>
+              <PropertySpecTiles specs={project.specs} />
             </div>
 
             {/* Description */}
