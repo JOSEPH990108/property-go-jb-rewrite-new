@@ -5,9 +5,10 @@
 // Used by both SignInForm and SignUpForm to avoid duplicating the OTP UI.
 
 import { Loader2 } from "lucide-react";
+
+import { AuthStepShell } from "@/components/auth/shared/AuthStepShell";
 import { Button } from "@/components/ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import { cn } from "@/lib/utils";
 
 interface OTPStepProps {
   /** The formatted phone number to display (e.g. +60123456789). */
@@ -36,19 +37,18 @@ export function OTPStep({
   isModal = false,
 }: OTPStepProps) {
   return (
-    <div
-      className={cn(
-        "flex min-h-[500px] w-full flex-1 flex-col items-center justify-center",
-        !isModal && "no-scrollbar overflow-y-auto lg:w-1/2",
-      )}
-    >
-      <div className="mx-auto w-full max-w-md space-y-6 px-4 text-center">
-        <h1 className="text-2xl font-semibold">Verify Phone Number</h1>
-        <p className="text-muted-foreground text-sm">
+    <AuthStepShell
+      title="Verify Phone Number"
+      description={
+        <>
           Enter the 6-digit code sent to{" "}
           <span className="text-foreground font-medium">{phoneNumber}</span>
-        </p>
-
+        </>
+      }
+      isModal={isModal}
+      variant="centered"
+    >
+      <div className="space-y-6 text-center">
         <div className="flex justify-center py-6">
           <InputOTP maxLength={6} value={value} onChange={onChange}>
             <InputOTPGroup>
@@ -73,6 +73,6 @@ export function OTPStep({
           {backLabel}
         </button>
       </div>
-    </div>
+    </AuthStepShell>
   );
 }
