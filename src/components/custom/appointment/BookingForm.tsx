@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  
   FormField,
   FormItem,
   FormLabel,
@@ -64,23 +63,23 @@ export function BookingForm({ projectId }: BookingFormProps) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-        const res = await createAppointment({
-            projectId,
-            scheduledAt: values.date,
-            referralCode: values.referralCode,
-            notes: values.notes
-        });
+      const res = await createAppointment({
+        projectId,
+        scheduledAt: values.date,
+        referralCode: values.referralCode,
+        notes: values.notes,
+      });
 
-        if (res.success) {
-            toast.success("Appointment Booked!", { description: "An agent will confirm shortly." });
-            router.push("/appointments");
-        } else {
-            toast.error("Booking Failed", { description: res.error });
-        }
+      if (res.success) {
+        toast.success("Appointment Booked!", { description: "An agent will confirm shortly." });
+        router.push("/appointments");
+      } else {
+        toast.error("Booking Failed", { description: res.error });
+      }
     } catch (error) {
-        toast.error("An unexpected error occurred");
+      toast.error("An unexpected error occurred");
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
   }
 
@@ -100,14 +99,10 @@ export function BookingForm({ projectId }: BookingFormProps) {
                       variant={"outline"}
                       className={cn(
                         "w-full pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground"
+                        !field.value && "text-muted-foreground",
                       )}
                     >
-                      {field.value ? (
-                        format(field.value, "PPP")
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
+                      {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                     </Button>
                   </FormControl>
@@ -117,9 +112,7 @@ export function BookingForm({ projectId }: BookingFormProps) {
                     mode="single"
                     selected={field.value}
                     onSelect={field.onChange}
-                    disabled={(date) =>
-                      date < new Date() || date < new Date("1900-01-01")
-                    }
+                    disabled={(date) => date < new Date() || date < new Date("1900-01-01")}
                     initialFocus
                   />
                 </PopoverContent>
@@ -156,11 +149,7 @@ export function BookingForm({ projectId }: BookingFormProps) {
             <FormItem>
               <FormLabel>Notes</FormLabel>
               <FormControl>
-                <Textarea
-                  placeholder="Any specific requests?"
-                  className="resize-none"
-                  {...field}
-                />
+                <Textarea placeholder="Any specific requests?" className="resize-none" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -168,7 +157,7 @@ export function BookingForm({ projectId }: BookingFormProps) {
         />
 
         <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Booking..." : "Confirm Booking"}
+          {isLoading ? "Booking..." : "Confirm Booking"}
         </Button>
       </form>
     </Form>

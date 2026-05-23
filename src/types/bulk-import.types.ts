@@ -1,4 +1,4 @@
-import { BulkImportEntityType, BulkImportResult } from '@/lib/bulk-import-schema';
+import { BulkImportEntityType, BulkImportResult } from "@/lib/bulk-import-schema";
 
 export type BulkImportEntityConfig = {
   label: string;

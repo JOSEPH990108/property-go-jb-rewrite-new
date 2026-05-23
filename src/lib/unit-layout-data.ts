@@ -40,7 +40,7 @@ function makeFloorUnits(
   lotSizeFrom: number,
   lotSizeStep: number,
   spaFrom: number,
-  spaStep: number
+  spaStep: number,
 ): UnitNode[] {
   const facings = ["North", "South", "East", "West", "North-east", "South-west"];
 
@@ -68,13 +68,21 @@ function makeTower(
   lotSizeFrom: number,
   lotSizeStep: number,
   spaFrom: number,
-  spaStep: number
+  spaStep: number,
 ): ProjectTower {
   const floors = Array.from({ length: floorEnd - floorStart + 1 }, (_, idx) => floorStart + idx)
     .reverse()
     .map((floor) => ({
       floor,
-      units: makeFloorUnits(towerId, floor, unitsPerFloor(floor), lotSizeFrom, lotSizeStep, spaFrom, spaStep),
+      units: makeFloorUnits(
+        towerId,
+        floor,
+        unitsPerFloor(floor),
+        lotSizeFrom,
+        lotSizeStep,
+        spaFrom,
+        spaStep,
+      ),
     }));
 
   return {
@@ -100,7 +108,17 @@ export const unitLayoutProjects: UnitLayoutProject[] = [
     },
     towers: [
       makeTower("A", "Tower A", 8, 32, () => 8, 720, 38, 551000, 12500),
-      makeTower("B", "Tower B", 6, 26, (floor) => (floor % 2 === 0 ? 7 : 6), 740, 42, 568000, 13200),
+      makeTower(
+        "B",
+        "Tower B",
+        6,
+        26,
+        (floor) => (floor % 2 === 0 ? 7 : 6),
+        740,
+        42,
+        568000,
+        13200,
+      ),
       makeTower("C", "Tower C", 5, 20, (floor) => (floor > 12 ? 5 : 6), 780, 46, 595000, 14100),
     ],
   },
@@ -111,13 +129,21 @@ export const unitLayoutProjects: UnitLayoutProject[] = [
     description: "Compact matrix example with two towers and distinct floor densities.",
     source: {
       verifiedTowerBreakdown: false,
-      notes: [
-        "Internal mock data used for demonstrating project-specific tower structures.",
-      ],
+      notes: ["Internal mock data used for demonstrating project-specific tower structures."],
     },
     towers: [
       makeTower("R1", "Riverhaus Tower 1", 10, 30, () => 6, 1080, 30, 798000, 9800),
-      makeTower("R2", "Riverhaus Tower 2", 12, 34, (floor) => (floor > 24 ? 5 : 7), 1020, 28, 782000, 9300),
+      makeTower(
+        "R2",
+        "Riverhaus Tower 2",
+        12,
+        34,
+        (floor) => (floor > 24 ? 5 : 7),
+        1020,
+        28,
+        782000,
+        9300,
+      ),
     ],
   },
 ];

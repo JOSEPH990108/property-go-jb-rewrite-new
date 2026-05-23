@@ -11,7 +11,10 @@ export async function getServerSession() {
   return auth.api.getSession({ headers: await headers() });
 }
 
-type RequireAdminOk = { ok: true; user: typeof user.$inferSelect & { role: { code: string } | null } };
+type RequireAdminOk = {
+  ok: true;
+  user: typeof user.$inferSelect & { role: { code: string } | null };
+};
 type RequireAdminFail = { ok: false; error: string };
 
 /**

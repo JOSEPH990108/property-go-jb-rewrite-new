@@ -1,10 +1,10 @@
 // src\components\custom\feature\DynamicDeck.tsx
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { DeckItem } from '@/types';
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { DeckItem } from "@/types";
 
 interface DynamicDeckProps {
   items: DeckItem[];
@@ -12,7 +12,7 @@ interface DynamicDeckProps {
 
 export default function DynamicDeck({ items }: DynamicDeckProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [direction, setDirection] = useState(0); 
+  const [direction, setDirection] = useState(0);
 
   // Stable random rotations for the "messy" look.
   // We generate one rotation value per item index so it stays consistent.
@@ -37,7 +37,7 @@ export default function DynamicDeck({ items }: DynamicDeckProps) {
   // 1. The Active Card (offset 0)
   // 2. The Next 3 Cards (offset 1, 2, 3) for the visible stack
   const visibleDepth = 4; // How many cards deep to visualize
-  
+
   // Calculate the specific items to show in the stack based on current index
   const visibleItems = Array.from({ length: visibleDepth }).map((_, i) => {
     const itemIndex = (currentIndex + i) % items.length;
@@ -48,20 +48,18 @@ export default function DynamicDeck({ items }: DynamicDeckProps) {
     };
   });
 
-  // Revert the list so the card at the *bottom* of the stack renders first 
+  // Revert the list so the card at the *bottom* of the stack renders first
   // (Standard HTML stacking order: later elements sit on top)
-  // BUT we are using z-index, so we can render in any order. 
+  // BUT we are using z-index, so we can render in any order.
   // Let's keep strict order to help Framer Motion's layout prop.
-  const renderList = [...visibleItems].reverse(); 
+  const renderList = [...visibleItems].reverse();
 
   return (
-    <section className="grid min-h-[600px] w-full grid-cols-1 place-items-center gap-8 bg-background p-8 text-foreground md:grid-cols-[1fr_1fr] md:gap-16 font-sans overflow-hidden">
-      
+    <section className="bg-background text-foreground grid min-h-[600px] w-full grid-cols-1 place-items-center gap-8 overflow-hidden p-8 font-sans md:grid-cols-[1fr_1fr] md:gap-16">
       {/* LEFT COLUMN: The Stack */}
       <div className="relative flex h-96 w-full max-w-sm items-center justify-center">
-        
         {/* We use AnimatePresence to handle the "Flying Out" of the card that leaves */}
-        <AnimatePresence mode='popLayout' custom={direction}>
+        <AnimatePresence mode="popLayout" custom={direction}>
           {renderList.map((item) => {
             const isTop = item.offset === 0;
 
@@ -70,10 +68,8 @@ export default function DynamicDeck({ items }: DynamicDeckProps) {
                 key={item.id} // Important: Key tracks the item across position changes
                 layout // This makes the card smoothly animate from "Stack" position to "Active" position
                 custom={direction}
-                
                 // --- Initial / Animate / Exit states ---
                 initial={isTop ? { opacity: 0, x: direction > 0 ? 100 : -100 } : false} // Only animate entry if it's the NEW active card appearing (edge case), otherwise it relies on layout
-                
                 animate={{
                   zIndex: 100 - item.offset, // Top card has highest Z
                   scale: 1 - item.offset * 0.05, // Items further back are slightly smaller
@@ -82,38 +78,31 @@ export default function DynamicDeck({ items }: DynamicDeckProps) {
                   y: item.offset * -2, // Slight offset up for depth (optional)
                   opacity: 1 - item.offset * 0.1, // Fade out slightly as they go back
                 }}
-
                 exit={{
                   x: direction > 0 ? -400 : 400, // Fly off screen
                   opacity: 0,
                   rotate: direction > 0 ? -20 : 20,
-                  transition: { duration: 0.4 }
+                  transition: { duration: 0.4 },
                 }}
-
                 transition={{
                   type: "spring",
                   stiffness: 260,
                   damping: 20,
                 }}
-
                 className="absolute top-0 left-0 flex h-full w-full items-center justify-center"
-                style={{ 
-                  // If it's not the top card, allow clicks to pass through? 
+                style={{
+                  // If it's not the top card, allow clicks to pass through?
                   // Or let user click stack to advance?
-                  pointerEvents: isTop ? 'auto' : 'none' 
+                  pointerEvents: isTop ? "auto" : "none",
                 }}
               >
                 {/* THE CARD CONTAINER */}
-                <div 
-                  className="relative h-full w-full overflow-hidden rounded-2xl bg-card border border-border shadow-xl"
-                >
+                <div className="bg-card border-border relative h-full w-full overflow-hidden rounded-2xl border shadow-xl">
                   {/* Render the actual content (Tiger image, etc) */}
                   {item.cardContent}
 
                   {/* Optional: Dark overlay for stack items to add depth */}
-                  {!isTop && (
-                    <div className="absolute inset-0 bg-black/30 transition-colors" />
-                  )}
+                  {!isTop && <div className="absolute inset-0 bg-black/30 transition-colors" />}
                 </div>
               </motion.div>
             );
@@ -122,13 +111,12 @@ export default function DynamicDeck({ items }: DynamicDeckProps) {
       </div>
 
       {/* RIGHT COLUMN: Info & Controls */}
-      <div className="flex w-full flex-col justify-center space-y-8 md:max-w-md z-10">
-        
+      <div className="z-10 flex w-full flex-col justify-center space-y-8 md:max-w-md">
         {/* Counter */}
-        <div className="text-right text-4xl font-bold text-muted-foreground">
-           <span className="text-accent">{currentIndex + 1}</span>
-           <span className="text-2xl text-muted-foreground mx-2">/</span>
-           <span>{items.length}</span>
+        <div className="text-muted-foreground text-right text-4xl font-bold">
+          <span className="text-accent">{currentIndex + 1}</span>
+          <span className="text-muted-foreground mx-2 text-2xl">/</span>
+          <span>{items.length}</span>
         </div>
 
         {/* Dynamic Text Content */}
@@ -151,21 +139,20 @@ export default function DynamicDeck({ items }: DynamicDeckProps) {
         <div className="flex items-center gap-6 pt-4">
           <button
             onClick={handlePrev}
-            className="group flex h-16 w-16 items-center justify-center rounded-full bg-card border border-border text-primary transition-all hover:bg-primary hover:text-primary-foreground hover:border-transparent active:scale-95"
+            className="group bg-card border-border text-primary hover:bg-primary hover:text-primary-foreground flex h-16 w-16 items-center justify-center rounded-full border transition-all hover:border-transparent active:scale-95"
             aria-label="Previous"
           >
             <ArrowLeft className="h-6 w-6" />
           </button>
-          
+
           <button
             onClick={handleNext}
-            className="group flex h-16 w-16 items-center justify-center rounded-full bg-card border border-border text-primary transition-all hover:bg-primary hover:text-primary-foreground hover:border-transparent active:scale-95"
+            className="group bg-card border-border text-primary hover:bg-primary hover:text-primary-foreground flex h-16 w-16 items-center justify-center rounded-full border transition-all hover:border-transparent active:scale-95"
             aria-label="Next"
           >
             <ArrowRight className="h-6 w-6" />
           </button>
         </div>
-
       </div>
     </section>
   );

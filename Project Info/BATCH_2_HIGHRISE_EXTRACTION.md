@@ -2,6 +2,7 @@
 
 Date scanned: 2026-04-30
 Projects covered:
+
 - IIB Elmora
 - M Grand Minori
 - Paragon Signature Suites
@@ -9,6 +10,7 @@ Projects covered:
 ## 1) IIB Elmora / Elmora Condominium
 
 ### Project profile
+
 - Project name shown: Elmora Condominium
 - Also referenced in pricing sheets as: Pangsapuri Iskandar Perdana
 - Developer: Shiya Development Sdn. Bhd. (Co. Reg. No. 1214347-A)
@@ -22,6 +24,7 @@ Projects covered:
 - Brochure update date shown: 10 November 2025
 
 ### Unit mix and built-up
+
 - Block A:
   - Type A: 3+1 Bedrooms, 3 Bathrooms, 1,000 sqft, 505 units
   - Type A1: 3+1 Bedrooms, 3 Bathrooms, 1,208 sqft, 11 units
@@ -33,6 +36,7 @@ Projects covered:
   - Type A1: 22 units
 
 ### Layout notes
+
 - Type A plan shown as 3+1 Bedrooms, 3 Bathrooms, 1,000 sqft / 92.90 sqm.
 - Type A spaces shown: living, dining, kitchen, yard, master bedroom, bedroom 2, bedroom 3, study room, 3 baths, balcony.
 - Type A1 plan shown as 3+1 Bedrooms, 3 Bathrooms, 1,208 sqft / 112.22 sqm.
@@ -44,6 +48,7 @@ Projects covered:
   - Levels 19-25 reduce some stacks again toward top floors.
 
 ### Facilities
+
 - Level 4 facilities deck legend lists 29 items:
   - Swimming pool
   - Kids wading / fun pool
@@ -76,11 +81,13 @@ Projects covered:
   - Event terrace
 
 ### Key selling points noted
+
 - Connectivity: strategically located with easy access to Tuas Second Link.
 - Easy access to shopping malls, hospitals and schools.
 - Wide range of facilities catered to all age groups.
 
 ### Nearby amenities observed
+
 - Shopping:
   - Mall of Medini 7.3 km
   - Lotus's Bukit Indah 8.8 km
@@ -113,6 +120,7 @@ Projects covered:
   - Tuas Checkpoint 11.0 km
 
 ### Pricing and package pattern observed
+
 - Sales sheets for both blocks show a consistent 9% rebate structure.
 - Pricing sheets classify units by:
   - Type A or A1
@@ -138,12 +146,14 @@ Projects covered:
   - Total nett value: RM272,516,756.33
 
 ### Stock / availability snapshot
+
 - Pricing sheets include unit-level status flags with several units marked unavailable while many others remain available.
 - The reviewed image set did not show a clean consolidated booked/approved/signed total, so this extraction keeps availability at pattern level rather than a final counted total.
 
 ## 2) M Grand Minori
 
 ### Project profile
+
 - Project: M Grand Minori
 - Developer: Dsara Sentral Sdn Bhd
 - Type of development: Serviced Apartment
@@ -160,6 +170,7 @@ Projects covered:
 - Maintenance fee estimate: RM0.40 psf (excluding sinking fund)
 
 ### Phase / tower composition
+
 - Phase 1:
   - Tower A: 843 units
   - Tower B: 890 units (future)
@@ -168,6 +179,7 @@ Projects covered:
 - Phase 2: to be confirmed
 
 ### Unit mix and built-up
+
 - Overall built-up range shown: 403 sqft to 835 sqft
 - Detailed unit mix table for Tower A & B:
   - Type A: Studio, 403 sqft, 94 units, 1 car park
@@ -177,6 +189,7 @@ Projects covered:
   - Type E: 3 Bedroom + 2 Bathroom (Dual Key), 835 sqft, 376 units, 2 car parks
 
 ### Layout notes
+
 - Type A: studio, 403 sqft.
 - Type B: 1 bedroom, 1 bath, 496 sqft.
 - Type C: 1 bedroom, 2 bath dual key, 624 sqft.
@@ -186,6 +199,7 @@ Projects covered:
 - Tower A typical layouts shown for levels 13-33, 35-37, 39-43 and 45-59, with special stack changes on levels 34, 38 and 44.
 
 ### Project features
+
 - Resident-centric services:
   - Concierge support
   - Parcel management
@@ -204,6 +218,7 @@ Projects covered:
   - Eco-conscious design with GreenRE certification
 
 ### Facilities
+
 - Facilities plan lists 41 items grouped into several categories.
 - Water and wellness:
   - 1.35m lap pool
@@ -252,6 +267,7 @@ Projects covered:
   - Childcare room
 
 ### Nearby amenities observed
+
 - Checkpoints and public transport:
   - Johor Causeway / CIQ 4.7 km
   - Second Link / ICQS 40.9 km
@@ -283,6 +299,7 @@ Projects covered:
   - Hospital Sultanah Aminah 5.7 km
 
 ### Pricing summary observed
+
 - Reviewed pricing summary is explicitly for Phase 1, Tower A.
 - Non-Bumi indicative ranges:
   - Type A (403 sqft): RM390,000 to RM400,000
@@ -304,6 +321,7 @@ Projects covered:
   - Total Tower A units: 843
 
 ### Sales support shown
+
 - Panel lawyer list included in brochure.
 - End-financing banks shown:
   - Maybank
@@ -317,11 +335,13 @@ Projects covered:
   - MBSB Bank
 
 ### Notes
+
 - The image set reviewed does not show an explicit rebate or freebie campaign page for M Grand Minori beyond the Tower A indicative price summary, so this extraction keeps pricing at the quoted min/max range level.
 
 ## 3) Paragon Signature Suites
 
 ### Project profile
+
 - Project: Paragon Signature Suites
 - Developer: Paragon Urban Sdn Bhd
 - Additional logo shown in one data sheet: SP Sam Property Sdn Bhd
@@ -342,6 +362,7 @@ Projects covered:
 - Completion shown in one sheet: Q2 2029
 
 ### Unit mix and built-up
+
 - Two unit types only:
   - Type A: 646 sqft, 1+1 bedroom, 1 bathroom, balcony
   - Type B: 649 sqft, 1 bedroom, 1 bathroom, balcony
@@ -355,6 +376,7 @@ Projects covered:
   - numbering excludes unit numbers 4, 14 and 24
 
 ### Orientation and building notes
+
 - Orientation shown:
   - NW: Johor Golf and Country Club view
   - SE: Singapore view
@@ -369,6 +391,7 @@ Projects covered:
 - Remark shown: Green Building / GreenRE position
 
 ### Facilities
+
 - Proposed facilities for Level 9:
   - Kids room
   - Male toilet
@@ -399,6 +422,7 @@ Projects covered:
   - Co-office
 
 ### Nearby amenities observed
+
 - Daily convenience near site:
   - Famous Cafe 0.1 km
   - Mamak 0.1 km
@@ -434,6 +458,7 @@ Projects covered:
   - Paradigm Mall JB 12.5 km
 
 ### Unique selling points noted
+
 - 484 signature units
 - 88 exclusive units positioned for single dwellers
 - Partially furnished
@@ -444,6 +469,7 @@ Projects covered:
 - Sustainable living with GreenRE certification
 
 ### Package / campaign terms observed
+
 - Booking fee: RM1,000 (fully refund)
 - Main fee estimate: RM0.35 to RM0.40 / sqft including sinking fund
 - Packages shown:
@@ -456,6 +482,7 @@ Projects covered:
   - Cash buyer gets extra 3% rebate if settled within 60 days
 
 ### Furnishing / fit-out notes
+
 - Type A package shown:
   - Hot and cold water heater for shower (no shower screen)
   - Bedroom wardrobe with box up
@@ -477,6 +504,7 @@ Projects covered:
   - Type B master bedroom with SPC floor tiles
 
 ### Pricing and stock pattern observed
+
 - Unit-level sales sheet shows columns for:
   - Unit number
   - Type
@@ -506,6 +534,7 @@ Projects covered:
   - Reviewed stock sheets cover units from Level 11 up to Level 32.
 
 ## Notes
+
 - This batch focuses on decision-useful summary data: project fundamentals, unit mix, facilities, pricing bands, campaign terms, and stock patterns.
 - IIB Elmora image set provided dense unit pricing sheets but no clean final aggregate stock total in the reviewed pages, so availability is summarized qualitatively.
 - M Grand Minori pricing in the reviewed set is the Tower A summary page rather than a full unit-by-unit stock list.

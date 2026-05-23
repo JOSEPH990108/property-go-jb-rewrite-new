@@ -2,6 +2,7 @@
 description: "Use when writing or updating unit tests, E2E tests, or test utilities. Covers Vitest, Testing Library, and Playwright patterns."
 applyTo: ["tests/**", "**/*.test.ts", "**/*.test.tsx"]
 ---
+
 # Testing Conventions
 
 - Unit tests live in `tests/` directory, mirroring `src/` structure

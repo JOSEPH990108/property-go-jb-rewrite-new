@@ -91,9 +91,7 @@ export function UserInfoCard({ user }: UserInfoCardProps) {
           trigger={
             <Button variant="outline" size="sm" className="h-8 gap-1">
               <Edit2 className="h-3.5 w-3.5" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                Edit Details
-              </span>
+              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Edit Details</span>
             </Button>
           }
         >
@@ -113,9 +111,11 @@ export function UserInfoCard({ user }: UserInfoCardProps) {
             />
 
             <div className="grid gap-2">
-                <FormLabel>Email</FormLabel>
-                <Input value={user.email || ""} disabled readOnly className="bg-muted" />
-                <p className="text-[0.8rem] text-muted-foreground">Email cannot be changed directly.</p>
+              <FormLabel>Email</FormLabel>
+              <Input value={user.email || ""} disabled readOnly className="bg-muted" />
+              <p className="text-muted-foreground text-[0.8rem]">
+                Email cannot be changed directly.
+              </p>
             </div>
           </Form>
         </FormDialog>
@@ -124,31 +124,31 @@ export function UserInfoCard({ user }: UserInfoCardProps) {
       {/* Basic Info */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-1">
-          <p className="text-sm font-medium text-muted-foreground">Name</p>
+          <p className="text-muted-foreground text-sm font-medium">Name</p>
           <p className="text-sm font-semibold">{user.name || "Not set"}</p>
         </div>
         <div className="space-y-1">
-          <p className="text-sm font-medium text-muted-foreground">Email</p>
+          <p className="text-muted-foreground text-sm font-medium">Email</p>
           <p className="text-sm font-semibold break-all">{user.email || "Not set"}</p>
         </div>
       </div>
 
       <div className="border-t pt-4">
-          <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-medium text-muted-foreground">Phone Number</p>
-              <PhoneVerificationModal
-                  currentPhoneNumber={user.phoneNumber}
-                  onSuccess={() => {
-                      router.refresh();
-                  }}
-              />
-          </div>
-          <p className="text-sm font-semibold">{user.phoneNumber || "Not set"}</p>
+        <div className="mb-2 flex items-center justify-between">
+          <p className="text-muted-foreground text-sm font-medium">Phone Number</p>
+          <PhoneVerificationModal
+            currentPhoneNumber={user.phoneNumber}
+            onSuccess={() => {
+              router.refresh();
+            }}
+          />
+        </div>
+        <p className="text-sm font-semibold">{user.phoneNumber || "Not set"}</p>
       </div>
 
       {/* Linked Accounts Section */}
       <div className="border-t pt-4">
-           <LinkedAccounts />
+        <LinkedAccounts />
       </div>
     </BaseCard>
   );

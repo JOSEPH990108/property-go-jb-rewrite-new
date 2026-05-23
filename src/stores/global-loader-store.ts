@@ -1,5 +1,5 @@
 // src\store\global-loader-store.ts
-import { create } from 'zustand';
+import { create } from "zustand";
 
 interface GlobalLoaderState {
   isVisible: boolean;
@@ -15,12 +15,12 @@ export const useGlobalLoaderStore = create<GlobalLoaderState>((set) => ({
   isVisible: false,
   title: null,
   message: null,
-  
+
   show: (title = "Loading...", message = "Please wait a moment.") =>
     set({ isVisible: true, title, message }),
-    
+
   hide: () => set({ isVisible: false }),
-  
+
   // Allows changing the text smoothly while loader is already visible
   update: (title, message) => set({ title, message }),
 }));

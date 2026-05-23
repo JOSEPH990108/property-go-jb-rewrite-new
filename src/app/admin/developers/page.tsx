@@ -12,7 +12,7 @@ const columns: ColumnDef<DeveloperTableRow>[] = [
     header: "Featured",
     accessorKey: "featured",
     cell: ({ getValue }) => (
-      <span className="rounded-full border border-accent/20 bg-accent/12 px-3 py-1 text-xs font-medium text-accent">
+      <span className="border-accent/20 bg-accent/12 text-accent rounded-full border px-3 py-1 text-xs font-medium">
         {String(getValue())}
       </span>
     ),

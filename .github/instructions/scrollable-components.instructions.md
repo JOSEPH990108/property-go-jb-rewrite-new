@@ -21,15 +21,13 @@ Let the browser scroll. Use `overflow-y-auto` only if you need to constrain a **
 ```tsx
 // Wizard, multi-step form, tall admin page
 <div>
-  <div className="sticky top-0 z-10 bg-[#090d1a] border-b border-white/10 px-6 py-4">
+  <div className="sticky top-0 z-10 border-b border-white/10 bg-[#090d1a] px-6 py-4">
     {/* sticky header */}
   </div>
 
-  <div className="mx-auto max-w-5xl px-6 py-8">
-    {/* main content — scrolls with the page */}
-  </div>
+  <div className="mx-auto max-w-5xl px-6 py-8">{/* main content — scrolls with the page */}</div>
 
-  <div className="sticky bottom-0 z-10 bg-[#090d1a] border-t border-white/10 px-6 py-4">
+  <div className="sticky bottom-0 z-10 border-t border-white/10 bg-[#090d1a] px-6 py-4">
     {/* sticky footer / nav buttons */}
   </div>
 </div>
@@ -40,9 +38,7 @@ Let the browser scroll. Use `overflow-y-auto` only if you need to constrain a **
 Use a plain `div` with explicit height + `overflow-y-auto`:
 
 ```tsx
-<div className="h-[400px] overflow-y-auto">
-  {/* list items, logs, etc. */}
-</div>
+<div className="h-[400px] overflow-y-auto">{/* list items, logs, etc. */}</div>
 ```
 
 ### ✅ ScrollArea (Radix) — only for these cases
@@ -51,10 +47,10 @@ Use `ScrollArea` only when you need a **custom-styled scrollbar overlay** inside
 
 ```tsx
 // e.g. sidebar nav, command palette list, mini data table
-<div className="h-[600px]">           {/* ← fixed height MUST be on parent */}
-  <ScrollArea className="h-full">
-    {items}
-  </ScrollArea>
+<div className="h-[600px]">
+  {" "}
+  {/* ← fixed height MUST be on parent */}
+  <ScrollArea className="h-full">{items}</ScrollArea>
 </div>
 ```
 

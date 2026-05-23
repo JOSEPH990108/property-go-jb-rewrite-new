@@ -24,11 +24,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { authClient } from "@/lib/auth-client";
 import { Loader2, Phone } from "lucide-react";
 import parsePhoneNumber from "libphonenumber-js";
@@ -152,40 +148,34 @@ export function PhoneVerificationModal({
 
         {step === "PHONE" && (
           <Form {...phoneForm}>
-            <form
-              onSubmit={phoneForm.handleSubmit(onSendOtp)}
-              className="space-y-4"
-            >
+            <form onSubmit={phoneForm.handleSubmit(onSendOtp)} className="space-y-4">
               <div className="flex gap-2">
-                  <FormField
-                    control={phoneForm.control}
-                    name="country"
-                    render={({ field }) => (
-                      <FormItem className="flex-shrink-0 w-[120px]">
-                        <FormLabel>Country</FormLabel>
-                        <FormControl>
-                          <CountrySelect
-                            value={field.value}
-                            onChange={field.onChange}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={phoneForm.control}
-                    name="phoneNumber"
-                    render={({ field }) => (
-                      <FormItem className="flex-grow">
-                        <FormLabel>Phone Number</FormLabel>
-                        <FormControl>
-                          <Input placeholder="123456789" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                <FormField
+                  control={phoneForm.control}
+                  name="country"
+                  render={({ field }) => (
+                    <FormItem className="w-[120px] flex-shrink-0">
+                      <FormLabel>Country</FormLabel>
+                      <FormControl>
+                        <CountrySelect value={field.value} onChange={field.onChange} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={phoneForm.control}
+                  name="phoneNumber"
+                  render={({ field }) => (
+                    <FormItem className="flex-grow">
+                      <FormLabel>Phone Number</FormLabel>
+                      <FormControl>
+                        <Input placeholder="123456789" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
 
               <Button type="submit" className="w-full" disabled={isLoading}>
@@ -198,10 +188,7 @@ export function PhoneVerificationModal({
 
         {step === "OTP" && (
           <Form {...otpForm}>
-            <form
-              onSubmit={otpForm.handleSubmit(onVerifyOtp)}
-              className="space-y-4"
-            >
+            <form onSubmit={otpForm.handleSubmit(onVerifyOtp)} className="space-y-4">
               <FormField
                 control={otpForm.control}
                 name="otp"

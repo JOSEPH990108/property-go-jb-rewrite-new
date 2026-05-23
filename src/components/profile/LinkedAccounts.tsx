@@ -23,7 +23,11 @@ export function LinkedAccounts() {
     return { success: false, error: "Failed to fetch account methods" };
   }, []);
 
-  const { data: accountMethods, isLoading, refetch } = useServerQuery<{
+  const {
+    data: accountMethods,
+    isLoading,
+    refetch,
+  } = useServerQuery<{
     google: boolean;
     hasPassword: boolean;
     phone: boolean;
@@ -52,10 +56,13 @@ export function LinkedAccounts() {
     const hasOtherMethods = accountMethods?.hasPassword || accountMethods?.phone;
 
     if (!hasOtherMethods) {
-        toast.error("You cannot disconnect your only login method. Please add a password or verified phone number first, or delete your account.", {
-            duration: 5000,
-        });
-        return;
+      toast.error(
+        "You cannot disconnect your only login method. Please add a password or verified phone number first, or delete your account.",
+        {
+          duration: 5000,
+        },
+      );
+      return;
     }
 
     setShowUnlinkModal(true);
@@ -64,19 +71,19 @@ export function LinkedAccounts() {
   const confirmUnlink = async () => {
     setIsUnlinking(true);
     try {
-        const res = await unlinkGoogleAccount();
-        if (res.success) {
-            toast.success("Google account disconnected successfully");
-            await refetch();
-            setShowUnlinkModal(false);
-        } else {
-            toast.error(res.error || "Failed to disconnect Google account");
-        }
+      const res = await unlinkGoogleAccount();
+      if (res.success) {
+        toast.success("Google account disconnected successfully");
+        await refetch();
+        setShowUnlinkModal(false);
+      } else {
+        toast.error(res.error || "Failed to disconnect Google account");
+      }
     } catch (err) {
-        console.error(err);
-        toast.error("An unexpected error occurred");
+      console.error(err);
+      toast.error("An unexpected error occurred");
     } finally {
-        setIsUnlinking(false);
+      setIsUnlinking(false);
     }
   };
 
@@ -89,12 +96,12 @@ export function LinkedAccounts() {
       {/* GOOGLE LINK */}
       <div className="flex items-center justify-between rounded-lg border p-4">
         <div className="flex items-center gap-3">
-           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
-             <span className="font-bold text-muted-foreground">G</span>
-           </div>
+          <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-full">
+            <span className="text-muted-foreground font-bold">G</span>
+          </div>
           <div>
             <p className="font-medium">Google</p>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               {isGoogleLinked
                 ? "Your Google account is connected."
                 : "Link your Google account for easier login"}
@@ -103,45 +110,45 @@ export function LinkedAccounts() {
         </div>
 
         {isLoading ? (
-             <Button variant="ghost" disabled size="icon">
-                <Loader2 className="h-4 w-4 animate-spin" />
-             </Button>
+          <Button variant="ghost" disabled size="icon">
+            <Loader2 className="h-4 w-4 animate-spin" />
+          </Button>
         ) : (
-            <Button
+          <Button
             variant={isGoogleLinked ? "secondary" : "outline"}
             onClick={isGoogleLinked ? handleDisconnectClick : handleLinkGoogle}
             disabled={isLinking || isUnlinking}
             className={
-                isGoogleLinked
-                ? "relative overflow-hidden group hover:bg-destructive hover:text-destructive-foreground transition-colors"
+              isGoogleLinked
+                ? "group hover:bg-destructive hover:text-destructive-foreground relative overflow-hidden transition-colors"
                 : ""
             }
-            >
+          >
             {isLinking ? (
-                <>
+              <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Connecting...
-                </>
+              </>
             ) : isUnlinking ? (
-                <>
+              <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Disconnecting...
-                </>
+              </>
             ) : isGoogleLinked ? (
-                <>
-                 <span className="flex items-center group-hover:hidden">
-                    <Check className="mr-2 h-4 w-4" />
-                    Connected
-                 </span>
-                 <span className="hidden items-center group-hover:flex">
-                    <X className="mr-2 h-4 w-4" />
-                    Disconnect
-                 </span>
-                </>
+              <>
+                <span className="flex items-center group-hover:hidden">
+                  <Check className="mr-2 h-4 w-4" />
+                  Connected
+                </span>
+                <span className="hidden items-center group-hover:flex">
+                  <X className="mr-2 h-4 w-4" />
+                  Disconnect
+                </span>
+              </>
             ) : (
-                "Connect"
+              "Connect"
             )}
-            </Button>
+          </Button>
         )}
       </div>
 

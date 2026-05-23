@@ -36,19 +36,12 @@ export function ReferralCodeInput({
           placeholder="Enter code"
           className={status?.valid ? "border-green-500 focus-visible:ring-green-500" : ""}
         />
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onApply}
-          disabled={isLoading || !value}
-        >
+        <Button type="button" variant="outline" onClick={onApply} disabled={isLoading || !value}>
           Apply
         </Button>
       </div>
 
-      {status && (
-        <ValidationStatus valid={status.valid} message={status.message} />
-      )}
+      {status && <ValidationStatus valid={status.valid} message={status.message} />}
     </div>
   );
 }

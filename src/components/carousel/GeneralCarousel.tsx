@@ -15,11 +15,7 @@ interface CarouselProps {
   scrollStep?: number;
 }
 
-export default function Carousel({
-  children,
-  className,
-  scrollStep = 320,
-}: CarouselProps) {
+export default function Carousel({ children, className, scrollStep = 320 }: CarouselProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -90,18 +86,17 @@ export default function Carousel({
   };
 
   return (
-    <div className={cn("relative w-full py-10 px-4", className)}>
+    <div className={cn("relative w-full px-4 py-10", className)}>
       {/* Container Wrapper - Constrained to approx 4 items width (1240px) */}
-      <div className="relative group/carousel max-w-[1240px] mx-auto">
-        
+      <div className="group/carousel relative mx-auto max-w-[1240px]">
         {/* Left Arrow - Only render if we can scroll left & hidden on mobile */}
         {canScrollLeft && (
           <button
             onClick={() => scroll("left")}
-            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-30 w-12 h-12 rounded-full shadow-md items-center justify-center transition-all duration-300 opacity-0 group-hover/carousel:opacity-100 disabled:opacity-0 focus:outline-none bg-card border border-border text-muted-foreground hover:text-accent hover:border-accent hover:scale-110"
+            className="bg-card border-border text-muted-foreground hover:text-accent hover:border-accent absolute top-1/2 left-0 z-30 hidden h-12 w-12 -translate-x-4 -translate-y-1/2 items-center justify-center rounded-full border opacity-0 shadow-md transition-all duration-300 group-hover/carousel:opacity-100 hover:scale-110 focus:outline-none disabled:opacity-0 md:flex"
             aria-label="Scroll left"
           >
-            <ChevronLeft className="w-6 h-6" />
+            <ChevronLeft className="h-6 w-6" />
           </button>
         )}
 
@@ -109,10 +104,10 @@ export default function Carousel({
         {canScrollRight && (
           <button
             onClick={() => scroll("right")}
-            className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-30 w-12 h-12 rounded-full shadow-md items-center justify-center transition-all duration-300 opacity-0 group-hover/carousel:opacity-100 disabled:opacity-0 focus:outline-none bg-card border border-border text-muted-foreground hover:text-accent hover:border-accent hover:scale-110"
+            className="bg-card border-border text-muted-foreground hover:text-accent hover:border-accent absolute top-1/2 right-0 z-30 hidden h-12 w-12 translate-x-4 -translate-y-1/2 items-center justify-center rounded-full border opacity-0 shadow-md transition-all duration-300 group-hover/carousel:opacity-100 hover:scale-110 focus:outline-none disabled:opacity-0 md:flex"
             aria-label="Scroll right"
           >
-            <ChevronRight className="w-6 h-6" />
+            <ChevronRight className="h-6 w-6" />
           </button>
         )}
 
@@ -124,8 +119,8 @@ export default function Carousel({
           onMouseUp={handleMouseUp}
           onMouseMove={handleMouseMove}
           className={cn(
-            "overflow-x-auto px-4 py-12 scrollbar-hide scroll-smooth",
-            isDragging ? "cursor-grabbing select-none" : "cursor-grab"
+            "scrollbar-hide overflow-x-auto scroll-smooth px-4 py-12",
+            isDragging ? "cursor-grabbing select-none" : "cursor-grab",
           )}
           style={{
             scrollbarWidth: "none", // Firefox
@@ -133,9 +128,7 @@ export default function Carousel({
           }}
         >
           {/* Inner Layout Container for Centering */}
-          <div className="flex min-w-full w-max justify-center items-center gap-6">
-            {children}
-          </div>
+          <div className="flex w-max min-w-full items-center justify-center gap-6">{children}</div>
         </div>
       </div>
     </div>

@@ -36,10 +36,10 @@ export interface DeckItem {
 // --- Property & Real Estate Specifics ---
 
 export interface PropertySpecs {
-  area: string;      // e.g. "2,500 sqft"
-  rooms: string | number;     // e.g. "4 Beds" or 4
+  area: string; // e.g. "2,500 sqft"
+  rooms: string | number; // e.g. "4 Beds" or 4
   bathrooms?: string | number; // e.g. "3 Baths" or 3
-  color?: string;    // e.g. "White", "Beige"
+  color?: string; // e.g. "White", "Beige"
   [key: string]: string | number | undefined; // Allow flexible specs for different property types
 }
 

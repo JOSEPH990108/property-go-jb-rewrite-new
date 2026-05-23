@@ -8,12 +8,14 @@ import { Pagination } from "@/components/shared/Pagination";
 
 export const metadata: Metadata = {
   title: "Properties for Sale in Johor Bahru | PropertyGoJB",
-  description: "Browse our curated list of premier properties in Johor Bahru, Bukit Indah, and surrounding areas. Find your dream home or investment opportunity today.",
+  description:
+    "Browse our curated list of premier properties in Johor Bahru, Bukit Indah, and surrounding areas. Find your dream home or investment opportunity today.",
   openGraph: {
     title: "Properties for Sale in Johor Bahru | PropertyGoJB",
-    description: "Browse our curated list of premier properties in Johor Bahru, Bukit Indah, and surrounding areas.",
+    description:
+      "Browse our curated list of premier properties in Johor Bahru, Bukit Indah, and surrounding areas.",
     type: "website",
-  }
+  },
 };
 
 export default async function PropertiesPage({
@@ -34,7 +36,7 @@ export default async function PropertiesPage({
   const typeId = params.typeId;
   const regionId = params.regionId;
   const search = params.search;
-  const sort = (params.sort as 'newest' | 'oldest' | 'name_asc' | 'name_desc') || 'newest';
+  const sort = (params.sort as "newest" | "oldest" | "name_asc" | "name_desc") || "newest";
 
   const [{ data, totalPages }, lookups, favoriteIds] = await Promise.all([
     getProperties({ page, limit: 9, categoryId, typeId, regionId, search, sort }),
@@ -43,18 +45,19 @@ export default async function PropertiesPage({
   ]);
 
   return (
-    <div className="container py-10 min-h-screen">
+    <div className="container min-h-screen py-10">
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-2 pt-20 md:pt-10">
-            <h1 className="text-4xl font-serif font-bold tracking-tight">Discover Properties</h1>
-            <p className="text-muted-foreground text-lg max-w-2xl">
-                Explore our exclusive collection of residential and commercial properties in Johor&apos;s most prime locations.
-            </p>
+          <h1 className="font-serif text-4xl font-bold tracking-tight">Discover Properties</h1>
+          <p className="text-muted-foreground max-w-2xl text-lg">
+            Explore our exclusive collection of residential and commercial properties in
+            Johor&apos;s most prime locations.
+          </p>
         </div>
 
         <PropertyFilters
-          categories={lookups.categories.map(c => ({ id: c.id, name: c.name }))}
-          types={lookups.types.map(t => ({ id: t.id, name: t.name }))}
+          categories={lookups.categories.map((c) => ({ id: c.id, name: c.name }))}
+          types={lookups.types.map((t) => ({ id: t.id, name: t.name }))}
         />
 
         <PropertyGrid projects={data} favoriteIds={favoriteIds} />

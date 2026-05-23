@@ -1,9 +1,9 @@
 // src\components\shared\PropertyStoreHydrator.tsx
 "use client";
 
-import { useRef } from 'react';
-import { usePropertyStore } from '@/stores/property-store';
-import { PropertyData } from '@/app/actions/property-actions';
+import { useRef } from "react";
+import { usePropertyStore } from "@/stores/property-store";
+import { PropertyData } from "@/app/actions/property-actions";
 
 export function PropertyStoreHydrator({ data }: { data: PropertyData | null }) {
   const initialized = useRef(false);

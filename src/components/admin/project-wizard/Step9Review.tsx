@@ -37,7 +37,18 @@ function ReviewCard({ title, count, items }: { title: string; count: number; ite
 }
 
 export function Step9Review({ data, onSubmit, isSubmitting }: Props) {
-  const { project, phases, towers, layouts, facingGroups, stacks, specialFloors, salesPackages, nearbyPlaces, pricingSnapshots } = data;
+  const {
+    project,
+    phases,
+    towers,
+    layouts,
+    facingGroups,
+    stacks,
+    specialFloors,
+    salesPackages,
+    nearbyPlaces,
+    pricingSnapshots,
+  } = data;
 
   return (
     <div>
@@ -47,8 +58,8 @@ export function Step9Review({ data, onSubmit, isSubmitting }: Props) {
       />
 
       {/* Project summary banner */}
-      <div className="mb-6 rounded-xl border border-primary/30 bg-primary/10 p-4">
-        <p className="text-sm font-semibold text-primary">{project.name || "(unnamed)"}</p>
+      <div className="border-primary/30 bg-primary/10 mb-6 rounded-xl border p-4">
+        <p className="text-primary text-sm font-semibold">{project.name || "(unnamed)"}</p>
         <p className="mt-1 text-xs text-white/60">
           Slug: <span className="font-mono text-white/80">{project.slug || "—"}</span> &nbsp;·&nbsp;
           {project.totalUnits ? `${project.totalUnits} total units` : "units TBD"} &nbsp;·&nbsp;
@@ -65,12 +76,18 @@ export function Step9Review({ data, onSubmit, isSubmitting }: Props) {
         <ReviewCard
           title="Towers"
           count={towers.length}
-          items={towers.map((t) => `${t.towerNumber} — ${t.floorCount || "?"} floors (${t.floorMin || "?"}–${t.floorMax || "?"})`)}
+          items={towers.map(
+            (t) =>
+              `${t.towerNumber} — ${t.floorCount || "?"} floors (${t.floorMin || "?"}–${t.floorMax || "?"})`,
+          )}
         />
         <ReviewCard
           title="Layouts"
           count={layouts.length}
-          items={layouts.map((l) => `${l.code} — ${l.builtUpSqft} sqft, ${l.bedrooms}br${l.isDualKey ? " (DK)" : ""}`)}
+          items={layouts.map(
+            (l) =>
+              `${l.code} — ${l.builtUpSqft} sqft, ${l.bedrooms}br${l.isDualKey ? " (DK)" : ""}`,
+          )}
         />
         <ReviewCard
           title="Facing Groups"
@@ -85,22 +102,31 @@ export function Step9Review({ data, onSubmit, isSubmitting }: Props) {
         <ReviewCard
           title="Special Floors"
           count={specialFloors.length}
-          items={specialFloors.map((sf) => `${sf.towerNumber} / ${sf.floorLabel} (${sf.floorKind})`)}
+          items={specialFloors.map(
+            (sf) => `${sf.towerNumber} / ${sf.floorLabel} (${sf.floorKind})`,
+          )}
         />
         <ReviewCard
           title="Sales Packages"
           count={salesPackages.length}
-          items={salesPackages.map((p) => `${p.name}${p.rebatePercentage ? ` (${p.rebatePercentage}%)` : ""}`)}
+          items={salesPackages.map(
+            (p) => `${p.name}${p.rebatePercentage ? ` (${p.rebatePercentage}%)` : ""}`,
+          )}
         />
         <ReviewCard
           title="Nearby Places"
           count={nearbyPlaces.length}
-          items={nearbyPlaces.map((p) => `${p.category}: ${p.name} ${p.distanceKm ? `(${p.distanceKm}km)` : ""}`)}
+          items={nearbyPlaces.map(
+            (p) => `${p.category}: ${p.name} ${p.distanceKm ? `(${p.distanceKm}km)` : ""}`,
+          )}
         />
         <ReviewCard
           title="Pricing Snapshots"
           count={pricingSnapshots.length}
-          items={pricingSnapshots.map((s) => `${s.layoutCode} / ${s.towerNumber} — SPA ${s.spaPriceMin ? `RM${Number(s.spaPriceMin).toLocaleString()}` : "TBD"}`)}
+          items={pricingSnapshots.map(
+            (s) =>
+              `${s.layoutCode} / ${s.towerNumber} — SPA ${s.spaPriceMin ? `RM${Number(s.spaPriceMin).toLocaleString()}` : "TBD"}`,
+          )}
         />
       </div>
 
@@ -109,7 +135,7 @@ export function Step9Review({ data, onSubmit, isSubmitting }: Props) {
           size="lg"
           onClick={onSubmit}
           disabled={isSubmitting || !project.slug || !project.name}
-          className="min-w-[180px] bg-primary text-white hover:bg-primary/90"
+          className="bg-primary hover:bg-primary/90 min-w-[180px] text-white"
         >
           {isSubmitting ? (
             <>

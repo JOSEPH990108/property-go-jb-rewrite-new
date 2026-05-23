@@ -65,6 +65,6 @@ export const useUIStore = create<UIState>()(
         onboardingDismissedDate: state.onboardingDismissedDate,
         onboardingDismissedUserId: state.onboardingDismissedUserId,
       }),
-    }
-  )
+    },
+  ),
 );

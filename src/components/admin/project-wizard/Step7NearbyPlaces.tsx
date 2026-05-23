@@ -33,7 +33,10 @@ export function Step7NearbyPlaces({ rows, onChange }: Props) {
 
   return (
     <div>
-      <SectionHeading title="Nearby Places" subtitle="Points of interest, amenities, and transport links near the project." />
+      <SectionHeading
+        title="Nearby Places"
+        subtitle="Points of interest, amenities, and transport links near the project."
+      />
       <DynamicRows
         rows={rows}
         addRow={() => onChange([...rows, { ...emptyPlace(), sortOrder: String(rows.length + 1) }])}
@@ -43,12 +46,35 @@ export function Step7NearbyPlaces({ rows, onChange }: Props) {
         {(row, i) => (
           <div className="grid grid-cols-2 gap-4 pr-8 sm:grid-cols-4">
             <div className="sm:col-span-2">
-              <FieldInput label="Place Name" required value={row.name} onChange={(v) => update(i, "name", v)} placeholder="e.g. KSL City Mall" />
+              <FieldInput
+                label="Place Name"
+                required
+                value={row.name}
+                onChange={(v) => update(i, "name", v)}
+                placeholder="e.g. KSL City Mall"
+              />
             </div>
-            <FieldSelect label="Category" required value={row.category} onChange={(v) => update(i, "category", v)} options={CATEGORY_OPTIONS} />
+            <FieldSelect
+              label="Category"
+              required
+              value={row.category}
+              onChange={(v) => update(i, "category", v)}
+              options={CATEGORY_OPTIONS}
+            />
             <div className="grid grid-cols-2 gap-2">
-              <FieldInput label="Distance (km)" value={row.distanceKm} onChange={(v) => update(i, "distanceKm", v)} placeholder="e.g. 2.1" type="number" />
-              <FieldInput label="Sort" value={row.sortOrder} onChange={(v) => update(i, "sortOrder", v)} type="number" />
+              <FieldInput
+                label="Distance (km)"
+                value={row.distanceKm}
+                onChange={(v) => update(i, "distanceKm", v)}
+                placeholder="e.g. 2.1"
+                type="number"
+              />
+              <FieldInput
+                label="Sort"
+                value={row.sortOrder}
+                onChange={(v) => update(i, "sortOrder", v)}
+                type="number"
+              />
             </div>
           </div>
         )}

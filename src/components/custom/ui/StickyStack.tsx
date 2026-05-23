@@ -29,9 +29,7 @@ export function StickyStack({ items, className, offset = 0 }: StickyStackProps) 
           }}
         >
           {/* Use item.className to allow overriding the default bg-card */}
-          <div className={cn("bg-card", item.className)}>
-            {item.content}
-          </div>
+          <div className={cn("bg-card", item.className)}>{item.content}</div>
         </div>
       ))}
     </div>

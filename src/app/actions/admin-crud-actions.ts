@@ -1,15 +1,15 @@
 // src/app/actions/admin-crud-actions.ts
-'use server';
+"use server";
 
-import { randomUUID } from 'crypto';
-import { revalidatePath } from 'next/cache';
-import { and, asc, desc, eq, ilike, or, sql, type SQL } from 'drizzle-orm';
-import { getTableColumns } from 'drizzle-orm';
-import { db } from '@/db';
-import { user, roles } from '@/db/schema';
-import { requireAdmin } from '@/lib/server-auth';
-import { TABLE_REGISTRY, type TableConfig } from '@/lib/admin-table-registry';
-import type { ActionResult } from '@/types/action-result.types';
+import { randomUUID } from "crypto";
+import { revalidatePath } from "next/cache";
+import { and, asc, desc, eq, ilike, or, sql, type SQL } from "drizzle-orm";
+import { getTableColumns } from "drizzle-orm";
+import { db } from "@/db";
+import { user, roles } from "@/db/schema";
+import { requireAdmin } from "@/lib/server-auth";
+import { TABLE_REGISTRY, type TableConfig } from "@/lib/admin-table-registry";
+import type { ActionResult } from "@/types/action-result.types";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -44,7 +44,7 @@ function getConfig(tableName: string): TableConfig | null {
 
 function getPKColumn(config: TableConfig) {
   const cols = getTableColumns(config.table);
-  const pkName = config.primaryKey ?? 'id';
+  const pkName = config.primaryKey ?? "id";
   return { name: pkName, column: cols[pkName] };
 }
 
@@ -61,7 +61,7 @@ export async function getTableMeta(tableName: string): Promise<CrudResult<TableM
     const cols = getTableColumns(config.table);
     const columns: ColumnMeta[] = Object.entries(cols).map(([name, col]) => ({
       name,
-      dataType: (col as any).dataType ?? 'string',
+      dataType: (col as any).dataType ?? "string",
       notNull: (col as any).notNull ?? false,
       hasDefault: (col as any).hasDefault ?? false,
       isPrimaryKey: (col as any).primary ?? false,
@@ -80,7 +80,7 @@ export async function getTableMeta(tableName: string): Promise<CrudResult<TableM
         if (!refConfig) return;
 
         const refCols = getTableColumns(refConfig.table);
-        const valCol = fk.valueColumn ?? refConfig.primaryKey ?? 'id';
+        const valCol = fk.valueColumn ?? refConfig.primaryKey ?? "id";
         const lblCol = fk.labelColumn;
 
         if (!refCols[valCol] || !refCols[lblCol]) return;
@@ -104,7 +104,7 @@ export async function getTableMeta(tableName: string): Promise<CrudResult<TableM
     return { success: true, data: { columns, foreignKeyOptions } };
   } catch (error) {
     console.error(`getTableMeta(${tableName}) failed:`, error);
-    return { success: false, error: 'Failed to load table metadata' };
+    return { success: false, error: "Failed to load table metadata" };
   }
 }
 
@@ -143,7 +143,7 @@ export async function listTableRecords(
     let orderClause;
     if (config.defaultSort && cols[config.defaultSort.column]) {
       const sortCol = cols[config.defaultSort.column];
-      orderClause = config.defaultSort.direction === 'desc' ? desc(sortCol) : asc(sortCol);
+      orderClause = config.defaultSort.direction === "desc" ? desc(sortCol) : asc(sortCol);
     }
 
     // Count total
@@ -170,7 +170,7 @@ export async function listTableRecords(
     };
   } catch (error) {
     console.error(`listTableRecords(${tableName}) failed:`, error);
-    return { success: false, error: 'Failed to list records' };
+    return { success: false, error: "Failed to list records" };
   }
 }
 
@@ -210,11 +210,11 @@ export async function createTableRecord(
 
     await db.insert(config.table).values(values);
 
-    revalidatePath('/admin');
+    revalidatePath("/admin");
     return { success: true, data: undefined };
   } catch (error) {
     console.error(`createTableRecord(${tableName}) failed:`, error);
-    const msg = error instanceof Error ? error.message : 'Failed to create record';
+    const msg = error instanceof Error ? error.message : "Failed to create record";
     return { success: false, error: msg };
   }
 }
@@ -234,7 +234,7 @@ export async function updateTableRecord(
     if (!config) return { success: false, error: `Unknown table: ${tableName}` };
 
     if (config.compositePK) {
-      return { success: false, error: 'Use updateJunctionRecord for composite-PK tables' };
+      return { success: false, error: "Use updateJunctionRecord for composite-PK tables" };
     }
 
     const cols = getTableColumns(config.table);
@@ -252,26 +252,20 @@ export async function updateTableRecord(
 
     if (cols.updatedAt) values.updatedAt = new Date();
 
-    await db
-      .update(config.table)
-      .set(values)
-      .where(eq(pk.column, id));
+    await db.update(config.table).set(values).where(eq(pk.column, id));
 
-    revalidatePath('/admin');
+    revalidatePath("/admin");
     return { success: true, data: undefined };
   } catch (error) {
     console.error(`updateTableRecord(${tableName}) failed:`, error);
-    const msg = error instanceof Error ? error.message : 'Failed to update record';
+    const msg = error instanceof Error ? error.message : "Failed to update record";
     return { success: false, error: msg };
   }
 }
 
 // ── Delete record ────────────────────────────────────────────────────────────
 
-export async function deleteTableRecord(
-  tableName: string,
-  id: string,
-): Promise<CrudResult> {
+export async function deleteTableRecord(tableName: string, id: string): Promise<CrudResult> {
   try {
     const admin = await requireAdmin();
     if (!admin.ok) return { success: false, error: admin.error };
@@ -280,19 +274,19 @@ export async function deleteTableRecord(
     if (!config) return { success: false, error: `Unknown table: ${tableName}` };
 
     if (config.compositePK) {
-      return { success: false, error: 'Use deleteJunctionRecord for composite-PK tables' };
+      return { success: false, error: "Use deleteJunctionRecord for composite-PK tables" };
     }
 
     const pk = getPKColumn(config);
     await db.delete(config.table).where(eq(pk.column, id));
 
-    revalidatePath('/admin');
+    revalidatePath("/admin");
     return { success: true, data: undefined };
   } catch (error) {
     console.error(`deleteTableRecord(${tableName}) failed:`, error);
     return {
       success: false,
-      error: 'Unable to delete. This record may be referenced by other records.',
+      error: "Unable to delete. This record may be referenced by other records.",
     };
   }
 }
@@ -309,7 +303,7 @@ export async function createJunctionRecord(
 
     const config = getConfig(tableName);
     if (!config) return { success: false, error: `Unknown table: ${tableName}` };
-    if (!config.compositePK) return { success: false, error: 'Not a junction table' };
+    if (!config.compositePK) return { success: false, error: "Not a junction table" };
 
     const cols = getTableColumns(config.table);
     const values: Record<string, unknown> = {};
@@ -321,11 +315,11 @@ export async function createJunctionRecord(
 
     await db.insert(config.table).values(values);
 
-    revalidatePath('/admin');
+    revalidatePath("/admin");
     return { success: true, data: undefined };
   } catch (error) {
     console.error(`createJunctionRecord(${tableName}) failed:`, error);
-    const msg = error instanceof Error ? error.message : 'Failed to create record';
+    const msg = error instanceof Error ? error.message : "Failed to create record";
     return { success: false, error: msg };
   }
 }
@@ -340,7 +334,7 @@ export async function deleteJunctionRecord(
 
     const config = getConfig(tableName);
     if (!config) return { success: false, error: `Unknown table: ${tableName}` };
-    if (!config.compositePK) return { success: false, error: 'Not a junction table' };
+    if (!config.compositePK) return { success: false, error: "Not a junction table" };
 
     const cols = getTableColumns(config.table);
     const conditions = config.compositePK
@@ -348,42 +342,46 @@ export async function deleteJunctionRecord(
       .map((k) => eq(cols[k], keys[k]));
 
     if (conditions.length !== config.compositePK.length) {
-      return { success: false, error: 'All composite key fields are required' };
+      return { success: false, error: "All composite key fields are required" };
     }
 
     await db.delete(config.table).where(and(...conditions));
 
-    revalidatePath('/admin');
+    revalidatePath("/admin");
     return { success: true, data: undefined };
   } catch (error) {
     console.error(`deleteJunctionRecord(${tableName}) failed:`, error);
-    return { success: false, error: 'Failed to delete record' };
+    return { success: false, error: "Failed to delete record" };
   }
 }
 
 // ── Value coercion ───────────────────────────────────────────────────────────
 
 function coerceValue(val: unknown, fieldType?: string): unknown {
-  if (val === '' || val === undefined) return null;
+  if (val === "" || val === undefined) return null;
   if (val === null) return null;
 
   switch (fieldType) {
-    case 'number':
+    case "number":
       return val === null ? null : Number(val);
-    case 'decimal':
+    case "decimal":
       return val === null ? null : String(val);
-    case 'boolean':
-      if (typeof val === 'string') return val === 'true';
+    case "boolean":
+      if (typeof val === "string") return val === "true";
       return Boolean(val);
-    case 'date':
+    case "date":
       if (!val) return null;
       return String(val);
-    case 'datetime':
+    case "datetime":
       if (!val) return null;
       return new Date(String(val));
-    case 'json':
-      if (typeof val === 'string') {
-        try { return JSON.parse(val); } catch { return val; }
+    case "json":
+      if (typeof val === "string") {
+        try {
+          return JSON.parse(val);
+        } catch {
+          return val;
+        }
       }
       return val;
     default:

@@ -36,30 +36,24 @@ export default function CashRequired() {
   ];
 
   return (
-    <div className="bg-white dark:bg-zinc-900 p-4 rounded-lg shadow text-sm text-zinc-800 dark:text-zinc-200 flex flex-col h-full">
+    <div className="flex h-full flex-col rounded-lg bg-white p-4 text-sm text-zinc-800 shadow dark:bg-zinc-900 dark:text-zinc-200">
       {/* Panel header */}
       <div
         onClick={() => setExpandCash((x) => !x)}
-        className="flex items-center justify-between cursor-pointer select-none"
+        className="flex cursor-pointer items-center justify-between select-none"
       >
         <div className="flex items-center gap-2">
           <span className="text-xl">💵</span>
-          <h2 className="text-lg sm:text-xl font-bold text-primary">
-            Cash Required on Purchase
-          </h2>
+          <h2 className="text-primary text-lg font-bold sm:text-xl">Cash Required on Purchase</h2>
         </div>
-        {expandCash ? (
-          <ChevronUp className="w-5 h-5" />
-        ) : (
-          <ChevronDown className="w-5 h-5" />
-        )}
+        {expandCash ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
       </div>
 
       {/* Collapsible breakdown */}
       {expandCash && (
         <div className="mt-4 space-y-2 text-sm text-zinc-700 dark:text-zinc-300">
           {cashBreakdown.map(({ label, value, icon }) => (
-            <div key={label} className="flex justify-between items-center">
+            <div key={label} className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span>{icon}</span>
                 <span>{label}:</span>
@@ -68,7 +62,7 @@ export default function CashRequired() {
             </div>
           ))}
           <hr className="my-2 border-zinc-300 dark:border-zinc-700" />
-          <div className="flex justify-between items-center font-bold text-base">
+          <div className="flex items-center justify-between text-base font-bold">
             <div className="flex items-center gap-2">
               <span>💰</span>
               <span>Total Cash Required:</span>

@@ -32,15 +32,15 @@ export const ScrollCarousel = ({
   interval = 3000,
 }: ScrollCarouselProps) => {
   const {
-      items,
-      currentIndex,
-      direction,
-      containerRef,
-      goTo,
-      setIsHovered,
-      onPointerDown,
-      onPointerUp,
-      onPointerLeave
+    items,
+    currentIndex,
+    direction,
+    containerRef,
+    goTo,
+    setIsHovered,
+    onPointerDown,
+    onPointerUp,
+    onPointerLeave,
   } = useCarousel({ children, autoScroll, interval });
 
   const variants = {
@@ -70,18 +70,18 @@ export const ScrollCarousel = ({
       onPointerUp={onPointerUp}
       onPointerLeave={onPointerLeave}
       className={cn(
-        "relative w-full max-w-md p-10 bg-card rounded-2xl border border-border shadow-sm overflow-hidden flex flex-col justify-between min-h-[340px] cursor-grab active:cursor-grabbing",
+        "bg-card border-border relative flex min-h-[340px] w-full max-w-md cursor-grab flex-col justify-between overflow-hidden rounded-2xl border p-10 shadow-sm active:cursor-grabbing",
         // Scroll Locking CSS Fallback
-        "overscroll-contain touch-none select-none",
+        "touch-none overscroll-contain select-none",
         // Enhanced Hover Effect (Luxury Theme)
         "transition-all duration-500 ease-out",
-        "hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] hover:border-accent/40 hover:-translate-y-1",
-        "dark:hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] dark:hover:border-accent/30",
-        className
+        "hover:border-accent/40 hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)]",
+        "dark:hover:border-accent/30 dark:hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)]",
+        className,
       )}
     >
       {/* Top Navigation Row (Dots) */}
-      <div className={cn("flex justify-end w-full mb-8 z-10", dotsClassName)}>
+      <div className={cn("z-10 mb-8 flex w-full justify-end", dotsClassName)}>
         <div className="flex gap-2.5">
           {items.map((_, idx) => (
             <button
@@ -90,8 +90,8 @@ export const ScrollCarousel = ({
               className={cn(
                 "h-2 rounded-full transition-all duration-500 ease-out",
                 currentIndex === idx
-                  ? "w-8 bg-accent" // Use Accent color for active state
-                  : "w-2 bg-muted-foreground/20 hover:bg-muted-foreground/40"
+                  ? "bg-accent w-8" // Use Accent color for active state
+                  : "bg-muted-foreground/20 hover:bg-muted-foreground/40 w-2",
               )}
               aria-label={`Go to slide ${idx + 1}`}
             />
@@ -100,7 +100,7 @@ export const ScrollCarousel = ({
       </div>
 
       {/* Content Area */}
-      <div className="flex-grow flex flex-col justify-center relative perspective-1000">
+      <div className="perspective-1000 relative flex flex-grow flex-col justify-center">
         <AnimatePresence mode="popLayout" custom={direction}>
           <motion.div
             key={currentIndex}
@@ -113,7 +113,7 @@ export const ScrollCarousel = ({
               y: { type: "spring", stiffness: 100, damping: 20 },
               opacity: { duration: 0.4 },
             }}
-            className="w-full absolute inset-0 flex flex-col justify-center"
+            className="absolute inset-0 flex w-full flex-col justify-center"
           >
             {items[currentIndex]}
           </motion.div>

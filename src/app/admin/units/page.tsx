@@ -25,8 +25,7 @@ const statusNodeStyles: Record<UnitStatus, string> = {
     "border-emerald-300/30 bg-emerald-500/15 text-emerald-800 shadow-[0_0_16px_rgba(16,185,129,0.2)] dark:text-emerald-100 dark:shadow-[0_0_18px_rgba(52,211,153,0.28)]",
   reserved:
     "border-amber-300/30 bg-amber-500/15 text-amber-800 shadow-[0_0_16px_rgba(245,158,11,0.2)] dark:text-amber-100 dark:shadow-[0_0_18px_rgba(251,191,36,0.25)]",
-  sold:
-    "border-rose-300/30 bg-rose-500/15 text-rose-800 shadow-[0_0_16px_rgba(244,63,94,0.2)] dark:text-rose-100 dark:shadow-[0_0_18px_rgba(251,113,133,0.25)]",
+  sold: "border-rose-300/30 bg-rose-500/15 text-rose-800 shadow-[0_0_16px_rgba(244,63,94,0.2)] dark:text-rose-100 dark:shadow-[0_0_18px_rgba(251,113,133,0.25)]",
 };
 
 export default function AdminUnitsPage() {
@@ -37,7 +36,7 @@ export default function AdminUnitsPage() {
 
   const selectedProject = useMemo(
     () => projectsData.find((project) => project.slug === selectedProjectSlug) ?? projectsData[0],
-    [projectsData, selectedProjectSlug]
+    [projectsData, selectedProjectSlug],
   );
 
   const visibleTowers = useMemo(() => {
@@ -70,8 +69,8 @@ export default function AdminUnitsPage() {
 
     setProjectsData((prev) =>
       prev.map((project) =>
-        project.slug === selectedProject.slug ? randomizeProjectStatuses(project) : project
-      )
+        project.slug === selectedProject.slug ? randomizeProjectStatuses(project) : project,
+      ),
     );
   };
 
@@ -97,27 +96,30 @@ export default function AdminUnitsPage() {
 
   if (!selectedProject) {
     return (
-      <section className="rounded-[28px] border border-border bg-card/95 p-6">
-        <h2 className="text-2xl font-semibold text-foreground">Unit Management</h2>
-        <p className="mt-3 text-sm text-foreground/70">No project data available.</p>
+      <section className="border-border bg-card/95 rounded-[28px] border p-6">
+        <h2 className="text-foreground text-2xl font-semibold">Unit Management</h2>
+        <p className="text-foreground/70 mt-3 text-sm">No project data available.</p>
       </section>
     );
   }
 
   return (
     <div className="space-y-6">
-      <section className="rounded-[28px] border border-border bg-card/95 p-5 shadow-[0_20px_60px_rgba(15,23,42,0.1)]">
-        <div className="flex flex-col gap-4 border-b border-border pb-5 xl:flex-row xl:items-end xl:justify-between">
+      <section className="border-border bg-card/95 rounded-[28px] border p-5 shadow-[0_20px_60px_rgba(15,23,42,0.1)]">
+        <div className="border-border flex flex-col gap-4 border-b pb-5 xl:flex-row xl:items-end xl:justify-between">
           <div>
-            <p className="text-xs uppercase tracking-[0.24em] text-primary/80">Unit page</p>
-            <h2 className="mt-2 text-3xl font-semibold text-foreground">Project Unit Control Center</h2>
-            <p className="mt-2 text-sm text-foreground/70">
-              Select a project and tower, then refresh live statuses to simulate incoming availability updates.
+            <p className="text-primary/80 text-xs tracking-[0.24em] uppercase">Unit page</p>
+            <h2 className="text-foreground mt-2 text-3xl font-semibold">
+              Project Unit Control Center
+            </h2>
+            <p className="text-foreground/70 mt-2 text-sm">
+              Select a project and tower, then refresh live statuses to simulate incoming
+              availability updates.
             </p>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[220px_220px_auto_auto]">
-            <label className="text-sm font-medium text-foreground/75">
+            <label className="text-foreground/75 text-sm font-medium">
               Project
               <select
                 value={selectedProjectSlug}
@@ -125,7 +127,7 @@ export default function AdminUnitsPage() {
                   setSelectedProjectSlug(event.target.value);
                   setSelectedTowerId("all");
                 }}
-                className="mt-2 h-11 w-full rounded-xl border border-border bg-background px-3 text-sm text-foreground"
+                className="border-border bg-background text-foreground mt-2 h-11 w-full rounded-xl border px-3 text-sm"
               >
                 {projectsData.map((project) => (
                   <option key={project.slug} value={project.slug}>
@@ -135,12 +137,12 @@ export default function AdminUnitsPage() {
               </select>
             </label>
 
-            <label className="text-sm font-medium text-foreground/75">
+            <label className="text-foreground/75 text-sm font-medium">
               Tower
               <select
                 value={selectedTowerId}
                 onChange={(event) => setSelectedTowerId(event.target.value)}
-                className="mt-2 h-11 w-full rounded-xl border border-border bg-background px-3 text-sm text-foreground"
+                className="border-border bg-background text-foreground mt-2 h-11 w-full rounded-xl border px-3 text-sm"
               >
                 <option value="all">All Towers</option>
                 {selectedProject.towers.map((tower) => (
@@ -154,7 +156,7 @@ export default function AdminUnitsPage() {
             <button
               type="button"
               onClick={refreshSelectedProject}
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-primary/20 bg-primary/12 px-4 text-sm font-medium text-primary"
+              className="border-primary/20 bg-primary/12 text-primary inline-flex h-11 items-center justify-center gap-2 rounded-xl border px-4 text-sm font-medium"
             >
               <RefreshCcw className="h-4 w-4" />
               Refresh Units
@@ -163,7 +165,7 @@ export default function AdminUnitsPage() {
             <button
               type="button"
               onClick={resetAllProjects}
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-border bg-background px-4 text-sm font-medium text-foreground"
+              className="border-border bg-background text-foreground inline-flex h-11 items-center justify-center gap-2 rounded-xl border px-4 text-sm font-medium"
             >
               <RotateCcw className="h-4 w-4" />
               Reset Data
@@ -172,31 +174,46 @@ export default function AdminUnitsPage() {
         </div>
 
         <div className="mt-4 flex flex-wrap items-center gap-3">
-          <span className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium uppercase tracking-[0.2em] text-foreground/70">
+          <span className="border-border bg-background text-foreground/70 rounded-full border px-3 py-1.5 text-xs font-medium tracking-[0.2em] uppercase">
             {selectedProject.location}
           </span>
-          <span className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium uppercase tracking-[0.2em] text-foreground/70">
+          <span className="border-border bg-background text-foreground/70 rounded-full border px-3 py-1.5 text-xs font-medium tracking-[0.2em] uppercase">
             {totals.units} units
           </span>
-          <span className={cn("rounded-full border px-3 py-1.5 text-xs font-medium uppercase tracking-[0.2em]", statusChipStyles.available)}>
+          <span
+            className={cn(
+              "rounded-full border px-3 py-1.5 text-xs font-medium tracking-[0.2em] uppercase",
+              statusChipStyles.available,
+            )}
+          >
             {totals.available} available
           </span>
-          <span className={cn("rounded-full border px-3 py-1.5 text-xs font-medium uppercase tracking-[0.2em]", statusChipStyles.reserved)}>
+          <span
+            className={cn(
+              "rounded-full border px-3 py-1.5 text-xs font-medium tracking-[0.2em] uppercase",
+              statusChipStyles.reserved,
+            )}
+          >
             {totals.reserved} reserved
           </span>
-          <span className={cn("rounded-full border px-3 py-1.5 text-xs font-medium uppercase tracking-[0.2em]", statusChipStyles.sold)}>
+          <span
+            className={cn(
+              "rounded-full border px-3 py-1.5 text-xs font-medium tracking-[0.2em] uppercase",
+              statusChipStyles.sold,
+            )}
+          >
             {totals.sold} sold
           </span>
         </div>
 
-        <div className="mt-4 rounded-2xl border border-border bg-background p-4">
-          <p className="text-sm text-foreground/80">
+        <div className="border-border bg-background mt-4 rounded-2xl border p-4">
+          <p className="text-foreground/80 text-sm">
             <span className="font-semibold">Data source note:</span>{" "}
             {selectedProject.source.verifiedTowerBreakdown
               ? "Tower breakdown verified from public source."
               : "Tower/unit breakdown currently modeled for UI workflow testing."}
           </p>
-          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-foreground/70">
+          <ul className="text-foreground/70 mt-2 list-disc space-y-1 pl-5 text-sm">
             {selectedProject.source.notes.map((note) => (
               <li key={note}>{note}</li>
             ))}
@@ -213,24 +230,31 @@ export default function AdminUnitsPage() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 12 }}
-              className="rounded-[26px] border border-border bg-card/95 p-5"
+              className="border-border bg-card/95 rounded-[26px] border p-5"
             >
-              <div className="flex items-center justify-between gap-3 border-b border-border pb-4">
+              <div className="border-border flex items-center justify-between gap-3 border-b pb-4">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.22em] text-primary/80">Tower design</p>
-                  <h3 className="mt-2 text-2xl font-semibold text-foreground">{tower.towerLabel}</h3>
+                  <p className="text-primary/80 text-xs tracking-[0.22em] uppercase">
+                    Tower design
+                  </p>
+                  <h3 className="text-foreground mt-2 text-2xl font-semibold">
+                    {tower.towerLabel}
+                  </h3>
                 </div>
 
-                <div className="inline-flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground/75">
-                  <Building2 className="h-4 w-4 text-primary" />
+                <div className="border-border bg-background text-foreground/75 inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm">
+                  <Building2 className="text-primary h-4 w-4" />
                   {tower.floors.length} floors
                 </div>
               </div>
 
               <div className="mt-4 space-y-3">
                 {tower.floors.map((floorRow) => (
-                  <div key={`${tower.towerId}-${floorRow.floor}`} className="grid gap-2 lg:grid-cols-[92px_1fr] lg:items-center">
-                    <div className="rounded-xl border border-border bg-background px-3 py-2 text-xs font-medium uppercase tracking-[0.2em] text-foreground/70">
+                  <div
+                    key={`${tower.towerId}-${floorRow.floor}`}
+                    className="grid gap-2 lg:grid-cols-[92px_1fr] lg:items-center"
+                  >
+                    <div className="border-border bg-background text-foreground/70 rounded-xl border px-3 py-2 text-xs font-medium tracking-[0.2em] uppercase">
                       Floor {floorRow.floor}
                     </div>
 
@@ -241,7 +265,7 @@ export default function AdminUnitsPage() {
                           ? "grid-cols-5"
                           : floorRow.units.length === 6
                             ? "grid-cols-3 sm:grid-cols-6"
-                            : "grid-cols-4 sm:grid-cols-7"
+                            : "grid-cols-4 sm:grid-cols-7",
                       )}
                     >
                       {floorRow.units.map((unit) => (
@@ -251,11 +275,15 @@ export default function AdminUnitsPage() {
                           onClick={() => onUnitClick(tower.towerLabel, floorRow.floor, unit)}
                           className={cn(
                             "aspect-square rounded-xl border p-1.5 text-left transition hover:-translate-y-0.5",
-                            statusNodeStyles[unit.status]
+                            statusNodeStyles[unit.status],
                           )}
                         >
-                          <span className="block text-[10px] uppercase tracking-[0.15em] opacity-75">{unit.status}</span>
-                          <span className="mt-2 block text-[11px] font-semibold leading-4">{unit.unitCode}</span>
+                          <span className="block text-[10px] tracking-[0.15em] uppercase opacity-75">
+                            {unit.status}
+                          </span>
+                          <span className="mt-2 block text-[11px] leading-4 font-semibold">
+                            {unit.unitCode}
+                          </span>
                         </button>
                       ))}
                     </div>

@@ -6,10 +6,6 @@ export const metadata: Metadata = {
   title: "Admin - PropertyGoJB",
 };
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return <AdminShell>{children}</AdminShell>;
 }

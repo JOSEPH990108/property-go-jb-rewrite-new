@@ -47,15 +47,13 @@ export function BaseCard<T = unknown>({
         <CardHeader
           className={cn(
             "flex flex-row items-center justify-between space-y-0 pb-2",
-            headerClassName
+            headerClassName,
           )}
         >
           <div className="flex flex-col space-y-1.5">
             {title && <CardTitle className={cn(titleClassName)}>{title}</CardTitle>}
             {description && (
-              <CardDescription className={cn(descriptionClassName)}>
-                {description}
-              </CardDescription>
+              <CardDescription className={cn(descriptionClassName)}>{description}</CardDescription>
             )}
           </div>
           {action && <div className="shrink-0">{action}</div>}

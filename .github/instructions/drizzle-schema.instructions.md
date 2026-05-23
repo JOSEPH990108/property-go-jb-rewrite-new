@@ -2,6 +2,7 @@
 description: "Use when editing database schema, creating tables, adding columns, or writing Drizzle ORM queries. Covers schema patterns, relations, and lookup table conventions."
 applyTo: "src/db/**"
 ---
+
 # Drizzle Schema Conventions
 
 - All tables defined in single file: `src/db/schema.ts`

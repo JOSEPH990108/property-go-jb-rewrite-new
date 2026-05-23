@@ -89,7 +89,7 @@ function NavNode({
           // depth indent (desktop only)
           depth > 0 && "lg:pl-3",
           // mobile: horizontal strip
-          "min-w-[120px] text-primary-foreground/60",
+          "text-primary-foreground/60 min-w-[120px]",
           // desktop: compact icon-only (unless sub-menu is open)
           "lg:min-w-0 lg:justify-center lg:px-0",
           // active / parent-of-active
@@ -102,15 +102,15 @@ function NavNode({
         {/* Label: always visible on mobile, hidden on desktop */}
         <span className="flex-1 text-sm lg:hidden">{item.label}</span>
         {item.badge && (
-          <span className="rounded-full bg-primary-foreground/20 px-1.5 py-0.5 text-[10px] font-semibold text-primary-foreground lg:hidden">
+          <span className="bg-primary-foreground/20 text-primary-foreground rounded-full px-1.5 py-0.5 text-[10px] font-semibold lg:hidden">
             {item.badge}
           </span>
         )}
         {hasChildren && (
           <ChevronRight
             className={cn(
-              "h-3.5 w-3.5 shrink-0 text-primary-foreground/40 transition-transform duration-200 lg:hidden",
-              open && "rotate-90"
+              "text-primary-foreground/40 h-3.5 w-3.5 shrink-0 transition-transform duration-200 lg:hidden",
+              open && "rotate-90",
             )}
           />
         )}
@@ -118,7 +118,7 @@ function NavNode({
 
       {/* Sub-menu — only shown on mobile (desktop uses tooltip popover pattern) */}
       {hasChildren && open && (
-        <div className="ml-4 mt-1 flex flex-col gap-1 border-l border-primary-foreground/20 pl-2 lg:hidden">
+        <div className="border-primary-foreground/20 mt-1 ml-4 flex flex-col gap-1 border-l pl-2 lg:hidden">
           {item.children!.map((child) => (
             <NavNode
               key={child.key}
@@ -145,10 +145,10 @@ export function AdminSidebar({
   logo,
 }: AdminSidebarProps) {
   return (
-    <div className="flex flex-row gap-3 lg:sticky lg:top-5 lg:self-start lg:flex-col">
-      <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto rounded-[24px] bg-primary p-2 shadow-lg lg:h-[calc(100dvh-2.5rem)] lg:min-h-0 lg:w-[72px] lg:flex-col lg:items-center lg:overflow-y-auto lg:overflow-x-hidden">
+    <div className="flex flex-row gap-3 lg:sticky lg:top-5 lg:flex-col lg:self-start">
+      <div className="bg-primary flex min-w-0 flex-1 gap-2 overflow-x-auto rounded-[24px] p-2 shadow-lg lg:h-[calc(100dvh-2.5rem)] lg:min-h-0 lg:w-[72px] lg:flex-col lg:items-center lg:overflow-x-hidden lg:overflow-y-auto">
         {/* Logo */}
-        <div className="flex h-[56px] w-[56px] shrink-0 items-center justify-center rounded-[18px] border border-primary-foreground/20 bg-primary-foreground/10 text-primary-foreground lg:h-10 lg:w-10 lg:rounded-[14px]">
+        <div className="border-primary-foreground/20 bg-primary-foreground/10 text-primary-foreground flex h-[56px] w-[56px] shrink-0 items-center justify-center rounded-[18px] border lg:h-10 lg:w-10 lg:rounded-[14px]">
           {logo ?? <Compass className="h-4 w-4" />}
         </div>
 
@@ -164,7 +164,7 @@ export function AdminSidebar({
 
         {/* Divider (desktop only) */}
         {utilityItems && utilityItems.length > 0 && (
-          <div className="hidden h-px w-8 bg-primary-foreground/20 lg:block" />
+          <div className="bg-primary-foreground/20 hidden h-px w-8 lg:block" />
         )}
 
         {/* Utility icons */}
@@ -174,7 +174,7 @@ export function AdminSidebar({
             type="button"
             title={util.label}
             onClick={util.onClick}
-            className="hidden h-8 w-8 items-center justify-center rounded-[10px] text-primary-foreground/65 transition hover:bg-primary-foreground/15 hover:text-primary-foreground lg:flex"
+            className="text-primary-foreground/65 hover:bg-primary-foreground/15 hover:text-primary-foreground hidden h-8 w-8 items-center justify-center rounded-[10px] transition lg:flex"
           >
             <util.icon className="h-3.5 w-3.5" />
           </button>
@@ -183,7 +183,7 @@ export function AdminSidebar({
         {/* User / avatar slot */}
         {userLabel && (
           <div className="hidden lg:mt-auto lg:flex lg:flex-col lg:items-center lg:gap-2 lg:pb-1">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full border border-primary-foreground/30 bg-secondary text-[10px] font-semibold text-foreground">
+            <div className="border-primary-foreground/30 bg-secondary text-foreground flex h-9 w-9 items-center justify-center rounded-full border text-[10px] font-semibold">
               {userLabel}
             </div>
           </div>

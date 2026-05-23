@@ -23,12 +23,18 @@ const referralSchema = z.object({
 type ReferralData = z.infer<typeof referralSchema>;
 
 interface ReferralCodeCardProps {
-    userId: string;
+  userId: string;
 }
 
 export function ReferralCodeCard({ userId }: ReferralCodeCardProps) {
   const router = useRouter();
-  const { verify, status, verifiedCode, isLoading: isVerifying, handleInputChange } = useReferralVerification();
+  const {
+    verify,
+    status,
+    verifiedCode,
+    isLoading: isVerifying,
+    handleInputChange,
+  } = useReferralVerification();
 
   const { execute: applyReferral, isLoading: isApplying } = useAsyncAction(
     (code: string) => applyReferralOnSignup(userId, code),
@@ -70,32 +76,34 @@ export function ReferralCodeCard({ userId }: ReferralCodeCardProps) {
       title="Add Referral Code"
       description="Did someone refer you? Enter their code to link your account."
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 max-w-md">
-          <div className="space-y-1.5">
-              <Label>Referral Code</Label>
-              <div className="flex gap-2">
-                  <Input
-                      {...register("referralCode")}
-                      placeholder="Enter code"
-                      className={status?.valid ? "border-green-500 focus-visible:ring-green-500" : ""}
-                  />
-                  <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => verify(watchedReferralCode || "")}
-                      disabled={isLoading || !watchedReferralCode}
-                  >
-                      Apply
-                  </Button>
-              </div>
-              {status && <ValidationStatus valid={status.valid} message={status.message} />}
-              {errors.referralCode && <p className="text-destructive text-xs">{errors.referralCode.message}</p>}
+      <form onSubmit={handleSubmit(onSubmit)} className="max-w-md space-y-4">
+        <div className="space-y-1.5">
+          <Label>Referral Code</Label>
+          <div className="flex gap-2">
+            <Input
+              {...register("referralCode")}
+              placeholder="Enter code"
+              className={status?.valid ? "border-green-500 focus-visible:ring-green-500" : ""}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => verify(watchedReferralCode || "")}
+              disabled={isLoading || !watchedReferralCode}
+            >
+              Apply
+            </Button>
           </div>
+          {status && <ValidationStatus valid={status.valid} message={status.message} />}
+          {errors.referralCode && (
+            <p className="text-destructive text-xs">{errors.referralCode.message}</p>
+          )}
+        </div>
 
-          <Button type="submit" disabled={isLoading || !status?.valid}>
-              {isLoading ? <Loader2 className="animate-spin mr-2"/> : null}
-              Save Referral
-          </Button>
+        <Button type="submit" disabled={isLoading || !status?.valid}>
+          {isLoading ? <Loader2 className="mr-2 animate-spin" /> : null}
+          Save Referral
+        </Button>
       </form>
     </BaseCard>
   );

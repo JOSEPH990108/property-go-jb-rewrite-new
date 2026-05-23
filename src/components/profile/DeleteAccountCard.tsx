@@ -24,14 +24,14 @@ export function DeleteAccountCard() {
 
       if (res.success) {
         await authClient.signOut({
-            fetchOptions: {
-                onSuccess: () => {
-                     useUIStore.getState().resetDismissed();
-                     toast.success("Your account has been deleted.");
-                     router.push("/");
-                     router.refresh();
-                },
-            }
+          fetchOptions: {
+            onSuccess: () => {
+              useUIStore.getState().resetDismissed();
+              toast.success("Your account has been deleted.");
+              router.push("/");
+              router.refresh();
+            },
+          },
         });
         setOpen(false);
       } else {
@@ -50,8 +50,8 @@ export function DeleteAccountCard() {
       className="border-destructive/20 bg-destructive/5"
       title={
         <div className="text-destructive flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5" />
-            Danger Zone
+          <AlertTriangle className="h-5 w-5" />
+          Danger Zone
         </div>
       }
       description="Irreversible actions related to your account."
@@ -59,7 +59,7 @@ export function DeleteAccountCard() {
       <div className="flex items-center justify-between">
         <div>
           <p className="font-medium">Delete Account</p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Permanently delete your account and all associated data.
           </p>
         </div>
