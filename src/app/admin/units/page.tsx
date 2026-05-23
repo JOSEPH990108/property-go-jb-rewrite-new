@@ -5,28 +5,19 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Building2, RefreshCcw, RotateCcw } from "lucide-react";
 import { UnitModal } from "@/components/shared/UnitModal";
 import {
+  getUnitStatusLabel,
+  UNIT_STATUSES,
+  UNIT_STATUS_ADMIN_CHIP_CLASS,
+  UNIT_STATUS_ADMIN_NODE_CLASS,
+} from "@/components/properties/unit-availability/UnitAvailabilityStatus";
+import {
   deepCloneProjects,
   randomizeProjectStatuses,
   unitLayoutProjects,
   type UnitNode,
-  type UnitStatus,
 } from "@/lib/unit-layout-data";
 import type { UnitRecord } from "@/lib/admin-mock-data";
 import { cn } from "@/lib/utils";
-
-const statusChipStyles: Record<UnitStatus, string> = {
-  available: "border-emerald-300/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-200",
-  reserved: "border-amber-300/30 bg-amber-500/10 text-amber-700 dark:text-amber-200",
-  sold: "border-rose-300/30 bg-rose-500/10 text-rose-700 dark:text-rose-200",
-};
-
-const statusNodeStyles: Record<UnitStatus, string> = {
-  available:
-    "border-emerald-300/30 bg-emerald-500/15 text-emerald-800 shadow-[0_0_16px_rgba(16,185,129,0.2)] dark:text-emerald-100 dark:shadow-[0_0_18px_rgba(52,211,153,0.28)]",
-  reserved:
-    "border-amber-300/30 bg-amber-500/15 text-amber-800 shadow-[0_0_16px_rgba(245,158,11,0.2)] dark:text-amber-100 dark:shadow-[0_0_18px_rgba(251,191,36,0.25)]",
-  sold: "border-rose-300/30 bg-rose-500/15 text-rose-800 shadow-[0_0_16px_rgba(244,63,94,0.2)] dark:text-rose-100 dark:shadow-[0_0_18px_rgba(251,113,133,0.25)]",
-};
 
 export default function AdminUnitsPage() {
   const [projectsData, setProjectsData] = useState(() => deepCloneProjects(unitLayoutProjects));
@@ -180,30 +171,17 @@ export default function AdminUnitsPage() {
           <span className="border-border bg-background text-foreground/70 rounded-full border px-3 py-1.5 text-xs font-medium tracking-[0.2em] uppercase">
             {totals.units} units
           </span>
-          <span
-            className={cn(
-              "rounded-full border px-3 py-1.5 text-xs font-medium tracking-[0.2em] uppercase",
-              statusChipStyles.available,
-            )}
-          >
-            {totals.available} available
-          </span>
-          <span
-            className={cn(
-              "rounded-full border px-3 py-1.5 text-xs font-medium tracking-[0.2em] uppercase",
-              statusChipStyles.reserved,
-            )}
-          >
-            {totals.reserved} reserved
-          </span>
-          <span
-            className={cn(
-              "rounded-full border px-3 py-1.5 text-xs font-medium tracking-[0.2em] uppercase",
-              statusChipStyles.sold,
-            )}
-          >
-            {totals.sold} sold
-          </span>
+          {UNIT_STATUSES.map((status) => (
+            <span
+              key={status}
+              className={cn(
+                "rounded-full border px-3 py-1.5 text-xs font-medium tracking-[0.2em] uppercase",
+                UNIT_STATUS_ADMIN_CHIP_CLASS[status],
+              )}
+            >
+              {totals[status]} {getUnitStatusLabel(status).toLowerCase()}
+            </span>
+          ))}
         </div>
 
         <div className="border-border bg-background mt-4 rounded-2xl border p-4">
@@ -275,11 +253,11 @@ export default function AdminUnitsPage() {
                           onClick={() => onUnitClick(tower.towerLabel, floorRow.floor, unit)}
                           className={cn(
                             "aspect-square rounded-xl border p-1.5 text-left transition hover:-translate-y-0.5",
-                            statusNodeStyles[unit.status],
+                            UNIT_STATUS_ADMIN_NODE_CLASS[unit.status],
                           )}
                         >
                           <span className="block text-[10px] tracking-[0.15em] uppercase opacity-75">
-                            {unit.status}
+                            {getUnitStatusLabel(unit.status)}
                           </span>
                           <span className="mt-2 block text-[11px] leading-4 font-semibold">
                             {unit.unitCode}
