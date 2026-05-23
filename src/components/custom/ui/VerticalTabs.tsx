@@ -21,10 +21,8 @@ export default function VerticalTabs({
   className,
   scrollOffset = -140, // Increased offset for the floating header
 }: VerticalTabsProps) {
-  const [activeTabId, setActiveTabId] = useState<string>(
-    defaultTabId || items[0]?.id
-  );
-  
+  const [activeTabId, setActiveTabId] = useState<string>(defaultTabId || items[0]?.id);
+
   const contentTopRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const lenis = useLenis();
@@ -68,7 +66,8 @@ export default function VerticalTabs({
         if (lenis) {
           lenis.scrollTo(contentTopRef.current, { offset: scrollOffset, duration: 0.8 });
         } else {
-          const y = contentTopRef.current.getBoundingClientRect().top + window.scrollY + scrollOffset;
+          const y =
+            contentTopRef.current.getBoundingClientRect().top + window.scrollY + scrollOffset;
           window.scrollTo({ top: y, behavior: "smooth" });
         }
       }
@@ -78,32 +77,30 @@ export default function VerticalTabs({
   if (!items.length) return null;
 
   return (
-    <div className={cn("w-full max-w-7xl mx-auto p-4 md:p-8", className)}>
-      
+    <div className={cn("mx-auto w-full max-w-7xl p-4 md:p-8", className)}>
       {/* =======================================================
           MOBILE VIEW: Floating "Glass" Island Tabs
          ======================================================= */}
-      <div className="lg:hidden flex flex-col gap-6">
-        
+      <div className="flex flex-col gap-6 lg:hidden">
         {/* Sticky Container Wrapper */}
-        <div className="sticky top-20 z-30 w-full flex justify-center pointer-events-none">
+        <div className="pointer-events-none sticky top-20 z-30 flex w-full justify-center">
           {/* THE FLOATING ISLAND 
               - pointer-events-auto: Re-enables clicks specifically for this box
               - rounded-2xl: Gives the container the requested border radius
               - shadow-lg: Adds depth so it floats above content
           */}
-          <div 
+          <div
             ref={scrollContainerRef}
             onMouseDown={handleMouseDown}
             onMouseLeave={handleMouseLeave}
             onMouseUp={handleMouseUp}
             onMouseMove={handleMouseMove}
             className={cn(
-              "pointer-events-auto relative max-w-full overflow-x-auto no-scrollbar",
-              "flex gap-2 p-2 mx-4", // Inner padding/margins
-              "bg-background/80 backdrop-blur-xl border border-white/20", // Glass effect
+              "no-scrollbar pointer-events-auto relative max-w-full overflow-x-auto",
+              "mx-4 flex gap-2 p-2", // Inner padding/margins
+              "bg-background/80 border border-white/20 backdrop-blur-xl", // Glass effect
               "rounded-2xl shadow-xl shadow-black/5", // THE BORDER RADIUS
-              "cursor-grab active:cursor-grabbing select-none"
+              "cursor-grab select-none active:cursor-grabbing",
             )}
           >
             {items.map((item) => {
@@ -113,10 +110,10 @@ export default function VerticalTabs({
                   key={item.id}
                   onClick={() => handleMobileTabClick(item.id)}
                   className={cn(
-                    "relative px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 whitespace-nowrap", // Buttons also rounded-xl
-                    isActive 
-                      ? "bg-foreground text-background shadow-sm" 
-                      : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                    "relative rounded-xl px-4 py-2 text-sm font-medium whitespace-nowrap transition-all duration-300", // Buttons also rounded-xl
+                    isActive
+                      ? "bg-foreground text-background shadow-sm"
+                      : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
                   )}
                 >
                   {item.label}
@@ -145,13 +142,12 @@ export default function VerticalTabs({
         </div>
       </div>
 
-
       {/* =======================================================
           DESKTOP VIEW: Vertical Sidebar
          ======================================================= */}
-      <div className="hidden lg:flex flex-row gap-12 items-start">
+      <div className="hidden flex-row items-start gap-12 lg:flex">
         {/* LEFT: Navigation Tabs */}
-        <div className="w-1/4 flex flex-col gap-3 sticky top-24">
+        <div className="sticky top-24 flex w-1/4 flex-col gap-3">
           {items.map((item) => {
             const isActive = activeTabId === item.id;
             return (
@@ -159,32 +155,32 @@ export default function VerticalTabs({
                 key={item.id}
                 onClick={() => setActiveTabId(item.id)}
                 className={cn(
-                  "group relative flex items-center justify-between w-full px-6 py-5 rounded-2xl text-left transition-all duration-300 ease-out cursor-pointer border border-transparent", // rounded-2xl for desktop tabs too
+                  "group relative flex w-full cursor-pointer items-center justify-between rounded-2xl border border-transparent px-6 py-5 text-left transition-all duration-300 ease-out", // rounded-2xl for desktop tabs too
                   isActive
                     ? "bg-card border-border shadow-lg"
-                    : "hover:bg-muted/50 text-muted-foreground hover:text-foreground"
+                    : "hover:bg-muted/50 text-muted-foreground hover:text-foreground",
                 )}
               >
                 {isActive && (
                   <motion.div
                     layoutId="activeTabIndicator"
-                    className="absolute left-0 top-0 bottom-0 w-1 bg-accent rounded-l-2xl" // Matches container
+                    className="bg-accent absolute top-0 bottom-0 left-0 w-1 rounded-l-2xl" // Matches container
                   />
                 )}
                 <span
                   className={cn(
-                    "font-medium text-base tracking-wide transition-colors",
-                    isActive ? "text-foreground font-semibold" : ""
+                    "text-base font-medium tracking-wide transition-colors",
+                    isActive ? "text-foreground font-semibold" : "",
                   )}
                 >
                   {item.label}
                 </span>
                 <ArrowRight
                   className={cn(
-                    "w-4 h-4 transition-all duration-300",
+                    "h-4 w-4 transition-all duration-300",
                     isActive
-                      ? "opacity-100 translate-x-0 text-accent"
-                      : "opacity-0 -translate-x-2 group-hover:opacity-50 group-hover:translate-x-0"
+                      ? "text-accent translate-x-0 opacity-100"
+                      : "-translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-50",
                   )}
                 />
               </button>
@@ -193,7 +189,7 @@ export default function VerticalTabs({
         </div>
 
         {/* RIGHT: Content Display */}
-        <div className="w-3/4 min-h-[500px]">
+        <div className="min-h-[500px] w-3/4">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTabId}

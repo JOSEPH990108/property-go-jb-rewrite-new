@@ -48,47 +48,49 @@ export function DynamicDataTable<TData extends Record<string, unknown>>({
       return Object.values(row.original).some((value) =>
         String(value ?? "")
           .toLowerCase()
-          .includes(search)
+          .includes(search),
       );
     },
   });
 
   return (
     <>
-      <section className="rounded-[28px] border border-border bg-card/95 p-5 shadow-[0_20px_60px_rgba(15,23,42,0.1)] backdrop-blur-md">
-        <div className="flex flex-col gap-4 border-b border-border pb-5 lg:flex-row lg:items-center lg:justify-between">
+      <section className="border-border bg-card/95 rounded-[28px] border p-5 shadow-[0_20px_60px_rgba(15,23,42,0.1)] backdrop-blur-md">
+        <div className="border-border flex flex-col gap-4 border-b pb-5 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <p className="text-xs uppercase tracking-[0.24em] text-primary/80">Reusable CRUD table</p>
-            <h2 className="mt-2 text-2xl font-semibold text-foreground">{title}</h2>
-            <p className="mt-1 text-sm text-foreground/70">{description}</p>
+            <p className="text-primary/80 text-xs tracking-[0.24em] uppercase">
+              Reusable CRUD table
+            </p>
+            <h2 className="text-foreground mt-2 text-2xl font-semibold">{title}</h2>
+            <p className="text-foreground/70 mt-1 text-sm">{description}</p>
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <button
               type="button"
               onClick={onAddNew}
-              className="inline-flex items-center justify-center gap-2 rounded-2xl border border-primary/20 bg-gradient-to-r from-primary to-accent px-4 py-3 text-sm font-semibold text-primary-foreground shadow-[0_0_32px_hsl(var(--primary)/0.3)] transition hover:shadow-[0_0_40px_hsl(var(--primary)/0.4)]"
+              className="border-primary/20 from-primary to-accent text-primary-foreground inline-flex items-center justify-center gap-2 rounded-2xl border bg-gradient-to-r px-4 py-3 text-sm font-semibold shadow-[0_0_32px_hsl(var(--primary)/0.3)] transition hover:shadow-[0_0_40px_hsl(var(--primary)/0.4)]"
             >
               <Plus className="h-4 w-4" />
               {addLabel}
             </button>
 
-            <label className="flex items-center gap-3 rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground/70">
-              <Search className="h-4 w-4 text-primary" />
+            <label className="border-border bg-background text-foreground/70 flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm">
+              <Search className="text-primary h-4 w-4" />
               <input
                 value={globalFilter}
                 onChange={(event) => setGlobalFilter(event.target.value)}
                 placeholder="Search records..."
-                className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-foreground/45 sm:min-w-64"
+                className="text-foreground placeholder:text-foreground/45 w-full bg-transparent text-sm outline-none sm:min-w-64"
               />
             </label>
           </div>
         </div>
 
-        <div className="mt-5 overflow-hidden rounded-[24px] border border-border bg-background">
+        <div className="border-border bg-background mt-5 overflow-hidden rounded-[24px] border">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-border text-left text-sm text-foreground">
-              <thead className="bg-muted/35 text-xs uppercase tracking-[0.24em] text-foreground/60">
+            <table className="divide-border text-foreground min-w-full divide-y text-left text-sm">
+              <thead className="bg-muted/35 text-foreground/60 text-xs tracking-[0.24em] uppercase">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
@@ -101,12 +103,12 @@ export function DynamicDataTable<TData extends Record<string, unknown>>({
                   </tr>
                 ))}
               </thead>
-              <tbody className="divide-y divide-border/70">
+              <tbody className="divide-border/70 divide-y">
                 {table.getRowModel().rows.length === 0 ? (
                   <tr>
                     <td
                       colSpan={columns.length}
-                      className="px-4 py-10 text-center text-sm text-foreground/60"
+                      className="text-foreground/60 px-4 py-10 text-center text-sm"
                     >
                       No records match the current search.
                     </td>
@@ -116,7 +118,7 @@ export function DynamicDataTable<TData extends Record<string, unknown>>({
                     <tr
                       key={row.id}
                       onClick={() => setSelectedRow(row.original)}
-                      className="cursor-pointer transition hover:bg-primary/8"
+                      className="hover:bg-primary/8 cursor-pointer transition"
                     >
                       {row.getVisibleCells().map((cell) => (
                         <td key={cell.id} className="px-4 py-4 align-middle">
@@ -137,7 +139,7 @@ export function DynamicDataTable<TData extends Record<string, unknown>>({
           <>
             <motion.button
               type="button"
-              className="fixed inset-0 z-40 bg-background/70"
+              className="bg-background/70 fixed inset-0 z-40"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -148,17 +150,17 @@ export function DynamicDataTable<TData extends Record<string, unknown>>({
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 28, stiffness: 260 }}
-              className="fixed right-0 top-0 z-50 flex h-full w-full max-w-xl flex-col border-l border-border bg-card p-6 shadow-[0_0_60px_rgba(15,23,42,0.2)] backdrop-blur-xl"
+              className="border-border bg-card fixed top-0 right-0 z-50 flex h-full w-full max-w-xl flex-col border-l p-6 shadow-[0_0_60px_rgba(15,23,42,0.2)] backdrop-blur-xl"
             >
-              <div className="flex items-center justify-between border-b border-border pb-4">
+              <div className="border-border flex items-center justify-between border-b pb-4">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.24em] text-primary/80">Row details</p>
-                  <h3 className="mt-2 text-2xl font-semibold text-foreground">Update drawer</h3>
+                  <p className="text-primary/80 text-xs tracking-[0.24em] uppercase">Row details</p>
+                  <h3 className="text-foreground mt-2 text-2xl font-semibold">Update drawer</h3>
                 </div>
                 <button
                   type="button"
                   onClick={() => setSelectedRow(null)}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-border bg-background text-foreground transition hover:bg-muted/30"
+                  className="border-border bg-background text-foreground hover:bg-muted/30 inline-flex h-10 w-10 items-center justify-center rounded-2xl border transition"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -172,10 +174,14 @@ export function DynamicDataTable<TData extends Record<string, unknown>>({
                     {Object.entries(selectedRow).map(([key, value]) => (
                       <div
                         key={key}
-                        className="rounded-2xl border border-border bg-background px-4 py-3"
+                        className="border-border bg-background rounded-2xl border px-4 py-3"
                       >
-                        <p className="text-xs uppercase tracking-[0.2em] text-foreground/60">{key}</p>
-                        <p className="mt-2 text-sm font-medium text-foreground">{String(value ?? "-")}</p>
+                        <p className="text-foreground/60 text-xs tracking-[0.2em] uppercase">
+                          {key}
+                        </p>
+                        <p className="text-foreground mt-2 text-sm font-medium">
+                          {String(value ?? "-")}
+                        </p>
                       </div>
                     ))}
                   </div>
@@ -185,14 +191,14 @@ export function DynamicDataTable<TData extends Record<string, unknown>>({
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
                 <button
                   type="button"
-                  className="rounded-2xl border border-primary/20 bg-primary/10 px-4 py-3 text-sm font-medium text-primary"
+                  className="border-primary/20 bg-primary/10 text-primary rounded-2xl border px-4 py-3 text-sm font-medium"
                 >
                   Save changes
                 </button>
                 <button
                   type="button"
                   onClick={() => setSelectedRow(null)}
-                  className="rounded-2xl border border-border bg-background px-4 py-3 text-sm font-medium text-foreground"
+                  className="border-border bg-background text-foreground rounded-2xl border px-4 py-3 text-sm font-medium"
                 >
                   Cancel
                 </button>

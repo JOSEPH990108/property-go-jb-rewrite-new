@@ -7,17 +7,18 @@ export const metadata: Metadata = {
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className="container max-w-3xl py-20 md:py-16 min-h-screen">
-      <h1 className="text-4xl font-serif font-bold tracking-tight mb-8">Privacy Policy</h1>
-      <p className="text-sm text-muted-foreground mb-8">Last updated: 19 April 2026</p>
+    <div className="container min-h-screen max-w-3xl py-20 md:py-16">
+      <h1 className="mb-8 font-serif text-4xl font-bold tracking-tight">Privacy Policy</h1>
+      <p className="text-muted-foreground mb-8 text-sm">Last updated: 19 April 2026</p>
 
       <div className="prose dark:prose-invert max-w-none space-y-8">
         <section>
           <h2>1. Introduction</h2>
           <p>
-            PropertyGoJB (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;) is committed to protecting the privacy of
-            individuals who visit our website and use our services. This Privacy Policy explains how
-            we collect, use, disclose, and safeguard your information when you use our platform.
+            PropertyGoJB (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;) is committed to
+            protecting the privacy of individuals who visit our website and use our services. This
+            Privacy Policy explains how we collect, use, disclose, and safeguard your information
+            when you use our platform.
           </p>
         </section>
 
@@ -70,18 +71,14 @@ export default function PrivacyPolicyPage() {
 
         <section>
           <h2>6. Your Rights (PDPA Malaysia)</h2>
-          <p>
-            Under the Personal Data Protection Act 2010 (PDPA), you have the right to:
-          </p>
+          <p>Under the Personal Data Protection Act 2010 (PDPA), you have the right to:</p>
           <ul>
             <li>Access your personal data held by us</li>
             <li>Correct inaccurate personal data</li>
             <li>Withdraw consent for data processing</li>
             <li>Request deletion of your account and associated data</li>
           </ul>
-          <p>
-            You can exercise these rights through your profile settings or by contacting us.
-          </p>
+          <p>You can exercise these rights through your profile settings or by contacting us.</p>
         </section>
 
         <section>
@@ -105,7 +102,8 @@ export default function PrivacyPolicyPage() {
           <h2>9. Changes to This Policy</h2>
           <p>
             We may update this Privacy Policy from time to time. We will notify you of any material
-            changes by posting the updated policy on this page with a revised &quot;Last updated&quot; date.
+            changes by posting the updated policy on this page with a revised &quot;Last
+            updated&quot; date.
           </p>
         </section>
 
@@ -115,7 +113,8 @@ export default function PrivacyPolicyPage() {
             If you have any questions about this Privacy Policy, please contact us at{" "}
             <a href="mailto:privacy@propertygojb.com" className="text-primary hover:underline">
               privacy@propertygojb.com
-            </a>.
+            </a>
+            .
           </p>
         </section>
       </div>

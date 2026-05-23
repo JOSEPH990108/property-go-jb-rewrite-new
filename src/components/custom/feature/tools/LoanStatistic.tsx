@@ -9,7 +9,7 @@ function polarToCartesian(
   centerX: number,
   centerY: number,
   radius: number,
-  angleInDegrees: number
+  angleInDegrees: number,
 ) {
   const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
   return {
@@ -18,13 +18,7 @@ function polarToCartesian(
   };
 }
 
-function describeArc(
-  x: number,
-  y: number,
-  radius: number,
-  startAngle: number,
-  endAngle: number
-) {
+function describeArc(x: number, y: number, radius: number, startAngle: number, endAngle: number) {
   const start = polarToCartesian(x, y, radius, endAngle);
   const end = polarToCartesian(x, y, radius, startAngle);
   const largeArcFlag = endAngle - startAngle > 180 ? "1" : "0";
@@ -49,13 +43,9 @@ export default function LoanStatistic() {
   });
 
   return (
-    <div className="bg-white dark:bg-zinc-900 rounded-lg shadow p-4 flex flex-col items-center justify-center">
-      <div className="relative w-40 h-40 select-none">
-        <svg
-          viewBox="0 0 36 36"
-          className="w-full h-full"
-          aria-label="Loan split pie chart"
-        >
+    <div className="flex flex-col items-center justify-center rounded-lg bg-white p-4 shadow dark:bg-zinc-900">
+      <div className="relative h-40 w-40 select-none">
+        <svg viewBox="0 0 36 36" className="h-full w-full" aria-label="Loan split pie chart">
           <path
             d={describeArc(18, 18, 15.9155, 0, interestAngle)}
             fill="none"
@@ -71,9 +61,7 @@ export default function LoanStatistic() {
                 visible: true,
               })
             }
-            onMouseLeave={() =>
-              setTooltip((prev) => ({ ...prev, visible: false }))
-            }
+            onMouseLeave={() => setTooltip((prev) => ({ ...prev, visible: false }))}
             onFocus={() =>
               setTooltip({
                 content: `Interest: ${formatCurrency(firstMonth.interest)}`,
@@ -99,9 +87,7 @@ export default function LoanStatistic() {
                 visible: true,
               })
             }
-            onMouseLeave={() =>
-              setTooltip((prev) => ({ ...prev, visible: false }))
-            }
+            onMouseLeave={() => setTooltip((prev) => ({ ...prev, visible: false }))}
             onFocus={() =>
               setTooltip({
                 content: `Principal: ${formatCurrency(firstMonth.principal)}`,
@@ -116,7 +102,7 @@ export default function LoanStatistic() {
 
         {tooltip.visible && (
           <div
-            className="absolute text-xs px-2 py-1 bg-zinc-900 text-white rounded shadow z-20"
+            className="absolute z-20 rounded bg-zinc-900 px-2 py-1 text-xs text-white shadow"
             style={{
               top: tooltip.y,
               left: tooltip.x,
@@ -129,25 +115,20 @@ export default function LoanStatistic() {
           </div>
         )}
 
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
+        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
           <div className="text-xs text-zinc-500">1st Month</div>
-          <div className="text-lg font-bold text-primary">
-            {formatCurrency(firstMonth.total)}
-          </div>
+          <div className="text-primary text-lg font-bold">{formatCurrency(firstMonth.total)}</div>
         </div>
       </div>
 
-      <div className="mt-2 text-xs text-center space-y-1">
+      <div className="mt-2 space-y-1 text-center text-xs">
         <div className="flex items-center justify-center gap-1">
-          <div className="w-3 h-3 rounded-sm bg-[#00a6ed]" /> Principal:{" "}
-          {principalPct.toFixed(1)}%
+          <div className="h-3 w-3 rounded-sm bg-[#00a6ed]" /> Principal: {principalPct.toFixed(1)}%
         </div>
         <div className="flex items-center justify-center gap-1">
-          <div className="w-3 h-3 rounded-sm bg-[#ca0b4a]" /> Interest:{" "}
-          {interestPct.toFixed(1)}%
+          <div className="h-3 w-3 rounded-sm bg-[#ca0b4a]" /> Interest: {interestPct.toFixed(1)}%
         </div>
       </div>
     </div>
   );
 }
-  

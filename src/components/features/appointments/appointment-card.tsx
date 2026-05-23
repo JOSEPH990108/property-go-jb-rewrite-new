@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 // src/components/features/appointments/appointment-card.tsx
 
@@ -14,10 +14,10 @@ import { Appointment } from "@/types/appointment";
 // Module-level constant — reusable across any component that needs appointment status colours.
 export const APPOINTMENT_STATUS_COLORS: Record<string, string> = {
   CONFIRMED: "bg-green-500/15 text-green-500 border-green-500/20",
-  PENDING:   "bg-yellow-500/15 text-yellow-500 border-yellow-500/20",
+  PENDING: "bg-yellow-500/15 text-yellow-500 border-yellow-500/20",
   COMPLETED: "bg-blue-500/15 text-blue-500 border-blue-500/20",
   CANCELLED: "bg-red-500/15 text-red-500 border-red-500/20",
-  NO_SHOW:   "bg-orange-500/15 text-orange-500 border-orange-500/20",
+  NO_SHOW: "bg-orange-500/15 text-orange-500 border-orange-500/20",
 };
 
 const DEFAULT_STATUS_COLOR = "bg-gray-500/15 text-gray-500 border-gray-500/20";
@@ -27,16 +27,15 @@ interface AppointmentCardProps {
 }
 
 export function AppointmentCard({ appointment }: AppointmentCardProps) {
-  const statusColor =
-    APPOINTMENT_STATUS_COLORS[appointment.status.code] ?? DEFAULT_STATUS_COLOR;
+  const statusColor = APPOINTMENT_STATUS_COLORS[appointment.status.code] ?? DEFAULT_STATUS_COLOR;
 
   return (
-    <Card className="group overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm hover:bg-card hover:border-primary/20 transition-all duration-300">
-      <CardContent className="p-5 space-y-4">
+    <Card className="group border-border/50 bg-card/50 hover:bg-card hover:border-primary/20 overflow-hidden backdrop-blur-sm transition-all duration-300">
+      <CardContent className="space-y-4 p-5">
         {/* Header: Date & Status */}
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex flex-col items-center justify-center w-12 h-12 rounded-lg bg-primary/10 text-primary border border-primary/20 shrink-0">
+            <div className="bg-primary/10 text-primary border-primary/20 flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-lg border">
               <span className="text-xs font-medium uppercase">
                 {format(new Date(appointment.scheduledAt), "MMM")}
               </span>
@@ -45,17 +44,17 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
               </span>
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
+              <p className="text-muted-foreground text-sm font-medium">
                 {format(new Date(appointment.scheduledAt), "EEEE, h:mm a")}
               </p>
-              <h3 className="text-lg font-semibold text-foreground line-clamp-1">
+              <h3 className="text-foreground line-clamp-1 text-lg font-semibold">
                 {appointment.project.name}
               </h3>
             </div>
           </div>
           <Badge
             variant="outline"
-            className={cn("capitalize px-2 py-0.5 text-xs whitespace-nowrap", statusColor)}
+            className={cn("px-2 py-0.5 text-xs whitespace-nowrap capitalize", statusColor)}
           >
             {appointment.status.name}
           </Badge>
@@ -63,26 +62,26 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
 
         {/* Location */}
         {appointment.project.address && (
-          <div className="flex items-start gap-2 text-sm text-muted-foreground pl-1">
-            <MapPin className="w-3.5 h-3.5 mt-0.5 shrink-0 text-primary/70" />
+          <div className="text-muted-foreground flex items-start gap-2 pl-1 text-sm">
+            <MapPin className="text-primary/70 mt-0.5 h-3.5 w-3.5 shrink-0" />
             <span className="line-clamp-1 text-xs">{appointment.project.address}</span>
           </div>
         )}
 
         {/* Agent & Actions */}
-        <div className="pt-4 mt-2 border-t border-border/50 flex items-center justify-between">
+        <div className="border-border/50 mt-2 flex items-center justify-between border-t pt-4">
           <div className="flex items-center gap-3">
-            <Avatar className="w-8 h-8 border border-border">
+            <Avatar className="border-border h-8 w-8 border">
               <AvatarImage src={appointment.agent?.image ?? undefined} />
               <AvatarFallback>
-                <User className="w-4 h-4" />
+                <User className="h-4 w-4" />
               </AvatarFallback>
             </Avatar>
             <div className="text-sm">
-              <p className="font-medium text-foreground text-sm">
+              <p className="text-foreground text-sm font-medium">
                 {appointment.agent?.name ?? "Unassigned"}
               </p>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
+              <p className="text-muted-foreground text-[10px] tracking-wider uppercase">
                 {appointment.agent?.agencyName ?? "Agent"}
               </p>
             </div>
@@ -93,7 +92,7 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
               <Button
                 size="icon"
                 variant="ghost"
-                className="h-8 w-8 text-muted-foreground hover:text-green-500 hover:bg-green-500/10"
+                className="text-muted-foreground h-8 w-8 hover:bg-green-500/10 hover:text-green-500"
                 asChild
               >
                 <a
@@ -101,7 +100,7 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Phone className="w-4 h-4" />
+                  <Phone className="h-4 w-4" />
                 </a>
               </Button>
             )}
@@ -110,7 +109,7 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
 
         {/* Notes */}
         {appointment.notes && (
-          <div className="bg-muted/30 p-3 rounded-md text-xs text-muted-foreground italic border border-border/30 mt-2">
+          <div className="bg-muted/30 text-muted-foreground border-border/30 mt-2 rounded-md border p-3 text-xs italic">
             &ldquo;{appointment.notes}&rdquo;
           </div>
         )}

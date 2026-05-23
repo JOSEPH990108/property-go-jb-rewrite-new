@@ -11,7 +11,7 @@ const columns: ColumnDef<ProjectTableRow>[] = [
     header: "Status",
     accessorKey: "status",
     cell: ({ getValue }) => (
-      <span className="rounded-full border border-primary/20 bg-primary/12 px-3 py-1 text-xs font-medium text-primary">
+      <span className="border-primary/20 bg-primary/12 text-primary rounded-full border px-3 py-1 text-xs font-medium">
         {String(getValue())}
       </span>
     ),

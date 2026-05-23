@@ -53,32 +53,28 @@ export default function LoanSummary() {
   return (
     <>
       {/* Loan Summary Panel */}
-      <div className="bg-white dark:bg-zinc-900 p-4 rounded-lg shadow text-sm text-zinc-800 dark:text-zinc-200">
+      <div className="rounded-lg bg-white p-4 text-sm text-zinc-800 shadow dark:bg-zinc-900 dark:text-zinc-200">
         <div
           onClick={() => setExpandSummary(!expandSummary)}
-          className="flex items-center justify-between cursor-pointer"
+          className="flex cursor-pointer items-center justify-between"
         >
-          <h3 className="font-bold text-lg">📋 Loan Summary</h3>
-          {expandSummary ? (
-            <ChevronUp className="w-5 h-5" />
-          ) : (
-            <ChevronDown className="w-5 h-5" />
-          )}
+          <h3 className="text-lg font-bold">📋 Loan Summary</h3>
+          {expandSummary ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
         </div>
 
         <div
           className={clsx(
-            "transition-all overflow-hidden",
-            expandSummary ? "max-h-[1000px] mt-3 space-y-2" : "max-h-0"
+            "overflow-hidden transition-all",
+            expandSummary ? "mt-3 max-h-[1000px] space-y-2" : "max-h-0",
           )}
         >
           {summaryItems.map(({ label, value, icon }) => (
-            <div key={label} className="flex justify-between items-center">
+            <div key={label} className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span>{icon}</span>
                 <span>{label}:</span>
               </div>
-              <span className="font-semibold text-right">{value}</span>
+              <span className="text-right font-semibold">{value}</span>
             </div>
           ))}
         </div>

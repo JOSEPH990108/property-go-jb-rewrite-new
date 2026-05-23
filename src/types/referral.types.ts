@@ -20,14 +20,14 @@ export interface ReferralVoucher {
 
 /** Trigger events that can generate referral rewards. */
 export type ReferralTriggerEvent =
-  | 'ON_REGISTRATION'
-  | 'ON_BOOKING'
-  | 'ON_SPA_SIGNED'
-  | 'ON_VISIT'
-  | 'MILESTONE';
+  | "ON_REGISTRATION"
+  | "ON_BOOKING"
+  | "ON_SPA_SIGNED"
+  | "ON_VISIT"
+  | "MILESTONE";
 
 /** Reward types in the referral system. */
-export type ReferralRewardType = 'PHYSICAL_GIFT' | 'VOUCHER' | 'CASH' | 'CASHBACK' | 'POINTS';
+export type ReferralRewardType = "PHYSICAL_GIFT" | "VOUCHER" | "CASH" | "CASHBACK" | "POINTS";
 
 /** A single entry in the referral reward history (returned by getReferralHistory).
  *  Dates may be a JS `Date` from Drizzle or a serialised ISO string when passed across

@@ -1,7 +1,7 @@
 // src\stores\property-store.ts
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import { PropertyData, getInitialPropertyData } from '@/app/actions/property-actions';
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import { PropertyData, getInitialPropertyData } from "@/app/actions/property-actions";
 
 interface PropertyState {
   data: PropertyData | null;
@@ -40,13 +40,13 @@ export const usePropertyStore = create<PropertyState>()(
           set({
             data: result,
             isLoading: false,
-            lastFetched: Date.now()
+            lastFetched: Date.now(),
           });
         } catch (err) {
-          console.error('Failed to fetch property data:', err);
+          console.error("Failed to fetch property data:", err);
           set({
-            error: 'Failed to load property data',
-            isLoading: false
+            error: "Failed to load property data",
+            isLoading: false,
           });
         }
       },
@@ -54,12 +54,12 @@ export const usePropertyStore = create<PropertyState>()(
       reset: () => set({ data: null, isLoading: false, error: null, lastFetched: null }),
     }),
     {
-      name: 'property-storage', // key in storage
+      name: "property-storage", // key in storage
       storage: createJSONStorage(() => sessionStorage), // Session Storage = cleared on tab close
       partialize: (state) => ({
         data: state.data,
-        lastFetched: state.lastFetched
+        lastFetched: state.lastFetched,
       }), // Only persist data and timestamp, not loading state
-    }
-  )
+    },
+  ),
 );

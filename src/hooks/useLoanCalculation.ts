@@ -18,7 +18,7 @@ function calcLegalFee(amount: number): number {
   const tier2 = Math.min(remainder, 7_000_000);
   fee += tier2 * 0.01;
   remainder = Math.max(0, remainder - 7_000_000);
-  
+
   // Excess @ 0.9% (rare, but correct formula)
   fee += remainder * 0.009;
 
@@ -68,8 +68,7 @@ export function useLoanCalculation() {
   // 2. Installment (PMT)
   let monthlyInstallment = 0;
   if (monthlyRate > 0) {
-    monthlyInstallment =
-      (loanAmount * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -totalMonths));
+    monthlyInstallment = (loanAmount * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -totalMonths));
   } else {
     monthlyInstallment = loanAmount / totalMonths;
   }
@@ -90,15 +89,15 @@ export function useLoanCalculation() {
   const loanStampDuty = state.developerDiscounts.loanStampDuty ? 0 : loanStampDutyRaw;
 
   // 5. Cash Required
-  const estDisbursement = 2500; 
-  
+  const estDisbursement = 2500;
+
   const cashRequired =
     downPaymentAmount +
     spaLegalFee +
     loanLegalFee +
     spaStampDuty +
     loanStampDuty +
-    estDisbursement - 
+    estDisbursement -
     state.rebateAmount;
 
   // 6. Dates (NEW LOGIC ADDED HERE)

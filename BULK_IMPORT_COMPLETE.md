@@ -9,11 +9,13 @@ A production-ready bulk import system for your property database supporting **De
 ## 📦 Solution Components
 
 ### 1. **Validation Layer** (`bulk-import-schema.ts`)
+
 - Zod schemas for all 6 entity types
 - Type-safe validation with clear error messages
 - Automatic data coercion (strings → numbers, "yes" → boolean)
 
 **Schemas:**
+
 - `BulkDeveloperSchema` - Developer records and activation status
 - `BulkProjectSchema` - Projects with developer/location refs
 - `BulkProjectLayoutSchema` - Unit layouts (1BR, 2BR, etc.)
@@ -22,23 +24,26 @@ A production-ready bulk import system for your property database supporting **De
 - `BulkTowerSchema` - Building towers
 
 ### 2. **Processing Utilities** (`bulk-import-utils.ts`)
+
 - RFC 4180 CSV parser (handles quotes, escaping)
 - Duplicate detection by key fields
 - Batch processing for memory efficiency
 - Validation error formatting
 
 **Key Functions:**
+
 ```typescript
-parseCSV()              // Parse CSV content
-csvToObjects()          // Convert to objects
-validateRow()           // Validate against schema
-findDuplicates()        // Detect duplicates
-chunk()                 // Split into batches
-processBatches()        // Process with progress
-buildImportResult()     // Format results
+parseCSV(); // Parse CSV content
+csvToObjects(); // Convert to objects
+validateRow(); // Validate against schema
+findDuplicates(); // Detect duplicates
+chunk(); // Split into batches
+processBatches(); // Process with progress
+buildImportResult(); // Format results
 ```
 
 ### 3. **Server Actions** (`bulk-import-actions.ts`)
+
 - `bulkImportDevelopers()` - Bulk import developers
 - `bulkImportProjects()` - Bulk import projects
 - `bulkImportLayouts()` - Bulk import layouts
@@ -47,6 +52,7 @@ buildImportResult()     // Format results
 - `bulkImportTowers()` - Bulk import towers
 
 **Features:**
+
 - Foreign key resolution (by code/slug, not ID)
 - Duplicate handling with warnings
 - Per-row error collection
@@ -54,6 +60,7 @@ buildImportResult()     // Format results
 - Progress tracking via result object
 
 ### 4. **React UI Component** (`BulkImportDialog.tsx`)
+
 - Modal dialog with entity type selection
 - CSV file upload
 - Template download for each entity type
@@ -62,6 +69,7 @@ buildImportResult()     // Format results
 - Progress indication during import
 
 ### 5. **Admin Integration**
+
 - Added `BulkImportDialog` to AdminConsole
 - Appears next to "New Property" button
 - Easy access for bulk operations
@@ -71,6 +79,7 @@ buildImportResult()     // Format results
 ## 🔧 Algorithms & Techniques
 
 ### CSV Parsing - O(n)
+
 ```
 Handles:
 ✓ UNIX & Windows line endings
@@ -79,7 +88,8 @@ Handles:
 ✓ Inconsistent formatting
 ```
 
-### Duplicate Detection - O(n*k)
+### Duplicate Detection - O(n\*k)
+
 ```
 Creates composite keys from specified fields
 Identifies multi-row duplicates
@@ -87,6 +97,7 @@ Generates warnings without blocking
 ```
 
 ### Foreign Key Resolution - Lazy Lookup
+
 ```
 Resolves references inline: developer.slug → id
 Provides clear errors for missing references
@@ -94,6 +105,7 @@ Prevents invalid data entry
 ```
 
 ### Validation - Three Layers
+
 ```
 Layer 1: CSV Format ✗ → Entire import fails
 Layer 2: Schema      ✗ → Individual row error
@@ -101,6 +113,7 @@ Layer 3: References  ✗ → Individual row error + message
 ```
 
 ### Batch Processing - Chunked + Sequential
+
 ```
 10-100 records per batch
 Memory efficient: ~1-5MB total
@@ -112,23 +125,29 @@ Prevents database overload
 ## 📋 Usage Flow
 
 ### Step 1: Access
+
 Admin Console → Properties tab → "Bulk Import" button
 
 ### Step 2: Select Entity Type
+
 Choose from: Developers | Projects | Layouts | Units | Phases | Towers
 
 ### Step 3: Download Template
+
 Click "Template" → Opens CSV template in browser
 
 ### Step 4: Fill Data
+
 Open in Excel/Sheets, add your data, save as CSV
 
 ### Step 5: Upload & Import
+
 Select file → Click "Import" → Monitor progress
 
 ### Step 6: Review Results
+
 - Green: Count of successful imports
-- Red: Count of failed records  
+- Red: Count of failed records
 - Yellow: Warnings (duplicates, etc.)
 - Detailed errors with row numbers
 
@@ -137,6 +156,7 @@ Select file → Click "Import" → Monitor progress
 ## 📊 Example: Bulk Import 100 Units
 
 **CSV Format:**
+
 ```csv
 action,projectSlug,unitNo,layoutCode,floor,basePrice,bookingStatusCode,lotTypeCode
 create,project-sunset,01-01,2B2B,1,350000,available,residential
@@ -146,6 +166,7 @@ create,project-sunset,10-10,3B2B,10,425000,available,residential
 ```
 
 **Result (< 5 seconds):**
+
 - ✓ 100 success
 - ✗ 0 failed
 - ⚠ 0 warnings
@@ -156,6 +177,7 @@ create,project-sunset,10-10,3B2B,10,425000,available,residential
 ## 🛡️ Error Handling
 
 ### Clear Error Messages
+
 ```
 "Developer with slug 'invalid-dev' not found"
 "Required field 'basePrice' is missing"
@@ -164,13 +186,16 @@ create,project-sunset,10-10,3B2B,10,425000,available,residential
 ```
 
 ### Per-Row Tracking
+
 Each error includes:
+
 - Row number (2-based, header is row 1)
 - Field name (if applicable)
 - Clear message
 - Data context (optional)
 
 ### No Silent Failures
+
 - All errors collected
 - Reported with full context
 - Non-blocking (process continues)
@@ -180,18 +205,19 @@ Each error includes:
 
 ## 🚀 Performance
 
-| Import Size | Time | Memory | Status |
-|--|--|--|--|
-| 10 rows | < 1s | 2MB | ✓ |
-| 100 rows | 1-3s | 5MB | ✓ |
-| 1,000 rows | 5-15s | 10MB | ✓ |
-| 10,000 rows | 1-2min | 15MB | ✓ |
+| Import Size | Time   | Memory | Status |
+| ----------- | ------ | ------ | ------ |
+| 10 rows     | < 1s   | 2MB    | ✓      |
+| 100 rows    | 1-3s   | 5MB    | ✓      |
+| 1,000 rows  | 5-15s  | 10MB   | ✓      |
+| 10,000 rows | 1-2min | 15MB   | ✓      |
 
 ---
 
 ## 📁 Files Created/Modified
 
 ### New Files (10)
+
 ```
 src/lib/bulk-import-schema.ts           (Schema definitions)
 src/lib/bulk-import-utils.ts            (Processing utilities)
@@ -206,11 +232,13 @@ samples/bulk-import/towers_sample.csv
 ```
 
 ### Modified Files
+
 ```
 src/components/admin/AdminConsole.tsx   (Added BulkImportDialog)
 ```
 
 ### Documentation (3)
+
 ```
 BULK_IMPORT_GUIDE.md          (Full user guide)
 BULK_IMPORT_ARCHITECTURE.md   (Technical specs)
@@ -242,6 +270,7 @@ BULK_IMPORT_QUICKSTART.md     (Quick start guide)
 ## 🔍 Key Features
 
 ### For End Users
+
 ✓ Easy-to-use dialog interface
 ✓ Template download (no guessing format)
 ✓ Clear error messages on failures
@@ -249,6 +278,7 @@ BULK_IMPORT_QUICKSTART.md     (Quick start guide)
 ✓ Detailed error logs with row numbers
 
 ### For Developers
+
 ✓ Type-safe Zod schemas
 ✓ Modular architecture
 ✓ Server-side processing (Next.js 13+)
@@ -257,6 +287,7 @@ BULK_IMPORT_QUICKSTART.md     (Quick start guide)
 ✓ Well-documented code
 
 ### For your Database
+
 ✓ Foreign key validation before insert
 ✓ Duplicate prevention
 ✓ Consistent data integrity
@@ -277,26 +308,29 @@ BULK_IMPORT_QUICKSTART.md     (Quick start guide)
 ## 🔄 Typical Workflows
 
 ### Workflow 1: Bulk Upload New Project
+
 1. Bulk import developers CSV
 2. Bulk import projects CSV
 3. Bulk import phases CSV
 4. Bulk import towers CSV
 5. Bulk import layouts CSV
 6. Bulk import units CSV
-→ Entire project ready in < 1 minute
+   → Entire project ready in < 1 minute
 
 ### Workflow 2: Update Existing Prices
+
 1. Export current units
 2. Set `action: update` in CSV
 3. Modify prices
 4. Upload CSV
-→ All prices updated in seconds
+   → All prices updated in seconds
 
 ### Workflow 3: Quick Unit Creation
+
 1. Download units template
 2. Copy/paste unit numbers
 3. Upload CSV
-→ 100 units created in 5 seconds
+   → 100 units created in 5 seconds
 
 ---
 
@@ -313,6 +347,7 @@ BULK_IMPORT_QUICKSTART.md     (Quick start guide)
 ## 🚧 Future Enhancements
 
 **Possible additions:**
+
 - Async job queue for 100K+ record imports
 - Email notifications on completion
 - Import history/audit log
@@ -327,6 +362,7 @@ BULK_IMPORT_QUICKSTART.md     (Quick start guide)
 ## 💡 Tips & Tricks
 
 ### For Large Imports
+
 ```
 Split into 2-3 CSV files
 Import sequentially
@@ -337,6 +373,7 @@ Time: 10-15 seconds
 ```
 
 ### For Testing
+
 ```
 1. Create test project first
 2. Import 5 sample units
@@ -345,6 +382,7 @@ Time: 10-15 seconds
 ```
 
 ### For Consistency
+
 ```
 - Always use lowercase slugs
 - Use YYYY-MM-DD for dates
@@ -358,8 +396,9 @@ Time: 10-15 seconds
 ## 🤝 Integration Points
 
 ### UI Layer
+
 ```tsx
-import { BulkImportDialog } from '@/components/admin/BulkImportDialog';
+import { BulkImportDialog } from "@/components/admin/BulkImportDialog";
 
 export function AdminPage() {
   return <BulkImportDialog />;
@@ -367,15 +406,17 @@ export function AdminPage() {
 ```
 
 ### Server Actions
+
 ```typescript
-import { bulkImportProjects } from '@/app/actions/bulk-import-actions';
+import { bulkImportProjects } from "@/app/actions/bulk-import-actions";
 
 const result = await bulkImportProjects(csvContent);
 ```
 
 ### Direct Utilities
+
 ```typescript
-import { parseCSV, csvToObjects, validateRow } from '@/lib/bulk-import-utils';
+import { parseCSV, csvToObjects, validateRow } from "@/lib/bulk-import-utils";
 
 const rows = parseCSV(csvContent);
 const objects = csvToObjects(rows);
@@ -386,6 +427,7 @@ const objects = csvToObjects(rows);
 ## 📞 Support
 
 **For questions about:**
+
 - **Field formats** → See `BULK_IMPORT_GUIDE.md` CSV sections
 - **Errors** → Check error message details in results panel
 - **Algorithms** → Read `BULK_IMPORT_ARCHITECTURE.md`
@@ -399,6 +441,7 @@ const objects = csvToObjects(rows);
 The bulk import system is fully implemented and integrated into your admin console. Start importing property data in bulk today!
 
 **Next Steps:**
+
 1. Navigate to Admin Console
 2. Click "Bulk Import"
 3. Download a template

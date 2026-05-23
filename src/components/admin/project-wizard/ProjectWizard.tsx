@@ -48,13 +48,34 @@ const STEPS = [
 // ── Default state ────────────────────────────────────────────────────────────
 
 const defaultProject = (): ProjectFormData => ({
-  slug: "", name: "", displayName: "", legalName: "", description: "",
-  developerId: "", propertyCategoryId: "", propertyTypeId: "", projectStatusId: "",
-  tenureTypeId: "", titleTypeId: "", regionId: "", areaId: "", address: "",
-  latitude: "", longitude: "", landAreaAcres: "", bookingFee: "1000",
-  bookingFeeBumi: "", maintenanceFeePerSqft: "", sinkingFundPerSqft: "",
-  isForeignerEligible: true, isGatedCommunity: false, isHotDeal: false, isPublished: false,
-  greenCertification: "", totalUnits: "", launchYear: "",
+  slug: "",
+  name: "",
+  displayName: "",
+  legalName: "",
+  description: "",
+  developerId: "",
+  propertyCategoryId: "",
+  propertyTypeId: "",
+  projectStatusId: "",
+  tenureTypeId: "",
+  titleTypeId: "",
+  regionId: "",
+  areaId: "",
+  address: "",
+  latitude: "",
+  longitude: "",
+  landAreaAcres: "",
+  bookingFee: "1000",
+  bookingFeeBumi: "",
+  maintenanceFeePerSqft: "",
+  sinkingFundPerSqft: "",
+  isForeignerEligible: true,
+  isGatedCommunity: false,
+  isHotDeal: false,
+  isPublished: false,
+  greenCertification: "",
+  totalUnits: "",
+  launchYear: "",
 });
 
 // ── Props ────────────────────────────────────────────────────────────────────
@@ -83,7 +104,16 @@ export function ProjectWizard({ options }: Props) {
   const [pricingSnapshots, setPricingSnapshots] = useState<PricingSnapshotRow[]>([]);
 
   const wizardData: CreateFullProjectInput = {
-    project, phases, towers, layouts, facingGroups, stacks, specialFloors, salesPackages, nearbyPlaces, pricingSnapshots,
+    project,
+    phases,
+    towers,
+    layouts,
+    facingGroups,
+    stacks,
+    specialFloors,
+    salesPackages,
+    nearbyPlaces,
+    pricingSnapshots,
   };
 
   function handleSubmit() {
@@ -106,7 +136,7 @@ export function ProjectWizard({ options }: Props) {
       <div className="sticky top-0 z-10 border-b border-white/10 bg-[#090d1a] px-6 py-4">
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-white/40">
+            <p className="text-xs font-semibold tracking-widest text-white/40 uppercase">
               New Project Wizard
             </p>
             <p className="text-lg font-semibold text-white">
@@ -118,7 +148,7 @@ export function ProjectWizard({ options }: Props) {
           </p>
         </div>
 
-        <Progress value={progress} className="h-1.5 bg-white/10 [&>div]:bg-primary" />
+        <Progress value={progress} className="[&>div]:bg-primary h-1.5 bg-white/10" />
 
         {/* Step pills */}
         <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
@@ -132,8 +162,8 @@ export function ProjectWizard({ options }: Props) {
                 (i === step
                   ? "bg-primary text-white"
                   : i < step
-                  ? "bg-primary/20 text-primary"
-                  : "bg-white/5 text-white/40")
+                    ? "bg-primary/20 text-primary"
+                    : "bg-white/5 text-white/40")
               }
             >
               {i + 1}. {s.label}
@@ -161,7 +191,13 @@ export function ProjectWizard({ options }: Props) {
               onSpecialFloorsChange={setSpecialFloors}
             />
           )}
-          {step === 5 && <Step6SalesPackages rows={salesPackages} onChange={setSalesPackages} options={options} />}
+          {step === 5 && (
+            <Step6SalesPackages
+              rows={salesPackages}
+              onChange={setSalesPackages}
+              options={options}
+            />
+          )}
           {step === 6 && <Step7NearbyPlaces rows={nearbyPlaces} onChange={setNearbyPlaces} />}
           {step === 7 && (
             <Step8Pricing
@@ -193,7 +229,7 @@ export function ProjectWizard({ options }: Props) {
         {step < STEPS.length - 1 && (
           <Button
             onClick={() => setStep((s) => Math.min(STEPS.length - 1, s + 1))}
-            className="bg-primary text-white hover:bg-primary/90"
+            className="bg-primary hover:bg-primary/90 text-white"
           >
             Next
             <ChevronRight className="ml-1 h-4 w-4" />

@@ -1,54 +1,54 @@
-import { parseCSV } from '@/lib/bulk-import-utils';
+import { parseCSV } from "@/lib/bulk-import-utils";
 
 const RAW_HEADER_ALIASES: Record<string, string> = {
-  no: 'no',
-  unit: 'unitNo',
-  type: 'typeLabel',
-  sqft: 'sqFt',
-  bumiunit: 'bumiUnit',
-  unitsalesstatusdesc: 'salesStatusDesc',
-  unitsellingprice: 'unitSellingPrice',
-  nettprice: 'nettPrice',
-  agent: 'agentName',
-  bookingdate: 'bookingDate',
-  bookingfee: 'bookingFee',
-  bank: 'bank',
+  no: "no",
+  unit: "unitNo",
+  type: "typeLabel",
+  sqft: "sqFt",
+  bumiunit: "bumiUnit",
+  unitsalesstatusdesc: "salesStatusDesc",
+  unitsellingprice: "unitSellingPrice",
+  nettprice: "nettPrice",
+  agent: "agentName",
+  bookingdate: "bookingDate",
+  bookingfee: "bookingFee",
+  bank: "bank",
 };
 
 const UNIT_HEADERS = [
-  'action',
-  'projectSlug',
-  'layoutCode',
-  'towerNumber',
-  'phaseName',
-  'unitNo',
-  'floor',
-  'stack',
-  'displaySequence',
-  'builtUpSqft',
-  'landAreaSqft',
-  'dimensionText',
-  'facing',
-  'positionType',
-  'carparkCount',
-  'carparkLotNo',
-  'carparkType',
-  'lotTypeCode',
-  'bookingStatusCode',
-  'basePrice',
-  'finalPrice',
+  "action",
+  "projectSlug",
+  "layoutCode",
+  "towerNumber",
+  "phaseName",
+  "unitNo",
+  "floor",
+  "stack",
+  "displaySequence",
+  "builtUpSqft",
+  "landAreaSqft",
+  "dimensionText",
+  "facing",
+  "positionType",
+  "carparkCount",
+  "carparkLotNo",
+  "carparkType",
+  "lotTypeCode",
+  "bookingStatusCode",
+  "basePrice",
+  "finalPrice",
 ] as const;
 
-const LAYOUT_SUMMARY_HEADERS = ['layoutCode', 'typeLabel', 'builtUpSqft', 'unitCount'] as const;
+const LAYOUT_SUMMARY_HEADERS = ["layoutCode", "typeLabel", "builtUpSqft", "unitCount"] as const;
 const AUDIT_HEADERS = [
-  'sourceRowNumber',
-  'unitNo',
-  'salesStatusDesc',
-  'bookingStatusCode',
-  'agentName',
-  'bookingDate',
-  'bookingFee',
-  'bank',
+  "sourceRowNumber",
+  "unitNo",
+  "salesStatusDesc",
+  "bookingStatusCode",
+  "agentName",
+  "bookingDate",
+  "bookingFee",
+  "bank",
 ] as const;
 
 export interface AvailabilityPrepOptions {
@@ -88,15 +88,19 @@ export interface PreparedAvailabilityArtifacts {
 }
 
 function normalizeHeaderKey(header: string): string {
-  return header.replace(/^\uFEFF/, '').trim().replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+  return header
+    .replace(/^\uFEFF/, "")
+    .trim()
+    .replace(/[^a-zA-Z0-9]/g, "")
+    .toLowerCase();
 }
 
 function normalizeDecimal(value: string): string {
-  const cleaned = value.replace(/rm/gi, '').replace(/,/g, '').trim();
-  if (!cleaned) return '';
+  const cleaned = value.replace(/rm/gi, "").replace(/,/g, "").trim();
+  if (!cleaned) return "";
 
   const parsed = Number(cleaned);
-  if (Number.isNaN(parsed)) return '';
+  if (Number.isNaN(parsed)) return "";
   return parsed.toFixed(2);
 }
 
@@ -108,11 +112,11 @@ function escapeCsvValue(value: string): string {
 }
 
 function rowsToCsv(headers: readonly string[], rows: string[][]): string {
-  const output = [headers.join(',')];
+  const output = [headers.join(",")];
   for (const row of rows) {
-    output.push(row.map((value) => escapeCsvValue(value ?? '')).join(','));
+    output.push(row.map((value) => escapeCsvValue(value ?? "")).join(","));
   }
-  return output.join('\n');
+  return output.join("\n");
 }
 
 function mapRawHeaders(headers: string[]): Map<string, number> {
@@ -130,53 +134,56 @@ function mapRawHeaders(headers: string[]): Map<string, number> {
 
 function getCell(row: string[], indexMap: Map<string, number>, key: string): string {
   const index = indexMap.get(key);
-  return index === undefined ? '' : (row[index] ?? '').trim();
+  return index === undefined ? "" : (row[index] ?? "").trim();
 }
 
 function toLayoutCode(typeLabel: string): string {
   return typeLabel
     .trim()
-    .replace(/^type\s+/i, '')
-    .replace(/[^a-zA-Z0-9]+/g, '_')
-    .replace(/^_+|_+$/g, '')
+    .replace(/^type\s+/i, "")
+    .replace(/[^a-zA-Z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "")
     .toUpperCase()
-    .replace(/^/, 'TYPE_');
+    .replace(/^/, "TYPE_");
 }
 
 function deriveFloorAndStack(unitNo: string): { floor: string; stack: string } {
-  const segments = unitNo.split('-').map((segment) => segment.trim()).filter(Boolean);
+  const segments = unitNo
+    .split("-")
+    .map((segment) => segment.trim())
+    .filter(Boolean);
   if (segments.length < 3) {
-    return { floor: '', stack: '' };
+    return { floor: "", stack: "" };
   }
 
   return {
-    floor: segments[segments.length - 2] ?? '',
-    stack: segments[segments.length - 1] ?? '',
+    floor: segments[segments.length - 2] ?? "",
+    stack: segments[segments.length - 1] ?? "",
   };
 }
 
 function deriveTowerNumber(unitNo: string, fallback?: string): string {
   if (fallback) return fallback;
 
-  const prefix = unitNo.split('-')[0]?.trim();
-  return prefix ? `TOWER-${prefix.toUpperCase()}` : '';
+  const prefix = unitNo.split("-")[0]?.trim();
+  return prefix ? `TOWER-${prefix.toUpperCase()}` : "";
 }
 
 function mapLotTypeCode(bumiUnit: string): string {
-  return /^yes$/i.test(bumiUnit.trim()) ? 'BUMIPUTERA' : 'NON_BUMIPUTERA';
+  return /^yes$/i.test(bumiUnit.trim()) ? "BUMIPUTERA" : "NON_BUMIPUTERA";
 }
 
 function mapBookingStatusCode(salesStatusDesc: string, unavailableStatusCode: string): string {
   const normalized = salesStatusDesc.trim().toLowerCase();
 
-  if (!normalized || normalized === 'available') return 'AVAILABLE';
-  if (normalized === 'sold' || normalized === 'signed spa') return 'SOLD';
-  if (normalized === 'cancelled') return 'CANCELLED';
+  if (!normalized || normalized === "available") return "AVAILABLE";
+  if (normalized === "sold" || normalized === "signed spa") return "SOLD";
+  if (normalized === "cancelled") return "CANCELLED";
   return unavailableStatusCode;
 }
 
 function compareUnits(a: RawAvailabilityRow, b: RawAvailabilityRow): number {
-  return a.unitNo.localeCompare(b.unitNo, undefined, { numeric: true, sensitivity: 'base' });
+  return a.unitNo.localeCompare(b.unitNo, undefined, { numeric: true, sensitivity: "base" });
 }
 
 function parseRawAvailabilityRows(csvContent: string): RawAvailabilityRow[] {
@@ -187,22 +194,22 @@ function parseRawAvailabilityRows(csvContent: string): RawAvailabilityRow[] {
   const parsedRows: RawAvailabilityRow[] = [];
 
   rows.slice(1).forEach((row, rowIndex) => {
-    const unitNo = getCell(row, indexMap, 'unitNo');
+    const unitNo = getCell(row, indexMap, "unitNo");
     if (!unitNo) return;
 
     parsedRows.push({
       sourceRowNumber: rowIndex + 2,
       unitNo,
-      typeLabel: getCell(row, indexMap, 'typeLabel'),
-      sqFt: getCell(row, indexMap, 'sqFt'),
-      bumiUnit: getCell(row, indexMap, 'bumiUnit'),
-      salesStatusDesc: getCell(row, indexMap, 'salesStatusDesc'),
-      unitSellingPrice: getCell(row, indexMap, 'unitSellingPrice'),
-      nettPrice: getCell(row, indexMap, 'nettPrice'),
-      agentName: getCell(row, indexMap, 'agentName'),
-      bookingDate: getCell(row, indexMap, 'bookingDate'),
-      bookingFee: getCell(row, indexMap, 'bookingFee'),
-      bank: getCell(row, indexMap, 'bank'),
+      typeLabel: getCell(row, indexMap, "typeLabel"),
+      sqFt: getCell(row, indexMap, "sqFt"),
+      bumiUnit: getCell(row, indexMap, "bumiUnit"),
+      salesStatusDesc: getCell(row, indexMap, "salesStatusDesc"),
+      unitSellingPrice: getCell(row, indexMap, "unitSellingPrice"),
+      nettPrice: getCell(row, indexMap, "nettPrice"),
+      agentName: getCell(row, indexMap, "agentName"),
+      bookingDate: getCell(row, indexMap, "bookingDate"),
+      bookingFee: getCell(row, indexMap, "bookingFee"),
+      bank: getCell(row, indexMap, "bank"),
     });
   });
 
@@ -212,48 +219,51 @@ function parseRawAvailabilityRows(csvContent: string): RawAvailabilityRow[] {
 
 export function prepareAvailabilityImportArtifacts(
   csvContent: string,
-  options: AvailabilityPrepOptions
+  options: AvailabilityPrepOptions,
 ): PreparedAvailabilityArtifacts {
-  const unavailableStatusCode = options.unavailableStatusCode ?? 'RESERVED';
+  const unavailableStatusCode = options.unavailableStatusCode ?? "RESERVED";
   const defaultCarparkCount = options.defaultCarparkCount ?? 1;
   const rawRows = parseRawAvailabilityRows(csvContent);
 
   const unitsRows: string[][] = [];
   const auditRows: string[][] = [];
-  const layoutSummaryMap = new Map<string, { layoutCode: string; typeLabel: string; builtUpSqft: string; unitCount: number }>();
+  const layoutSummaryMap = new Map<
+    string,
+    { layoutCode: string; typeLabel: string; builtUpSqft: string; unitCount: number }
+  >();
   let availableCount = 0;
   let unavailableCount = 0;
 
   rawRows.forEach((row, index) => {
     const { floor, stack } = deriveFloorAndStack(row.unitNo);
-    const layoutCode = toLayoutCode(row.typeLabel || 'UNKNOWN');
+    const layoutCode = toLayoutCode(row.typeLabel || "UNKNOWN");
     const builtUpSqft = normalizeDecimal(row.sqFt);
     const bookingStatusCode = mapBookingStatusCode(row.salesStatusDesc, unavailableStatusCode);
 
-    if (bookingStatusCode === 'AVAILABLE') {
+    if (bookingStatusCode === "AVAILABLE") {
       availableCount++;
     } else {
       unavailableCount++;
     }
 
     unitsRows.push([
-      'create',
+      "create",
       options.projectSlug,
       layoutCode,
       deriveTowerNumber(row.unitNo, options.towerNumber),
-      options.phaseName ?? '',
+      options.phaseName ?? "",
       row.unitNo,
       floor,
       stack,
       String(index + 1),
       builtUpSqft,
-      '',
-      '',
-      '',
-      '',
+      "",
+      "",
+      "",
+      "",
       String(defaultCarparkCount),
-      '',
-      '',
+      "",
+      "",
       mapLotTypeCode(row.bumiUnit),
       bookingStatusCode,
       normalizeDecimal(row.unitSellingPrice),
@@ -287,7 +297,12 @@ export function prepareAvailabilityImportArtifacts(
 
   const layoutSummaryRows = [...layoutSummaryMap.values()]
     .sort((a, b) => a.layoutCode.localeCompare(b.layoutCode, undefined, { numeric: true }))
-    .map((layout) => [layout.layoutCode, layout.typeLabel, layout.builtUpSqft, String(layout.unitCount)]);
+    .map((layout) => [
+      layout.layoutCode,
+      layout.typeLabel,
+      layout.builtUpSqft,
+      String(layout.unitCount),
+    ]);
 
   return {
     unitsCsv: rowsToCsv(UNIT_HEADERS, unitsRows),

@@ -2,6 +2,7 @@
 
 Date scanned: 2026-04-30
 Projects covered:
+
 - Redhills
 - Single Storey Alam Heights
 - Vistara Hills
@@ -9,6 +10,7 @@ Projects covered:
 ## 1) Redhills (Double Storey Terrace House)
 
 ### Project profile
+
 - Location: 47, Jalan Tasek 44, Bandar Baru Seri Alam, 81750 Masai, Johor Darul Ta'zim
 - Name: Alam Heights (Red Hill)
 - Developer: Alam Heights Sdn. Bhd. (1180698A / 201601009770)
@@ -25,6 +27,7 @@ Projects covered:
 - Foreigner: Cannot buy at the moment
 
 ### Unit mix and built-up
+
 - Type: 20x70
 - Composition: 4 Bedrooms + 4 Bathrooms
 - Built-up observed in stock sheets:
@@ -32,6 +35,7 @@ Projects covered:
   - Some corners/end lots around 2,238.79 sqft
 
 ### Package / campaign
+
 - SPA rebate: 10%
 - Plus RM20,000 cash rebate mentioned for Phase 1 and 2 (Bumi and Non-Bumi)
 - Free legal fees on SPA and LA
@@ -44,6 +48,7 @@ Projects covered:
 - Cash buyer rebate (Section 2(a)): 10%
 
 ### Stock status snapshot (from phase tables)
+
 - Phase 1 totals:
   - Booked: 73
   - Unsold: 40
@@ -62,6 +67,7 @@ Projects covered:
   - Total: 231
 
 ### Typical pricing pattern observed
+
 - Intermediate Non-Bumi:
   - SPA around RM798,000
   - Rebate RM79,800
@@ -81,6 +87,7 @@ Projects covered:
   - Nett observed roughly RM841,500 to RM1,032,210
 
 ### Layout highlights
+
 - Ground floor: living, dining, kitchen, additional room(s), terrace, car porch.
 - First floor: master bedroom, bedroom 2, bedroom 3, family area, balcony.
 - Second floor: rooftop garden area.
@@ -88,6 +95,7 @@ Projects covered:
 ## 2) Single Storey Alam Heights
 
 ### Project profile
+
 - Location: 47, Jalan Tasek 44, Bandar Baru Seri Alam, 81750 Masai, Johor Darul Ta'zim
 - Name: Alam Heights (Single Storey)
 - Developer: Alam Heights Sdn. Bhd. (1180698A / 201601009770)
@@ -102,10 +110,12 @@ Projects covered:
 - Foreigner: Cannot buy at the moment
 
 ### Unit mix
+
 - 20x70: 3 Bedrooms + 2 Bathrooms, 1,400 sqft (219 units)
 - 22x70: 3 Bedrooms + 2 Bathrooms, 1,400 sqft (150 units)
 
 ### Packages
+
 - SPA rebate 10% Non-Bumi
 - SPA rebate 10% Bumi
 - Free legal fees on SPA and LA
@@ -114,6 +124,7 @@ Projects covered:
 - Cash buyer rebate (Section 2(a), normal): 10%
 
 ### Plan variants found
+
 - 20x70 design 1:
   - Intermediate lot
   - End lot (without side land)
@@ -126,6 +137,7 @@ Projects covered:
 ## 3) Vistara Hills / Vistara Residence (Landed)
 
 ### Project profile
+
 - Brand/project: Vistara Residence (Vistara Hill)
 - Developer: Yashi Land Sdn Bhd (subsidiary of Marcus Group)
 - Location: Taman Bukit Skudai
@@ -135,6 +147,7 @@ Projects covered:
 - Completion target shown: 2028 Q2
 
 ### Product mix
+
 - A1 Intermediate 32' x 70':
   - Land area: 2,239 sqft
   - Built-up: 3,156 sqft
@@ -153,12 +166,14 @@ Projects covered:
   - Units: 6
 
 ### Room program / plan content
+
 - Typical composition shown: 4 Bedrooms + 4 Bathrooms
 - Ground floor includes living, dining, kitchen, guest bedroom, wet/dry kitchen zones, car porch, driveway, and turf/courtyard/terraces depending on lot type.
 - First floor includes master bedroom, bedroom 2, bedroom 3, family area, and bathrooms.
 - Second floor includes rooftop garden.
 
 ### Nearby amenities (as listed)
+
 - Shopping:
   - NSK Trade City (3.6 km), Sutera Mall (4.6 km), Paradigm Mall JB (4.7 km), Mydin Mutiara Rini (5.4 km), Lotus's Mutiara Rini (5.7 km), AEON Taman Universiti (6.9 km), KipMall Tampoi (7.9 km), Lotus's Bukit Indah (9 km), Angsana JB Mall (9.2 km), JPO (15 km)
 - Transport:
@@ -173,6 +188,7 @@ Projects covered:
   - Skudai Police Station (1.7 km), Taman Universiti Police Station (7 km)
 
 ### Building specifications (key points)
+
 - Structure: Reinforced concrete framework
 - Wall: Reinforced concrete wall / masonry wall
 - Roof covering: Metal roofing / reinforced concrete roof
@@ -203,6 +219,7 @@ Projects covered:
 - Fencing: Provided
 
 ### Booking and package notes
+
 - Booking fee shown: RM1,000 (fully refund)
 - Rebate shown in one summary sheet: 8%
 - Free MOT
@@ -212,6 +229,7 @@ Projects covered:
 - Remarks: Gated community
 
 ### Pricing sheets and availability board (observed)
+
 - Appendix title indicates proposed non-Bumi selling price list dated 4/9/2025.
 - Common A1 SPA values observed around RM1,283,480.
 - Premium units show higher SPA values (examples observed around RM1,477,480, RM1,523,480, RM1,540,480, RM1,552,480).
@@ -223,5 +241,6 @@ Projects covered:
 - Board includes booking date, signing date, and booking person names for selected units.
 
 ## Notes
+
 - Large unit-level tables were captured carefully from images; this extraction focuses on decision-useful summary data, key pricing patterns, inventory status snapshots, and package terms.
 - If needed, next pass can produce a row-by-row CSV for Redhills and Vistara directly from the unit tables.

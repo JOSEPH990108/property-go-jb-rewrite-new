@@ -2,7 +2,7 @@
 "use client";
 
 import { ReactNode, useEffect, createContext, useContext, useState } from "react";
-import Lenis from "lenis"
+import Lenis from "lenis";
 
 const LenisContext = createContext<Lenis | null>(null);
 
@@ -39,9 +39,5 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  return (
-    <LenisContext.Provider value={lenisInstance}>
-      {children}
-    </LenisContext.Provider>
-  );
+  return <LenisContext.Provider value={lenisInstance}>{children}</LenisContext.Provider>;
 }

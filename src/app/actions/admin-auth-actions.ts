@@ -47,8 +47,7 @@ export async function adminSignIn(email: string, password: string) {
 
     return { success: true };
   } catch (err: unknown) {
-    const message =
-      err instanceof Error ? err.message : "Sign in failed. Please try again.";
+    const message = err instanceof Error ? err.message : "Sign in failed. Please try again.";
     return { success: false, error: message };
   }
 }

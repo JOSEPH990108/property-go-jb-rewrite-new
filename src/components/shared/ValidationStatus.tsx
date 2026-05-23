@@ -23,11 +23,7 @@ export function ValidationStatus({ valid, message, className }: ValidationStatus
         className,
       )}
     >
-      {valid ? (
-        <CheckCircle2 className="w-3.5 h-3.5" />
-      ) : (
-        <XCircle className="w-3.5 h-3.5" />
-      )}
+      {valid ? <CheckCircle2 className="h-3.5 w-3.5" /> : <XCircle className="h-3.5 w-3.5" />}
       {message}
     </div>
   );

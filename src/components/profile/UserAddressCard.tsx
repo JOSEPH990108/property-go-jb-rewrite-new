@@ -36,7 +36,7 @@ export function UserAddressCard({ nationality, userName }: UserAddressCardProps)
         // Revert on error could be implemented here
       }
     } catch (error) {
-        toast.error("An error occurred");
+      toast.error("An error occurred");
     }
   }
 
@@ -49,15 +49,17 @@ export function UserAddressCard({ nationality, userName }: UserAddressCardProps)
       contentClassName="space-y-4"
     >
       <div className="flex flex-col space-y-2">
-          <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Country / Region</label>
-          <CountrySelect
-            value={currentNationality}
-            onChange={handleNationalityChange}
-            className="w-full"
-          />
-           <p className="text-[0.8rem] text-muted-foreground">
-              This helps us personalize your experience.
-          </p>
+        <label className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+          Country / Region
+        </label>
+        <CountrySelect
+          value={currentNationality}
+          onChange={handleNationalityChange}
+          className="w-full"
+        />
+        <p className="text-muted-foreground text-[0.8rem]">
+          This helps us personalize your experience.
+        </p>
       </div>
     </BaseCard>
   );

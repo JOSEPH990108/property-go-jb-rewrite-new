@@ -37,9 +37,9 @@ export function SimpleCardCarousel<T>({
           return false;
         }
       }
-      // 2. If it's TOUCH, return true. 
+      // 2. If it's TOUCH, return true.
       // Embla is smart enough to respect 'touch-action: pan-y' which allows vertical scrolling.
-      return true; 
+      return true;
     },
     // --- CRITICAL FIX END ---
   });
@@ -47,14 +47,20 @@ export function SimpleCardCarousel<T>({
   return (
     <div className={cn("relative w-full", className)}>
       <div
-        className={cn("overflow-hidden cursor-grab active:cursor-grabbing touch-pan-y", viewportClassName)}
+        className={cn(
+          "cursor-grab touch-pan-y overflow-hidden active:cursor-grabbing",
+          viewportClassName,
+        )}
         ref={emblaRef}
       >
-        <div className="flex gap-4 pl-4 pr-4 py-4">
+        <div className="flex gap-4 py-4 pr-4 pl-4">
           {items.map((item, index) => (
             <div
               key={index}
-              className={cn("flex-[0_0_85%] min-w-0 sm:flex-[0_0_45%] md:flex-[0_0_30%]", itemClassName)}
+              className={cn(
+                "min-w-0 flex-[0_0_85%] sm:flex-[0_0_45%] md:flex-[0_0_30%]",
+                itemClassName,
+              )}
             >
               {renderItem(item, index)}
             </div>

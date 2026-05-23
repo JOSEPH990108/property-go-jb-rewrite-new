@@ -133,6 +133,7 @@ Algorithm:
 **Space Complexity:** O(m) where m = number of fields
 
 **Edge Cases Handled:**
+
 - UNIX line endings (LF)
 - Windows line endings (CRLF)
 - Quoted fields containing commas
@@ -161,15 +162,16 @@ Algorithm:
 4. Return filtered map
 ```
 
-**Time Complexity:** O(n * k) where n = rows, k = number of key fields
+**Time Complexity:** O(n \* k) where n = rows, k = number of key fields
 **Space Complexity:** O(n)
 
 **Example:**
+
 ```
 Input rows:
 [
   { slug: 'project-a', name: 'Project A' },  // Row 2
-  { slug: 'project-b', name: 'Project B' },  // Row 3  
+  { slug: 'project-b', name: 'Project B' },  // Row 3
   { slug: 'project-a', name: 'Project A' },  // Row 4 (duplicate)
 ]
 
@@ -204,24 +206,26 @@ Algorithm:
 ```
 
 **Optimization:** Each lookup is independently resolved, allowing:
+
 - Parallel database queries (future enhancement)
 - Early error detection at row level
 - Clear error messages indicating which reference failed
 
 **Example:**
+
 ```typescript
 // Resolve by code
 const tenureTypeId = await resolveLookupId(
   tenureTypes,
-  'code',
-  'freehold'  // Input from CSV
+  "code",
+  "freehold", // Input from CSV
 );
 
 // Resolve by slug
 const developerId = await resolveLookupId(
   developers,
-  'slug',
-  'abc-developer'  // Input from CSV
+  "slug",
+  "abc-developer", // Input from CSV
 );
 ```
 
@@ -230,9 +234,10 @@ const developerId = await resolveLookupId(
 **Purpose:** Validate row data against schema at design-time
 
 **Schema Structure:**
+
 ```typescript
 const Schema = z.object({
-  action: z.enum(['create', 'update']),
+  action: z.enum(["create", "update"]),
   slug: z.string().min(1).max(200),
   name: z.string().min(1).max(200),
   // ... other fields with type and constraint validation
@@ -240,6 +245,7 @@ const Schema = z.object({
 ```
 
 **Validation Process:**
+
 ```
 Input: row (Record<string, any>)
 
@@ -256,6 +262,7 @@ Input: row (Record<string, any>)
 
 **Time Complexity:** O(f) where f = number of fields
 **Validation Coverage:**
+
 - Type checking
 - Length constraints
 - Pattern matching (regex)
@@ -289,6 +296,7 @@ Algorithm:
 ```
 
 **Chunk Calculation:**
+
 ```
 totalItems = 1000
 batchSize = 100
@@ -302,6 +310,7 @@ Processing time ≈ 10 * time_per_batch
 **Space Complexity:** O(b) where b = batch size (constant memory)
 
 **Benefits:**
+
 - Prevents memory exhaustion with large imports
 - Allows progress tracking
 - Enables future cancellation support
@@ -310,6 +319,7 @@ Processing time ≈ 10 * time_per_batch
 ### 2.6 Three-Layer Validation Strategy
 
 **Layer 1: CSV Parse Validation**
+
 ```
 - Valid CSV format?
 - Correct line endings?
@@ -317,6 +327,7 @@ Processing time ≈ 10 * time_per_batch
 ```
 
 **Layer 2: Schema Validation (Zod)**
+
 ```
 - Required fields present?
 - Correct data types?
@@ -324,12 +335,14 @@ Processing time ≈ 10 * time_per_batch
 ```
 
 **Layer 3: Foreign Key Resolution**
+
 ```
 - Referenced entities exist?
 - Correct lookup codes/slugs?
 ```
 
 **Failure Modes:**
+
 ```
 Layer 1 Failure → CSV is malformed → Entire import fails
 Layer 2 Failure → Row constraints violated → Individual row error
@@ -438,10 +451,10 @@ if (!validationResult.valid) {
 
 ```typescript
 interface BulkImportError {
-  rowNumber: number;        // 2-based (header is row 1)
-  field?: string;           // Field that failed
-  message: string;          // User-friendly message
-  data?: Record<string, any>;  // Optional row data
+  rowNumber: number; // 2-based (header is row 1)
+  field?: string; // Field that failed
+  message: string; // User-friendly message
+  data?: Record<string, any>; // Optional row data
 }
 ```
 
@@ -451,21 +464,23 @@ interface BulkImportError {
 
 ### 5.1 Benchmark Results
 
-| Dataset Size | Time | Memory | Rows/sec |
-|--|--|--|--|
-| 10 rows | 150ms | 2MB | 67 |
-| 100 rows | 850ms | 5MB | 119 |
-| 1,000 rows | 8.5s | 10MB | 118 |
-| 10,000 rows | 85s | 15MB | 118 |
+| Dataset Size | Time  | Memory | Rows/sec |
+| ------------ | ----- | ------ | -------- |
+| 10 rows      | 150ms | 2MB    | 67       |
+| 100 rows     | 850ms | 5MB    | 119      |
+| 1,000 rows   | 8.5s  | 10MB   | 118      |
+| 10,000 rows  | 85s   | 15MB   | 118      |
 
 ### 5.2 Performance Optimization Techniques
 
 **1. Batch Processing**
+
 - Reduces memory footprint
 - Improves database throughput
 - Enables progress tracking
 
 **2. Foreign Key Caching (Future)**
+
 ```typescript
 const keyCache = new Map<string, string>();
 
@@ -480,16 +495,18 @@ async function resolveLookupIdCached(code: string) {
 ```
 
 **3. Parallel Validation (Future)**
+
 ```typescript
 // Process multiple validation layers in parallel
 const results = await Promise.all([
   validateSchemas(batch),
   resolveForeignKeys(batch),
-  checkDuplicates(batch)
+  checkDuplicates(batch),
 ]);
 ```
 
 **4. Index Usage**
+
 - Primary keys (fast lookup)
 - Unique constraints (fast validation)
 - Code/slug indices (fast resolution)
@@ -515,12 +532,10 @@ Scalable to:
 ### 6.1 SQL Injection Prevention
 
 All database operations use Drizzle ORM parameterized queries:
+
 ```typescript
 // Safe: Parameters are bound, not concatenated
-const query = db
-  .select({ id })
-  .from(table)
-  .where(eq(table.code, userInput));  // Parameterized!
+const query = db.select({ id }).from(table).where(eq(table.code, userInput)); // Parameterized!
 ```
 
 ### 6.2 Input Validation
@@ -568,41 +583,41 @@ const query = db
 ### 8.1 Unit Tests
 
 ```typescript
-describe('parseCSV', () => {
-  test('should handle CRLF line endings');
-  test('should handle quoted fields');
-  test('should handle escaped quotes');
+describe("parseCSV", () => {
+  test("should handle CRLF line endings");
+  test("should handle quoted fields");
+  test("should handle escaped quotes");
 });
 
-describe('findDuplicates', () => {
-  test('should identify exact duplicate keys');
-  test('should return empty map for unique rows');
+describe("findDuplicates", () => {
+  test("should identify exact duplicate keys");
+  test("should return empty map for unique rows");
 });
 
-describe('validateRow', () => {
-  test('should validate required fields');
-  test('should enforce type constraints');
+describe("validateRow", () => {
+  test("should validate required fields");
+  test("should enforce type constraints");
 });
 ```
 
 ### 8.2 Integration Tests
 
 ```typescript
-describe('bulkImportProjects', () => {
-  test('should import valid CSV successfully');
-  test('should rollback on validation error');
-  test('should handle foreign key resolution');
-  test('should detect duplicates');
+describe("bulkImportProjects", () => {
+  test("should import valid CSV successfully");
+  test("should rollback on validation error");
+  test("should handle foreign key resolution");
+  test("should detect duplicates");
 });
 ```
 
 ### 8.3 Performance Tests
 
 ```typescript
-describe('Bulk Import Performance', () => {
-  test('should import 1000 rows in < 10s');
-  test('should maintain < 10MB memory');
-  test('should handle concurrent imports');
+describe("Bulk Import Performance", () => {
+  test("should import 1000 rows in < 10s");
+  test("should maintain < 10MB memory");
+  test("should handle concurrent imports");
 });
 ```
 

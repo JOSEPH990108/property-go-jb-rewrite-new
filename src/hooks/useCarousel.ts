@@ -1,6 +1,6 @@
 // src\hook\useCarousel.ts
-import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import React from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import React from "react";
 
 interface UseCarouselProps {
   children: React.ReactNode;
@@ -96,15 +96,15 @@ export function useCarousel({ children, autoScroll = false, interval = 3000 }: U
         handlePrev();
       }
     } else {
-       if (Math.abs(diffY) < MIN_SWIPE) return;
-       // Vertical Swipe
-       // Swipe Up (diffY < 0) -> Next
-       // Swipe Down (diffY > 0) -> Prev
-       if (diffY < 0) {
-         handleNext();
-       } else {
-         handlePrev();
-       }
+      if (Math.abs(diffY) < MIN_SWIPE) return;
+      // Vertical Swipe
+      // Swipe Up (diffY < 0) -> Next
+      // Swipe Down (diffY > 0) -> Prev
+      if (diffY < 0) {
+        handleNext();
+      } else {
+        handlePrev();
+      }
     }
   };
 
@@ -124,6 +124,6 @@ export function useCarousel({ children, autoScroll = false, interval = 3000 }: U
     setIsHovered,
     onPointerDown,
     onPointerUp,
-    onPointerLeave
+    onPointerLeave,
   };
 }

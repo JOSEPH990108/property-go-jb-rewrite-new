@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useTransition } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Phone, MessageCircle, Send } from 'lucide-react';
-import { toast } from 'sonner';
+import { useState, useTransition } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Phone, MessageCircle, Send } from "lucide-react";
+import { toast } from "sonner";
 
 interface ContactAgentCardProps {
   projectName: string;
@@ -17,7 +17,7 @@ export function ContactAgentCard({ projectName, agentPhone }: ContactAgentCardPr
   const [isPending, startTransition] = useTransition();
   const [submitted, setSubmitted] = useState(false);
 
-  const whatsappNumber = agentPhone?.replace(/[^0-9]/g, '') || '60123456789';
+  const whatsappNumber = agentPhone?.replace(/[^0-9]/g, "") || "60123456789";
   const whatsappMessage = encodeURIComponent(
     `Hi, I'm interested in ${projectName}. Could you share more details?`,
   );
@@ -27,19 +27,19 @@ export function ContactAgentCard({ projectName, agentPhone }: ContactAgentCardPr
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const name = formData.get('name') as string;
-    const phone = formData.get('phone') as string;
-    const message = formData.get('message') as string;
+    const name = formData.get("name") as string;
+    const phone = formData.get("phone") as string;
+    const message = formData.get("message") as string;
 
     if (!name.trim() || !phone.trim()) {
-      toast.error('Please fill in your name and phone number');
+      toast.error("Please fill in your name and phone number");
       return;
     }
 
     startTransition(async () => {
       // For now, show success — can wire to a server action later
       setSubmitted(true);
-      toast.success('Enquiry sent! An agent will contact you shortly.');
+      toast.success("Enquiry sent! An agent will contact you shortly.");
     });
   };
 
@@ -49,7 +49,7 @@ export function ContactAgentCard({ projectName, agentPhone }: ContactAgentCardPr
 
       {/* Quick contact buttons */}
       <div className="flex gap-2">
-        <Button asChild className="flex-1 gap-2 bg-green-600 hover:bg-green-700 text-white">
+        <Button asChild className="flex-1 gap-2 bg-green-600 text-white hover:bg-green-700">
           <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
             <MessageCircle className="h-4 w-4" />
             WhatsApp
@@ -64,27 +64,39 @@ export function ContactAgentCard({ projectName, agentPhone }: ContactAgentCardPr
       </div>
 
       {/* Enquiry form */}
-      <div className="border-t border-border pt-4">
-        <p className="text-sm text-muted-foreground mb-3">
+      <div className="border-border border-t pt-4">
+        <p className="text-muted-foreground mb-3 text-sm">
           Or leave your details and we&apos;ll get back to you
         </p>
         {submitted ? (
-          <div className="text-center py-4 text-sm text-muted-foreground">
-            <p className="font-medium text-foreground">Thank you!</p>
+          <div className="text-muted-foreground py-4 text-center text-sm">
+            <p className="text-foreground font-medium">Thank you!</p>
             <p>We&apos;ll be in touch soon.</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-3">
             <div>
-              <Label htmlFor="contact-name" className="text-xs">Name</Label>
+              <Label htmlFor="contact-name" className="text-xs">
+                Name
+              </Label>
               <Input id="contact-name" name="name" placeholder="Your name" required />
             </div>
             <div>
-              <Label htmlFor="contact-phone" className="text-xs">Phone</Label>
-              <Input id="contact-phone" name="phone" placeholder="+60 12-345 6789" type="tel" required />
+              <Label htmlFor="contact-phone" className="text-xs">
+                Phone
+              </Label>
+              <Input
+                id="contact-phone"
+                name="phone"
+                placeholder="+60 12-345 6789"
+                type="tel"
+                required
+              />
             </div>
             <div>
-              <Label htmlFor="contact-message" className="text-xs">Message (optional)</Label>
+              <Label htmlFor="contact-message" className="text-xs">
+                Message (optional)
+              </Label>
               <Textarea
                 id="contact-message"
                 name="message"

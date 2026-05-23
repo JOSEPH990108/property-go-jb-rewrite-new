@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 export function CustomCursor() {
   const ringRef = useRef<HTMLDivElement>(null);
@@ -8,12 +8,10 @@ export function CustomCursor() {
 
   useEffect(() => {
     // Respect pointer type
-    if (!window.matchMedia('(pointer: fine)').matches) return;
+    if (!window.matchMedia("(pointer: fine)").matches) return;
 
     // Respect reduced motion
-    const prefersReducedMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)'
-    ).matches;
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const ring = ringRef.current;
     const dot = dotRef.current;
@@ -42,13 +40,13 @@ export function CustomCursor() {
     };
 
     const addHover = () => {
-      ring.classList.add('cursor-hover');
-      dot.classList.add('cursor-hover');
+      ring.classList.add("cursor-hover");
+      dot.classList.add("cursor-hover");
     };
 
     const removeHover = () => {
-      ring.classList.remove('cursor-hover');
-      dot.classList.remove('cursor-hover');
+      ring.classList.remove("cursor-hover");
+      dot.classList.remove("cursor-hover");
     };
 
     // Track interactive elements
@@ -56,18 +54,18 @@ export function CustomCursor() {
     const interactiveEls = document.querySelectorAll(interactiveSelectors);
 
     interactiveEls.forEach((el) => {
-      el.addEventListener('mouseenter', addHover);
-      el.addEventListener('mouseleave', removeHover);
+      el.addEventListener("mouseenter", addHover);
+      el.addEventListener("mouseleave", removeHover);
     });
 
-    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener("mousemove", onMouseMove);
     requestAnimationFrame(animate);
 
     return () => {
-      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener("mousemove", onMouseMove);
       interactiveEls.forEach((el) => {
-        el.removeEventListener('mouseenter', addHover);
-        el.removeEventListener('mouseleave', removeHover);
+        el.removeEventListener("mouseenter", addHover);
+        el.removeEventListener("mouseleave", removeHover);
       });
     };
   }, []);

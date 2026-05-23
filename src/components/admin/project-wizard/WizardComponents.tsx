@@ -55,7 +55,7 @@ export function FieldInput({
   return (
     <Field label={label} required={required}>
       <Input
-        className="border-white/10 bg-white/5 text-white placeholder:text-white/30 focus-visible:ring-primary/40"
+        className="focus-visible:ring-primary/40 border-white/10 bg-white/5 text-white placeholder:text-white/30"
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -83,7 +83,7 @@ export function FieldSelect({
   return (
     <Field label={label} required={required}>
       <Select value={value || undefined} onValueChange={onChange}>
-        <SelectTrigger className="border-white/10 bg-white/5 text-white focus:ring-primary/40">
+        <SelectTrigger className="focus:ring-primary/40 border-white/10 bg-white/5 text-white">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent className="border-white/10 bg-slate-900 text-white">
@@ -133,14 +133,11 @@ export function DynamicRows<T extends object>({
   return (
     <div className="space-y-3">
       {rows.map((row, i) => (
-        <div
-          key={i}
-          className="relative rounded-xl border border-white/10 bg-white/[0.03] p-4"
-        >
+        <div key={i} className="relative rounded-xl border border-white/10 bg-white/[0.03] p-4">
           <button
             type="button"
             onClick={() => removeRow(i)}
-            className="absolute right-3 top-3 text-red-400/70 hover:text-red-400"
+            className="absolute top-3 right-3 text-red-400/70 hover:text-red-400"
             aria-label="Remove row"
           >
             <Trash2 className="h-4 w-4" />
@@ -153,7 +150,7 @@ export function DynamicRows<T extends object>({
         variant="outline"
         size="sm"
         onClick={addRow}
-        className="w-full border-dashed border-white/20 bg-transparent text-white/60 hover:border-primary/40 hover:text-white"
+        className="hover:border-primary/40 w-full border-dashed border-white/20 bg-transparent text-white/60 hover:text-white"
       >
         <Plus className="mr-2 h-4 w-4" />
         {addLabel}
@@ -164,13 +161,7 @@ export function DynamicRows<T extends object>({
 
 // ── Section header ─────────────────────────────────────────────────────────────
 
-export function SectionHeading({
-  title,
-  subtitle,
-}: {
-  title: string;
-  subtitle?: string;
-}) {
+export function SectionHeading({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
     <div className="mb-6">
       <h3 className="text-base font-semibold text-white">{title}</h3>
@@ -184,7 +175,7 @@ export function SectionHeading({
 export function SubSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/40">{title}</p>
+      <p className="mb-3 text-xs font-semibold tracking-widest text-white/40 uppercase">{title}</p>
       {children}
     </div>
   );

@@ -2,23 +2,9 @@
 "use client";
 
 import { useCallback, useEffect, useState, useTransition } from "react";
-import {
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-  type ColumnDef,
-} from "@tanstack/react-table";
+import { flexRender, getCoreRowModel, useReactTable, type ColumnDef } from "@tanstack/react-table";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Loader2,
-  Pencil,
-  Plus,
-  Search,
-  Trash2,
-  X,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2, Pencil, Plus, Search, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -33,11 +19,7 @@ import {
   type TableMetaResult,
   type ColumnMeta,
 } from "@/app/actions/admin-crud-actions";
-import {
-  TABLE_REGISTRY,
-  type ColumnOverride,
-  type TableConfig,
-} from "@/lib/admin-table-registry";
+import { TABLE_REGISTRY, type ColumnOverride, type TableConfig } from "@/lib/admin-table-registry";
 import {
   Dialog,
   DialogContent,
@@ -168,7 +150,7 @@ export function AdminCrudPage({ tableName }: AdminCrudPageProps) {
           if (ov?.options && val) {
             const match = ov.options.find((o) => o.value === String(val));
             return (
-              <span className="rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+              <span className="border-primary/20 bg-primary/10 text-primary rounded-full border px-2.5 py-1 text-xs font-medium">
                 {match?.label ?? String(val)}
               </span>
             );
@@ -196,7 +178,7 @@ export function AdminCrudPage({ tableName }: AdminCrudPageProps) {
               e.stopPropagation();
               openEdit(row.original);
             }}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-xl text-foreground/60 transition hover:bg-primary/10 hover:text-primary"
+            className="text-foreground/60 hover:bg-primary/10 hover:text-primary inline-flex h-8 w-8 items-center justify-center rounded-xl transition"
           >
             <Pencil className="h-3.5 w-3.5" />
           </button>
@@ -206,7 +188,7 @@ export function AdminCrudPage({ tableName }: AdminCrudPageProps) {
               e.stopPropagation();
               setDeleteTarget(row.original);
             }}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-xl text-foreground/60 transition hover:bg-destructive/10 hover:text-destructive"
+            className="text-foreground/60 hover:bg-destructive/10 hover:text-destructive inline-flex h-8 w-8 items-center justify-center rounded-xl transition"
           >
             <Trash2 className="h-3.5 w-3.5" />
           </button>
@@ -365,9 +347,7 @@ export function AdminCrudPage({ tableName }: AdminCrudPageProps) {
               <SelectValue placeholder={`Select ${label.toLowerCase()}`} />
             </SelectTrigger>
             <SelectContent>
-              {!col.notNull && (
-                <SelectItem value="__null__">— None —</SelectItem>
-              )}
+              {!col.notNull && <SelectItem value="__null__">— None —</SelectItem>}
               {options.map((opt) => (
                 <SelectItem key={opt.value} value={opt.value}>
                   {opt.label}
@@ -460,7 +440,7 @@ export function AdminCrudPage({ tableName }: AdminCrudPageProps) {
 
   if (!config) {
     return (
-      <div className="flex h-64 items-center justify-center text-foreground/60">
+      <div className="text-foreground/60 flex h-64 items-center justify-center">
         Table &quot;{tableName}&quot; not found in registry.
       </div>
     );
@@ -469,18 +449,14 @@ export function AdminCrudPage({ tableName }: AdminCrudPageProps) {
   return (
     <>
       {/* ── Data Table ─────────────────────────────────────────────────── */}
-      <section className="rounded-[28px] border border-border bg-card/95 p-5 shadow-[0_20px_60px_rgba(15,23,42,0.1)] backdrop-blur-md">
+      <section className="border-border bg-card/95 rounded-[28px] border p-5 shadow-[0_20px_60px_rgba(15,23,42,0.1)] backdrop-blur-md">
         {/* Header */}
-        <div className="flex flex-col gap-4 border-b border-border pb-5 lg:flex-row lg:items-center lg:justify-between">
+        <div className="border-border flex flex-col gap-4 border-b pb-5 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <p className="text-xs uppercase tracking-[0.24em] text-primary/80">
-              CRUD Table
-            </p>
-            <h2 className="mt-2 text-2xl font-semibold text-foreground">
-              {config.label}
-            </h2>
+            <p className="text-primary/80 text-xs tracking-[0.24em] uppercase">CRUD Table</p>
+            <h2 className="text-foreground mt-2 text-2xl font-semibold">{config.label}</h2>
             {config.description && (
-              <p className="mt-1 text-sm text-foreground/70">{config.description}</p>
+              <p className="text-foreground/70 mt-1 text-sm">{config.description}</p>
             )}
           </div>
 
@@ -488,29 +464,29 @@ export function AdminCrudPage({ tableName }: AdminCrudPageProps) {
             <button
               type="button"
               onClick={openCreate}
-              className="inline-flex items-center justify-center gap-2 rounded-2xl border border-primary/20 bg-gradient-to-r from-primary to-accent px-4 py-3 text-sm font-semibold text-primary-foreground shadow-[0_0_32px_hsl(var(--primary)/0.3)] transition hover:shadow-[0_0_40px_hsl(var(--primary)/0.4)]"
+              className="border-primary/20 from-primary to-accent text-primary-foreground inline-flex items-center justify-center gap-2 rounded-2xl border bg-gradient-to-r px-4 py-3 text-sm font-semibold shadow-[0_0_32px_hsl(var(--primary)/0.3)] transition hover:shadow-[0_0_40px_hsl(var(--primary)/0.4)]"
             >
               <Plus className="h-4 w-4" />
               Add New
             </button>
 
-            <label className="flex items-center gap-3 rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground/70">
-              <Search className="h-4 w-4 text-primary" />
+            <label className="border-border bg-background text-foreground/70 flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm">
+              <Search className="text-primary h-4 w-4" />
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search records..."
-                className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-foreground/45 sm:min-w-64"
+                className="text-foreground placeholder:text-foreground/45 w-full bg-transparent text-sm outline-none sm:min-w-64"
               />
             </label>
           </div>
         </div>
 
         {/* Table */}
-        <div className="mt-5 overflow-hidden rounded-[24px] border border-border bg-background">
+        <div className="border-border bg-background mt-5 overflow-hidden rounded-[24px] border">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-border text-left text-sm text-foreground">
-              <thead className="bg-muted/35 text-xs uppercase tracking-[0.24em] text-foreground/60">
+            <table className="divide-border text-foreground min-w-full divide-y text-left text-sm">
+              <thead className="bg-muted/35 text-foreground/60 text-xs tracking-[0.24em] uppercase">
                 {table.getHeaderGroups().map((hg) => (
                   <tr key={hg.id}>
                     {hg.headers.map((header) => (
@@ -523,37 +499,28 @@ export function AdminCrudPage({ tableName }: AdminCrudPageProps) {
                   </tr>
                 ))}
               </thead>
-              <tbody className="divide-y divide-border/70">
+              <tbody className="divide-border/70 divide-y">
                 {isPending && !data ? (
                   <tr>
-                    <td
-                      colSpan={tableColumns.length}
-                      className="px-4 py-10 text-center"
-                    >
-                      <Loader2 className="mx-auto h-5 w-5 animate-spin text-primary" />
+                    <td colSpan={tableColumns.length} className="px-4 py-10 text-center">
+                      <Loader2 className="text-primary mx-auto h-5 w-5 animate-spin" />
                     </td>
                   </tr>
                 ) : table.getRowModel().rows.length === 0 ? (
                   <tr>
                     <td
                       colSpan={tableColumns.length}
-                      className="px-4 py-10 text-center text-sm text-foreground/60"
+                      className="text-foreground/60 px-4 py-10 text-center text-sm"
                     >
                       No records found.
                     </td>
                   </tr>
                 ) : (
                   table.getRowModel().rows.map((row) => (
-                    <tr
-                      key={row.id}
-                      className="transition hover:bg-primary/5"
-                    >
+                    <tr key={row.id} className="hover:bg-primary/5 transition">
                       {row.getVisibleCells().map((cell) => (
                         <td key={cell.id} className="px-4 py-3.5 align-middle">
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>
                       ))}
                     </tr>
@@ -567,7 +534,7 @@ export function AdminCrudPage({ tableName }: AdminCrudPageProps) {
         {/* Pagination */}
         {data && data.totalPages > 1 && (
           <div className="mt-4 flex items-center justify-between">
-            <p className="text-sm text-foreground/60">
+            <p className="text-foreground/60 text-sm">
               Showing {(data.page - 1) * data.limit + 1}–
               {Math.min(data.page * data.limit, data.total)} of {data.total}
             </p>
@@ -576,18 +543,18 @@ export function AdminCrudPage({ tableName }: AdminCrudPageProps) {
                 type="button"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page <= 1}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-background text-foreground transition hover:bg-muted/50 disabled:opacity-40"
+                className="border-border bg-background text-foreground hover:bg-muted/50 inline-flex h-9 w-9 items-center justify-center rounded-xl border transition disabled:opacity-40"
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
-              <span className="flex h-9 items-center px-3 text-sm text-foreground">
+              <span className="text-foreground flex h-9 items-center px-3 text-sm">
                 {data.page} / {data.totalPages}
               </span>
               <button
                 type="button"
                 onClick={() => setPage((p) => Math.min(data.totalPages, p + 1))}
                 disabled={page >= data.totalPages}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-background text-foreground transition hover:bg-muted/50 disabled:opacity-40"
+                className="border-border bg-background text-foreground hover:bg-muted/50 inline-flex h-9 w-9 items-center justify-center rounded-xl border transition disabled:opacity-40"
               >
                 <ChevronRight className="h-4 w-4" />
               </button>
@@ -603,9 +570,7 @@ export function AdminCrudPage({ tableName }: AdminCrudPageProps) {
             <DialogTitle>
               {dialogMode === "create" ? "Create" : "Edit"} {config.label} Record
             </DialogTitle>
-            <DialogDescription>
-              Fill in the fields below and save.
-            </DialogDescription>
+            <DialogDescription>Fill in the fields below and save.</DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-4 py-4 sm:grid-cols-2">
@@ -616,7 +581,7 @@ export function AdminCrudPage({ tableName }: AdminCrudPageProps) {
             <button
               type="button"
               onClick={() => setDialogMode(null)}
-              className="rounded-2xl border border-border bg-background px-5 py-2.5 text-sm font-medium text-foreground transition hover:bg-muted/50"
+              className="border-border bg-background text-foreground hover:bg-muted/50 rounded-2xl border px-5 py-2.5 text-sm font-medium transition"
             >
               Cancel
             </button>
@@ -624,7 +589,7 @@ export function AdminCrudPage({ tableName }: AdminCrudPageProps) {
               type="button"
               onClick={handleSave}
               disabled={isSaving}
-              className="inline-flex items-center gap-2 rounded-2xl border border-primary/20 bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
+              className="border-primary/20 bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center gap-2 rounded-2xl border px-5 py-2.5 text-sm font-semibold transition disabled:opacity-50"
             >
               {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
               {dialogMode === "create" ? "Create" : "Save Changes"}
@@ -646,7 +611,7 @@ export function AdminCrudPage({ tableName }: AdminCrudPageProps) {
             <button
               type="button"
               onClick={() => setDeleteTarget(null)}
-              className="rounded-2xl border border-border bg-background px-5 py-2.5 text-sm font-medium text-foreground transition hover:bg-muted/50"
+              className="border-border bg-background text-foreground hover:bg-muted/50 rounded-2xl border px-5 py-2.5 text-sm font-medium transition"
             >
               Cancel
             </button>
@@ -654,7 +619,7 @@ export function AdminCrudPage({ tableName }: AdminCrudPageProps) {
               type="button"
               onClick={handleDelete}
               disabled={isSaving}
-              className="inline-flex items-center gap-2 rounded-2xl border border-destructive/20 bg-destructive px-5 py-2.5 text-sm font-semibold text-destructive-foreground transition hover:bg-destructive/90 disabled:opacity-50"
+              className="border-destructive/20 bg-destructive text-destructive-foreground hover:bg-destructive/90 inline-flex items-center gap-2 rounded-2xl border px-5 py-2.5 text-sm font-semibold transition disabled:opacity-50"
             >
               {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
               Delete
@@ -679,9 +644,7 @@ function FieldWrapper({
 }) {
   return (
     <div className={`space-y-1.5 ${row ? "flex items-center gap-3" : ""}`}>
-      <Label className="text-xs uppercase tracking-wider text-foreground/60">
-        {label}
-      </Label>
+      <Label className="text-foreground/60 text-xs tracking-wider uppercase">{label}</Label>
       {children}
     </div>
   );

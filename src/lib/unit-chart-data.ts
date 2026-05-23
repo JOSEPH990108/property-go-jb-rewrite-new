@@ -17,7 +17,7 @@ export type UnitCell =
   | { kind: "void" };
 
 export type StackDef = {
-  stackNo: string;    // "01", "02", ...
+  stackNo: string; // "01", "02", ...
   layoutType: string; // "B1", "B2", "P3", ...
   sqft: number;
   facingGroupKey: string;
@@ -25,7 +25,7 @@ export type StackDef = {
 
 export type FacingGroupDef = {
   key: string;
-  label: string;    // "Lake, Golf & City View", "Singapore View", ...
+  label: string; // "Lake, Golf & City View", "Singapore View", ...
   stackCount: number;
 };
 
@@ -62,8 +62,8 @@ function seededStatus(n: number): UnitStatus {
   // Fast integer hash (Knuth multiplicative hashing)
   const h = ((Math.abs(n) * 2654435761) >>> 0) & 0xffff;
   if (h < 0x8ccc) return "available"; // ~55 %
-  if (h < 0xccc0) return "reserved";  // ~25 %
-  return "sold";                       // ~20 %
+  if (h < 0xccc0) return "reserved"; // ~25 %
+  return "sold"; // ~20 %
 }
 
 // Voids: specific (floor, stackNo) pairs that should show as void (no unit)
@@ -72,7 +72,7 @@ type VoidEntry = { floor: number; stackNo: string };
 function makeResidentialFloor(
   floor: number,
   stacks: StackDef[],
-  voids: VoidEntry[] = []
+  voids: VoidEntry[] = [],
 ): FloorRow {
   const voidSet = new Set(voids.filter((v) => v.floor === floor).map((v) => v.stackNo));
 
@@ -105,7 +105,7 @@ function buildTowerFloors(
   breaktankFloor: number | null,
   stacks: StackDef[],
   facilityLevels: Array<{ floorLabel: string; facilityLabel: string }>,
-  voids: VoidEntry[] = []
+  voids: VoidEntry[] = [],
 ): FloorRow[] {
   const rows: FloorRow[] = [];
 
@@ -120,7 +120,11 @@ function buildTowerFloors(
 
   // Facility / podium levels at the very bottom
   for (const level of facilityLevels) {
-    rows.push({ kind: "facility", floorLabel: level.floorLabel, facilityLabel: level.facilityLabel });
+    rows.push({
+      kind: "facility",
+      floorLabel: level.floorLabel,
+      facilityLabel: level.facilityLabel,
+    });
   }
 
   return rows;
@@ -139,27 +143,29 @@ const TOWER_B_STACKS: StackDef[] = [
   { stackNo: "04", layoutType: "F2", sqft: 2078, facingGroupKey: "lgc-left" },
   { stackNo: "05", layoutType: "P3", sqft: 1187, facingGroupKey: "singapore" },
   { stackNo: "06", layoutType: "P3", sqft: 1187, facingGroupKey: "singapore" },
-  { stackNo: "07", layoutType: "D1", sqft: 692,  facingGroupKey: "lgc-right" },
-  { stackNo: "08", layoutType: "D1", sqft: 692,  facingGroupKey: "lgc-right" },
+  { stackNo: "07", layoutType: "D1", sqft: 692, facingGroupKey: "lgc-right" },
+  { stackNo: "08", layoutType: "D1", sqft: 692, facingGroupKey: "lgc-right" },
 ];
 
 const TOWER_B_FACING_GROUPS: FacingGroupDef[] = [
-  { key: "lgc-left",   label: "Lake, Golf & City View", stackCount: 4 },
-  { key: "singapore",  label: "Singapore View",          stackCount: 2 },
-  { key: "lgc-right",  label: "Lake, Golf & City View", stackCount: 2 },
+  { key: "lgc-left", label: "Lake, Golf & City View", stackCount: 4 },
+  { key: "singapore", label: "Singapore View", stackCount: 2 },
+  { key: "lgc-right", label: "Lake, Golf & City View", stackCount: 2 },
 ];
 
 // Lobby / commercial area occupies stacks 05-06 at the lowest 2 podium-adjacent floors
 const TOWER_B_VOIDS: VoidEntry[] = [
-  { floor: 3, stackNo: "05" }, { floor: 3, stackNo: "06" },
-  { floor: 4, stackNo: "05" }, { floor: 4, stackNo: "06" },
+  { floor: 3, stackNo: "05" },
+  { floor: 3, stackNo: "06" },
+  { floor: 4, stackNo: "05" },
+  { floor: 4, stackNo: "06" },
 ];
 
 const TOWER_B_FACILITY_LEVELS = [
-  { floorLabel: "Pd 2F",  facilityLabel: "PARKING"                  },
-  { floorLabel: "Pd 1F",  facilityLabel: "PARKING"                  },
-  { floorLabel: "Pd GF",  facilityLabel: "LOBBY, DROP OFF, PARKING" },
-  { floorLabel: "Pd LG1", facilityLabel: "PARKING"                  },
+  { floorLabel: "Pd 2F", facilityLabel: "PARKING" },
+  { floorLabel: "Pd 1F", facilityLabel: "PARKING" },
+  { floorLabel: "Pd GF", facilityLabel: "LOBBY, DROP OFF, PARKING" },
+  { floorLabel: "Pd LG1", facilityLabel: "PARKING" },
 ];
 
 const TOWER_B: TowerAvailability = {
@@ -202,26 +208,29 @@ const TOWER_C_STACKS: StackDef[] = [
 ];
 
 const TOWER_C_FACING_GROUPS: FacingGroupDef[] = [
-  { key: "fac-left",  label: "Facilities View",        stackCount: 5 },
-  { key: "lgc-c",     label: "Lake, Golf & City View", stackCount: 9 },
-  { key: "fac-right", label: "Facilities View",        stackCount: 5 },
+  { key: "fac-left", label: "Facilities View", stackCount: 5 },
+  { key: "lgc-c", label: "Lake, Golf & City View", stackCount: 9 },
+  { key: "fac-right", label: "Facilities View", stackCount: 5 },
 ];
 
 // Corner stacks at lowest residential floors are void (no unit — stairwell/services)
 const TOWER_C_VOIDS: VoidEntry[] = [
-  { floor: 3, stackNo: "01" }, { floor: 3, stackNo: "19" },
-  { floor: 4, stackNo: "01" }, { floor: 4, stackNo: "19" },
-  { floor: 5, stackNo: "01" }, { floor: 5, stackNo: "19" },
+  { floor: 3, stackNo: "01" },
+  { floor: 3, stackNo: "19" },
+  { floor: 4, stackNo: "01" },
+  { floor: 4, stackNo: "19" },
+  { floor: 5, stackNo: "01" },
+  { floor: 5, stackNo: "19" },
 ];
 
 // Tower C has an extra "Facilities" deck level + one more basement parking
 const TOWER_C_FACILITY_LEVELS = [
-  { floorLabel: "FACILITIES", facilityLabel: "FACILITIES DECK"             },
-  { floorLabel: "Pd -2F",     facilityLabel: "PARKING"                     },
-  { floorLabel: "Pd -1F",     facilityLabel: "PARKING"                     },
-  { floorLabel: "Pd GF",      facilityLabel: "LOBBY, DROP OFF, PARKING"    },
-  { floorLabel: "Pd LG1",     facilityLabel: "PARKING"                     },
-  { floorLabel: "Pd LG2",     facilityLabel: "PARKING"                     },
+  { floorLabel: "FACILITIES", facilityLabel: "FACILITIES DECK" },
+  { floorLabel: "Pd -2F", facilityLabel: "PARKING" },
+  { floorLabel: "Pd -1F", facilityLabel: "PARKING" },
+  { floorLabel: "Pd GF", facilityLabel: "LOBBY, DROP OFF, PARKING" },
+  { floorLabel: "Pd LG1", facilityLabel: "PARKING" },
+  { floorLabel: "Pd LG2", facilityLabel: "PARKING" },
 ];
 
 const TOWER_C: TowerAvailability = {

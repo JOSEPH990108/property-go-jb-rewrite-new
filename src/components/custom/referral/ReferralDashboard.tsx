@@ -1,18 +1,23 @@
 // src/components/custom/referral/ReferralDashboard.tsx
-'use client';
+"use client";
 
-import { useCallback } from 'react';
-import { ReferralStats } from './ReferralStats';
-import { ReferralLink } from './ReferralLink';
-import { ReferralHistory } from './ReferralHistory';
-import { MilestoneTracker } from './MilestoneTracker';
-import { getReferralStats, getReferralHistory, getMilestoneTiers } from '@/app/actions/referral-actions';
-import { useServerQuery } from '@/hooks/useServerQuery';
-import { Loader2 } from 'lucide-react';
-import type { ReferralStatsData, ReferralReward, MilestoneTier } from '@/types/referral.types';
+import { useCallback } from "react";
+import { ReferralStats } from "./ReferralStats";
+import { ReferralLink } from "./ReferralLink";
+import { ReferralHistory } from "./ReferralHistory";
+import { MilestoneTracker } from "./MilestoneTracker";
+import {
+  getReferralStats,
+  getReferralHistory,
+  getMilestoneTiers,
+} from "@/app/actions/referral-actions";
+import { useServerQuery } from "@/hooks/useServerQuery";
+import { Loader2 } from "lucide-react";
+import type { ReferralStatsData, ReferralReward, MilestoneTier } from "@/types/referral.types";
 
 export default function ReferralDashboard() {
-  const { data: stats, isLoading: loadingStats } = useServerQuery<ReferralStatsData>(getReferralStats);
+  const { data: stats, isLoading: loadingStats } =
+    useServerQuery<ReferralStatsData>(getReferralStats);
 
   const getHistory = useCallback(async () => {
     const res = await getReferralHistory();
@@ -24,14 +29,15 @@ export default function ReferralDashboard() {
     const res = await getMilestoneTiers();
     return { ...res, data: res.data as unknown as MilestoneTier[] };
   }, []);
-  const { data: milestones, isLoading: loadingMilestones } = useServerQuery<MilestoneTier[]>(getTiers);
+  const { data: milestones, isLoading: loadingMilestones } =
+    useServerQuery<MilestoneTier[]>(getTiers);
 
   const loading = loadingStats || loadingHistory || loadingMilestones;
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-20">
-        <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
       </div>
     );
   }

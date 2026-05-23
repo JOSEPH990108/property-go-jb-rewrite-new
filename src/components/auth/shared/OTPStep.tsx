@@ -38,15 +38,15 @@ export function OTPStep({
   return (
     <div
       className={cn(
-        "flex flex-col flex-1 w-full items-center justify-center min-h-[500px]",
-        !isModal && "lg:w-1/2 overflow-y-auto no-scrollbar"
+        "flex min-h-[500px] w-full flex-1 flex-col items-center justify-center",
+        !isModal && "no-scrollbar overflow-y-auto lg:w-1/2",
       )}
     >
-      <div className="w-full max-w-md mx-auto space-y-6 text-center px-4">
+      <div className="mx-auto w-full max-w-md space-y-6 px-4 text-center">
         <h1 className="text-2xl font-semibold">Verify Phone Number</h1>
         <p className="text-muted-foreground text-sm">
           Enter the 6-digit code sent to{" "}
-          <span className="font-medium text-foreground">{phoneNumber}</span>
+          <span className="text-foreground font-medium">{phoneNumber}</span>
         </p>
 
         <div className="flex justify-center py-6">
@@ -59,24 +59,16 @@ export function OTPStep({
           </InputOTP>
         </div>
 
-        {error && (
-          <p className="text-destructive text-sm bg-destructive/10 p-2 rounded">
-            {error}
-          </p>
-        )}
+        {error && <p className="text-destructive bg-destructive/10 rounded p-2 text-sm">{error}</p>}
 
-        <Button
-          onClick={onSubmit}
-          className="w-full"
-          disabled={isLoading || value.length < 6}
-        >
-          {isLoading && <Loader2 className="animate-spin mr-2 h-4 w-4" />}
+        <Button onClick={onSubmit} className="w-full" disabled={isLoading || value.length < 6}>
+          {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {isLoading ? "Verifying..." : submitLabel}
         </Button>
 
         <button
           onClick={onBack}
-          className="text-sm text-muted-foreground hover:text-foreground underline"
+          className="text-muted-foreground hover:text-foreground text-sm underline"
         >
           {backLabel}
         </button>

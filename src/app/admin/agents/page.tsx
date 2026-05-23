@@ -10,8 +10,8 @@ const columns: ColumnDef<AgentTableRow>[] = [
     accessorKey: "name",
     cell: ({ row }) => (
       <div>
-        <p className="font-medium text-foreground">{row.original.name}</p>
-        <p className="mt-1 text-xs text-muted-foreground">{row.original.email}</p>
+        <p className="text-foreground font-medium">{row.original.name}</p>
+        <p className="text-muted-foreground mt-1 text-xs">{row.original.email}</p>
       </div>
     ),
   },
@@ -20,7 +20,7 @@ const columns: ColumnDef<AgentTableRow>[] = [
     header: "Status",
     accessorKey: "status",
     cell: ({ getValue }) => (
-      <span className="rounded-full border border-primary/20 bg-primary/12 px-3 py-1 text-xs font-medium text-primary">
+      <span className="border-primary/20 bg-primary/12 text-primary rounded-full border px-3 py-1 text-xs font-medium">
         {String(getValue())}
       </span>
     ),

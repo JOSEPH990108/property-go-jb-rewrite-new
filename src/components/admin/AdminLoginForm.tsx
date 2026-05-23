@@ -57,19 +57,15 @@ export default function AdminLoginForm() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+    <div className="bg-background flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-md space-y-8">
         {/* Header */}
         <div className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 shadow-lg">
-            <Shield className="h-8 w-8 text-primary" />
+          <div className="bg-primary/10 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl shadow-lg">
+            <Shield className="text-primary h-8 w-8" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            Admin Portal
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Sign in with your admin credentials
-          </p>
+          <h1 className="text-foreground text-2xl font-bold tracking-tight">Admin Portal</h1>
+          <p className="text-muted-foreground mt-2 text-sm">Sign in with your admin credentials</p>
         </div>
 
         {/* Form */}
@@ -83,9 +79,7 @@ export default function AdminLoginForm() {
               placeholder="admin@propertygo.com"
               {...register("email")}
             />
-            {errors.email && (
-              <p className="text-destructive text-xs">{errors.email.message}</p>
-            )}
+            {errors.email && <p className="text-destructive text-xs">{errors.email.message}</p>}
           </div>
 
           <div className="space-y-1.5">
@@ -102,7 +96,7 @@ export default function AdminLoginForm() {
               <button
                 type="button"
                 onClick={() => setShowPassword((v) => !v)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2"
                 tabIndex={-1}
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -114,18 +108,18 @@ export default function AdminLoginForm() {
           </div>
 
           {error && (
-            <p className="text-destructive text-sm bg-destructive/10 p-3 rounded-lg text-center">
+            <p className="text-destructive bg-destructive/10 rounded-lg p-3 text-center text-sm">
               {error}
             </p>
           )}
 
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : null}
+            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
             {isLoading ? "Signing in..." : "Sign In"}
           </Button>
         </form>
 
-        <p className="text-center text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-center text-xs">
           This portal is restricted to authorized administrators only.
         </p>
       </div>

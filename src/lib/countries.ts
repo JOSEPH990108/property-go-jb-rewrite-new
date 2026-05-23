@@ -17,14 +17,11 @@ export type CountryOption = {
 // ✅ libphonenumber-js already guarantees these are valid CountryCode
 const PHONE_SUPPORTED = getPhoneCountries();
 
-export const countryOptions: CountryOption[] = PHONE_SUPPORTED.map(
-  (iso) => ({
-    value: iso,
-    label:
-      countries.getName(iso, "en", { select: "official" }) ?? iso,
-    code: `+${getCountryCallingCode(iso)}`,
-  })
-);
+export const countryOptions: CountryOption[] = PHONE_SUPPORTED.map((iso) => ({
+  value: iso,
+  label: countries.getName(iso, "en", { select: "official" }) ?? iso,
+  code: `+${getCountryCallingCode(iso)}`,
+}));
 
 // Optional UX priority
 const PRIORITY: CountryCode[] = ["MY", "SG", "US"];

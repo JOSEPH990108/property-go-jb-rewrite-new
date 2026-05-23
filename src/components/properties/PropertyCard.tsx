@@ -15,12 +15,11 @@ interface PropertyCardProps {
 
 export function PropertyCard({ project, isFavorite = false }: PropertyCardProps) {
   return (
-    <BaseCard
-      className="overflow-hidden group"
-      withPadding={false}
-      data={project}
-    >
-      <Link href={`/properties/${project.slug}`} className="block relative aspect-[4/3] overflow-hidden">
+    <BaseCard className="group overflow-hidden" withPadding={false} data={project}>
+      <Link
+        href={`/properties/${project.slug}`}
+        className="relative block aspect-[4/3] overflow-hidden"
+      >
         {project.images.featured ? (
           <Image
             src={project.images.featured}
@@ -30,20 +29,14 @@ export function PropertyCard({ project, isFavorite = false }: PropertyCardProps)
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         ) : (
-          <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground">
+          <div className="bg-muted text-muted-foreground flex h-full w-full items-center justify-center">
             No Image
           </div>
         )}
 
         <div className="absolute top-3 left-3 flex flex-col gap-2">
-            {project.isHotDeal && (
-                <Badge variant="destructive">
-                    Hot Deal
-                </Badge>
-            )}
-            <Badge variant="tech">
-                {project.status}
-            </Badge>
+          {project.isHotDeal && <Badge variant="destructive">Hot Deal</Badge>}
+          <Badge variant="tech">{project.status}</Badge>
         </div>
 
         <div className="absolute top-3 right-3" onClick={(e) => e.preventDefault()}>
@@ -52,63 +45,65 @@ export function PropertyCard({ project, isFavorite = false }: PropertyCardProps)
       </Link>
 
       <CardHeader className="p-4 pb-2">
-        <div className="flex justify-between items-start gap-2">
-            <div>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium mb-1">
-                    {project.type} • {project.location.area}
-                </p>
-                <Link href={`/properties/${project.slug}`} className="hover:underline">
-                    <h3 className="font-sans text-xl font-semibold tracking-tight line-clamp-1 group-hover:gradient-text transition-all duration-300">
-                        {project.displayName || project.name}
-                    </h3>
-                </Link>
-            </div>
+        <div className="flex items-start justify-between gap-2">
+          <div>
+            <p className="text-muted-foreground mb-1 text-xs font-medium tracking-wider uppercase">
+              {project.type} • {project.location.area}
+            </p>
+            <Link href={`/properties/${project.slug}`} className="hover:underline">
+              <h3 className="group-hover:gradient-text line-clamp-1 font-sans text-xl font-semibold tracking-tight transition-all duration-300">
+                {project.displayName || project.name}
+              </h3>
+            </Link>
+          </div>
         </div>
-        <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
-            <MapPin className="h-3.5 w-3.5 text-accent" />
-            <span className="truncate">{project.location.region}, {project.location.state}</span>
+        <div className="text-muted-foreground mt-1 flex items-center gap-1 text-sm">
+          <MapPin className="text-accent h-3.5 w-3.5" />
+          <span className="truncate">
+            {project.location.region}, {project.location.state}
+          </span>
         </div>
       </CardHeader>
 
       <CardContent className="p-4 pt-2">
-        <div className="grid grid-cols-3 gap-2 py-3 border-y border-border my-2">
-            <div className="flex flex-col items-center justify-center gap-1 text-center">
-                <BedDouble className="h-4 w-4 text-accent" />
-                <span className="text-xs font-medium">
-                    {project.specs.minBedrooms === project.specs.maxBedrooms
-                        ? project.specs.minBedrooms
-                        : `${project.specs.minBedrooms}-${project.specs.maxBedrooms}`} Beds
-                </span>
-            </div>
-            <div className="flex flex-col items-center justify-center gap-1 text-center border-l border-border">
-                <Bath className="h-4 w-4 text-accent" />
-                <span className="text-xs font-medium">
-                    {project.specs.minBathrooms === project.specs.maxBathrooms
-                        ? project.specs.minBathrooms
-                        : `${project.specs.minBathrooms}-${project.specs.maxBathrooms}`} Baths
-                </span>
-            </div>
-            <div className="flex flex-col items-center justify-center gap-1 text-center border-l border-border">
-                <Ruler className="h-4 w-4 text-accent" />
-                <span className="text-xs font-medium">
-                    {project.specs.minSqft} sqft
-                </span>
-            </div>
+        <div className="border-border my-2 grid grid-cols-3 gap-2 border-y py-3">
+          <div className="flex flex-col items-center justify-center gap-1 text-center">
+            <BedDouble className="text-accent h-4 w-4" />
+            <span className="text-xs font-medium">
+              {project.specs.minBedrooms === project.specs.maxBedrooms
+                ? project.specs.minBedrooms
+                : `${project.specs.minBedrooms}-${project.specs.maxBedrooms}`}{" "}
+              Beds
+            </span>
+          </div>
+          <div className="border-border flex flex-col items-center justify-center gap-1 border-l text-center">
+            <Bath className="text-accent h-4 w-4" />
+            <span className="text-xs font-medium">
+              {project.specs.minBathrooms === project.specs.maxBathrooms
+                ? project.specs.minBathrooms
+                : `${project.specs.minBathrooms}-${project.specs.maxBathrooms}`}{" "}
+              Baths
+            </span>
+          </div>
+          <div className="border-border flex flex-col items-center justify-center gap-1 border-l text-center">
+            <Ruler className="text-accent h-4 w-4" />
+            <span className="text-xs font-medium">{project.specs.minSqft} sqft</span>
+          </div>
         </div>
       </CardContent>
 
-      <CardFooter className="p-4 pt-0 flex items-center justify-between">
+      <CardFooter className="flex items-center justify-between p-4 pt-0">
         <div className="flex flex-col">
-            <span className="text-xs text-muted-foreground">Starting from</span>
-            <span className="font-semibold text-lg gradient-text">
-                {formatPriceRange(project.price.min, project.price.max)}
-            </span>
+          <span className="text-muted-foreground text-xs">Starting from</span>
+          <span className="gradient-text text-lg font-semibold">
+            {formatPriceRange(project.price.min, project.price.max)}
+          </span>
         </div>
         <Link
-            href={`/properties/${project.slug}`}
-            className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white shadow-tech-sm hover:shadow-tech-md hover:scale-105 transition-all duration-200"
+          href={`/properties/${project.slug}`}
+          className="from-primary to-accent shadow-tech-sm hover:shadow-tech-md flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br text-white transition-all duration-200 hover:scale-105"
         >
-            <ArrowRight className="h-4 w-4" />
+          <ArrowRight className="h-4 w-4" />
         </Link>
       </CardFooter>
     </BaseCard>
