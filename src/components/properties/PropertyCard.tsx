@@ -6,9 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { BaseCard } from "@/components/shared/base-card";
 import { StatusBadge } from "@/components/shared/StatusBadge";
-import { MapPin, BedDouble, Bath, Ruler, ArrowRight } from "lucide-react";
+import { MapPin, ArrowRight } from "lucide-react";
 import { formatPriceRange } from "@/lib/format";
 import { FavoriteButton } from "@/components/properties/FavoriteButton";
+import { PropertySpecTiles } from "@/components/properties/PropertySpecTiles";
 
 type PropertyStatusTone = NonNullable<ComponentProps<typeof StatusBadge>["tone"]>;
 
@@ -92,30 +93,7 @@ export function PropertyCard({ project, isFavorite = false }: PropertyCardProps)
       </CardHeader>
 
       <CardContent className="p-4 pt-2">
-        <div className="border-border my-2 grid grid-cols-3 gap-2 border-y py-3">
-          <div className="flex flex-col items-center justify-center gap-1 text-center">
-            <BedDouble className="text-accent h-4 w-4" />
-            <span className="text-xs font-medium">
-              {project.specs.minBedrooms === project.specs.maxBedrooms
-                ? project.specs.minBedrooms
-                : `${project.specs.minBedrooms}-${project.specs.maxBedrooms}`}{" "}
-              Beds
-            </span>
-          </div>
-          <div className="border-border flex flex-col items-center justify-center gap-1 border-l text-center">
-            <Bath className="text-accent h-4 w-4" />
-            <span className="text-xs font-medium">
-              {project.specs.minBathrooms === project.specs.maxBathrooms
-                ? project.specs.minBathrooms
-                : `${project.specs.minBathrooms}-${project.specs.maxBathrooms}`}{" "}
-              Baths
-            </span>
-          </div>
-          <div className="border-border flex flex-col items-center justify-center gap-1 border-l text-center">
-            <Ruler className="text-accent h-4 w-4" />
-            <span className="text-xs font-medium">{project.specs.minSqft} sqft</span>
-          </div>
-        </div>
+        <PropertySpecTiles specs={project.specs} variant="compact" />
       </CardContent>
 
       <CardFooter className="flex items-center justify-between p-4 pt-0">
