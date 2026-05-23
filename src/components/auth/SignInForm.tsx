@@ -2,16 +2,18 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { AuthStepShell } from "@/components/auth/shared/AuthStepShell";
+import {
+  AuthMethodDivider,
+  AuthModeSwitch,
+  RememberMeCheckbox,
+} from "@/components/auth/shared/AuthPhoneStepParts";
 import { PhoneNumberField } from "@/components/auth/shared/PhoneNumberField";
 import { OTPStep } from "@/components/auth/shared/OTPStep";
 import { GoogleSignInButton } from "@/components/auth/shared/GoogleSignInButton";
@@ -176,12 +178,7 @@ function SignInFormContent({ isModal = false }: SignInFormProps) {
       <div className="space-y-5">
         <GoogleSignInButton onClick={handleGoogleSignIn} />
 
-        <div className="text-muted-foreground relative py-2 text-center text-sm">
-          <span className="bg-background relative z-10 px-2">Or with Phone</span>
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t" />
-          </div>
-        </div>
+        <AuthMethodDivider />
 
         <form onSubmit={handleSubmit(onRequestOtp)}>
           <div className="space-y-4">
@@ -199,19 +196,11 @@ function SignInFormContent({ isModal = false }: SignInFormProps) {
               requiredError={termsError}
             />
 
-            <div className="flex items-center space-x-2 py-2">
-              <Checkbox
-                id="signin-remember"
-                checked={isRememberMe}
-                onCheckedChange={(checked) => setIsRememberMe(checked as boolean)}
-              />
-              <Label
-                htmlFor="signin-remember"
-                className="text-muted-foreground cursor-pointer text-sm font-normal"
-              >
-                Keep me logged in
-              </Label>
-            </div>
+            <RememberMeCheckbox
+              id="signin-remember"
+              checked={isRememberMe}
+              onCheckedChange={setIsRememberMe}
+            />
 
             {error && (
               <p className="text-destructive bg-destructive/10 rounded p-2 text-center text-sm">
@@ -226,21 +215,13 @@ function SignInFormContent({ isModal = false }: SignInFormProps) {
           </div>
         </form>
 
-        <div className="text-muted-foreground text-center text-sm">
-          Don&apos;t have an account?{" "}
-          {isModal ? (
-            <button
-              onClick={() => setAuthMode("signup")}
-              className="text-primary font-medium hover:underline focus:outline-none"
-            >
-              Sign Up
-            </button>
-          ) : (
-            <Link href="/signup" className="text-primary font-medium">
-              Sign Up
-            </Link>
-          )}
-        </div>
+        <AuthModeSwitch
+          prompt="Don't have an account?"
+          actionLabel="Sign Up"
+          href="/signup"
+          isModal={isModal}
+          onModalSwitch={() => setAuthMode("signup")}
+        />
       </div>
     </AuthStepShell>
   );
