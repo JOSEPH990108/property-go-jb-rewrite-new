@@ -1,12 +1,32 @@
 import Link from "next/link";
 import Image from "next/image";
+import type { ComponentProps } from "react";
 import { PublicProject } from "@/app/actions/property-actions";
 import { Badge } from "@/components/ui/badge";
 import { CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { BaseCard } from "@/components/shared/base-card";
+import { StatusBadge } from "@/components/shared/StatusBadge";
 import { MapPin, BedDouble, Bath, Ruler, ArrowRight } from "lucide-react";
 import { formatPriceRange } from "@/lib/format";
 import { FavoriteButton } from "@/components/properties/FavoriteButton";
+
+type PropertyStatusTone = NonNullable<ComponentProps<typeof StatusBadge>["tone"]>;
+
+const PROPERTY_STATUS_TONES: Record<string, PropertyStatusTone> = {
+  completed: "success",
+  fully_sold: "danger",
+  new_launch: "accent",
+  subsale: "neutral",
+  under_construction: "warning",
+  upcoming: "info",
+};
+
+function normalizePropertyStatus(status: string) {
+  return status
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+}
 
 interface PropertyCardProps {
   project: PublicProject;
@@ -14,6 +34,8 @@ interface PropertyCardProps {
 }
 
 export function PropertyCard({ project, isFavorite = false }: PropertyCardProps) {
+  const statusKey = normalizePropertyStatus(project.status);
+
   return (
     <BaseCard className="group overflow-hidden" withPadding={false} data={project}>
       <Link
@@ -36,7 +58,11 @@ export function PropertyCard({ project, isFavorite = false }: PropertyCardProps)
 
         <div className="absolute top-3 left-3 flex flex-col gap-2">
           {project.isHotDeal && <Badge variant="destructive">Hot Deal</Badge>}
-          <Badge variant="tech">{project.status}</Badge>
+          <StatusBadge
+            status={statusKey}
+            label={project.status}
+            tone={PROPERTY_STATUS_TONES[statusKey]}
+          />
         </div>
 
         <div className="absolute top-3 right-3" onClick={(e) => e.preventDefault()}>
