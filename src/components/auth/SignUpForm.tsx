@@ -22,7 +22,6 @@ import { TermsCheckbox } from "@/components/auth/shared/TermsCheckbox";
 import { authClient } from "@/lib/auth-client";
 import { useGlobalLoaderStore } from "@/stores/global-loader-store";
 import { useUIStore } from "@/stores/ui-store";
-import { cn } from "@/lib/utils";
 import { phoneSchema } from "@/lib/schemas/phone-schema";
 import { buildE164PhoneNumber } from "@/lib/phone-utils";
 import { useReferralVerification } from "@/hooks/useReferralVerification";
@@ -269,85 +268,69 @@ function SignUpFormContent({ isModal = false }: SignUpFormProps) {
   // --- Name step ---
   if (step === "DETAILS") {
     return (
-      <div
-        className={cn(
-          "flex min-h-[500px] w-full flex-1 flex-col items-center justify-center",
-          !isModal && "no-scrollbar overflow-y-auto lg:w-1/2",
-        )}
+      <AuthStepShell
+        title="What's your name?"
+        description="Please provide your full name."
+        isModal={isModal}
+        variant="centered"
       >
-        <div className="mx-auto w-full max-w-md space-y-6 px-4">
-          <div className="text-center">
-            <h1 className="text-2xl font-semibold">What&apos;s your name?</h1>
-            <p className="text-muted-foreground text-sm">Please provide your full name.</p>
+        <form onSubmit={handleSubmitDetails(onNameSubmit)} className="space-y-4">
+          <div className="space-y-1.5">
+            <Label>Full Name*</Label>
+            <Input {...registerDetails("name")} placeholder="John Doe" />
+            {errorsDetails.name && (
+              <p className="text-destructive text-xs">{errorsDetails.name.message}</p>
+            )}
           </div>
-
-          <form onSubmit={handleSubmitDetails(onNameSubmit)} className="space-y-4">
-            <div className="space-y-1.5">
-              <Label>Full Name*</Label>
-              <Input {...registerDetails("name")} placeholder="John Doe" />
-              {errorsDetails.name && (
-                <p className="text-destructive text-xs">{errorsDetails.name.message}</p>
-              )}
-            </div>
-            <Button type="submit" className="w-full">
-              Next <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </form>
-        </div>
-      </div>
+          <Button type="submit" className="w-full">
+            Next <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </form>
+      </AuthStepShell>
     );
   }
 
   // --- Referral step ---
   if (step === "REFERRAL") {
     return (
-      <div
-        className={cn(
-          "flex min-h-[500px] w-full flex-1 flex-col items-center justify-center",
-          !isModal && "no-scrollbar overflow-y-auto lg:w-1/2",
-        )}
+      <AuthStepShell
+        title="Got a Referral Code?"
+        description="Enter it below to claim your rewards, or skip this step."
+        isModal={isModal}
+        variant="centered"
       >
-        <div className="mx-auto w-full max-w-md space-y-6 px-4">
-          <div className="text-center">
-            <h1 className="text-2xl font-semibold">Got a Referral Code?</h1>
-            <p className="text-muted-foreground text-sm">
-              Enter it below to claim your rewards, or skip this step.
+        <form onSubmit={handleSubmitReferral(onReferralSubmit)} className="space-y-4">
+          <ReferralCodeInput
+            inputProps={registerReferral("referralCode")}
+            value={watchedReferralCode}
+            onApply={() => referral.verify(watchedReferralCode || "")}
+            isLoading={referral.isLoading}
+            status={referral.status}
+          />
+
+          {error && (
+            <p className="text-destructive bg-destructive/10 rounded p-2 text-center text-sm">
+              {error}
             </p>
+          )}
+
+          <div className="space-y-2 pt-2">
+            <Button type="submit" className="w-full" disabled={isLoading || referral.isLoading}>
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isLoading ? "Completing..." : "Complete Signup"}
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              className="w-full"
+              onClick={handleSkipReferral}
+              disabled={isLoading || referral.isLoading}
+            >
+              Skip for now
+            </Button>
           </div>
-
-          <form onSubmit={handleSubmitReferral(onReferralSubmit)} className="space-y-4">
-            <ReferralCodeInput
-              inputProps={registerReferral("referralCode")}
-              value={watchedReferralCode}
-              onApply={() => referral.verify(watchedReferralCode || "")}
-              isLoading={referral.isLoading}
-              status={referral.status}
-            />
-
-            {error && (
-              <p className="text-destructive bg-destructive/10 rounded p-2 text-center text-sm">
-                {error}
-              </p>
-            )}
-
-            <div className="space-y-2 pt-2">
-              <Button type="submit" className="w-full" disabled={isLoading || referral.isLoading}>
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isLoading ? "Completing..." : "Complete Signup"}
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                className="w-full"
-                onClick={handleSkipReferral}
-                disabled={isLoading || referral.isLoading}
-              >
-                Skip for now
-              </Button>
-            </div>
-          </form>
-        </div>
-      </div>
+        </form>
+      </AuthStepShell>
     );
   }
 
