@@ -99,9 +99,11 @@ function SignUpFormContent({ isModal = false }: SignUpFormProps) {
 
   const watchedReferralCode = watchReferral("referralCode");
 
+  const handleReferralInputChange = referral.handleInputChange;
+
   useEffect(() => {
-    referral.handleInputChange(watchedReferralCode);
-  }, [watchedReferralCode, referral.handleInputChange]);
+    handleReferralInputChange(watchedReferralCode);
+  }, [watchedReferralCode, handleReferralInputChange]);
 
   const getFullPhoneNumber = () => {
     const data = getValuesPhone();
@@ -160,7 +162,11 @@ function SignUpFormContent({ isModal = false }: SignUpFormProps) {
         const destination = res.redirectTo || callbackUrl;
 
         if (isModal) {
-          destination !== "/" ? (window.location.href = destination) : window.location.reload();
+          if (destination !== "/") {
+            window.location.href = destination;
+          } else {
+            window.location.reload();
+          }
         } else {
           show("Success!", "Redirecting...");
           window.location.href = destination;
@@ -211,7 +217,11 @@ function SignUpFormContent({ isModal = false }: SignUpFormProps) {
       const destination = updateRes.redirectTo || callbackUrl;
 
       if (isModal) {
-        destination !== "/" ? (window.location.href = destination) : window.location.reload();
+        if (destination !== "/") {
+          window.location.href = destination;
+        } else {
+          window.location.reload();
+        }
       } else {
         show("All Set!", "Redirecting...");
         window.location.href = destination;
@@ -258,8 +268,13 @@ function SignUpFormContent({ isModal = false }: SignUpFormProps) {
   // --- Name step ---
   if (step === "DETAILS") {
     return (
-      <div className={cn("flex flex-col flex-1 w-full items-center justify-center min-h-[500px]", !isModal && "lg:w-1/2 overflow-y-auto no-scrollbar")}>
-        <div className="w-full max-w-md mx-auto space-y-6 px-4">
+      <div
+        className={cn(
+          "flex min-h-[500px] w-full flex-1 flex-col items-center justify-center",
+          !isModal && "no-scrollbar overflow-y-auto lg:w-1/2",
+        )}
+      >
+        <div className="mx-auto w-full max-w-md space-y-6 px-4">
           <div className="text-center">
             <h1 className="text-2xl font-semibold">What&apos;s your name?</h1>
             <p className="text-muted-foreground text-sm">Please provide your full name.</p>
@@ -274,7 +289,7 @@ function SignUpFormContent({ isModal = false }: SignUpFormProps) {
               )}
             </div>
             <Button type="submit" className="w-full">
-              Next <ArrowRight className="w-4 h-4 ml-2" />
+              Next <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </form>
         </div>
@@ -285,8 +300,13 @@ function SignUpFormContent({ isModal = false }: SignUpFormProps) {
   // --- Referral step ---
   if (step === "REFERRAL") {
     return (
-      <div className={cn("flex flex-col flex-1 w-full items-center justify-center min-h-[500px]", !isModal && "lg:w-1/2 overflow-y-auto no-scrollbar")}>
-        <div className="w-full max-w-md mx-auto space-y-6 px-4">
+      <div
+        className={cn(
+          "flex min-h-[500px] w-full flex-1 flex-col items-center justify-center",
+          !isModal && "no-scrollbar overflow-y-auto lg:w-1/2",
+        )}
+      >
+        <div className="mx-auto w-full max-w-md space-y-6 px-4">
           <div className="text-center">
             <h1 className="text-2xl font-semibold">Got a Referral Code?</h1>
             <p className="text-muted-foreground text-sm">
@@ -304,17 +324,23 @@ function SignUpFormContent({ isModal = false }: SignUpFormProps) {
             />
 
             {error && (
-              <p className="text-destructive text-sm bg-destructive/10 p-2 rounded text-center">
+              <p className="text-destructive bg-destructive/10 rounded p-2 text-center text-sm">
                 {error}
               </p>
             )}
 
             <div className="space-y-2 pt-2">
               <Button type="submit" className="w-full" disabled={isLoading || referral.isLoading}>
-                {isLoading && <Loader2 className="animate-spin mr-2 h-4 w-4" />}
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isLoading ? "Completing..." : "Complete Signup"}
               </Button>
-              <Button type="button" variant="ghost" className="w-full" onClick={handleSkipReferral} disabled={isLoading || referral.isLoading}>
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full"
+                onClick={handleSkipReferral}
+                disabled={isLoading || referral.isLoading}
+              >
                 Skip for now
               </Button>
             </div>
@@ -326,29 +352,34 @@ function SignUpFormContent({ isModal = false }: SignUpFormProps) {
 
   // --- Phone step (initial) ---
   return (
-    <div className={cn("flex flex-col flex-1 w-full", !isModal && "lg:w-1/2 overflow-y-auto no-scrollbar")}>
-      <div className="w-full max-w-md sm:pt-10 mx-auto mb-5 px-4">
+    <div
+      className={cn(
+        "flex w-full flex-1 flex-col",
+        !isModal && "no-scrollbar overflow-y-auto lg:w-1/2",
+      )}
+    >
+      <div className="mx-auto mb-5 w-full max-w-md px-4 sm:pt-10">
         {!isModal && (
-          <Link href="/" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground">
-            <ChevronLeft className="w-4 h-4 mr-1" /> Back to main
+          <Link
+            href="/"
+            className="text-muted-foreground hover:text-foreground inline-flex items-center text-sm"
+          >
+            <ChevronLeft className="mr-1 h-4 w-4" /> Back to main
           </Link>
         )}
       </div>
 
-      <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto px-4 pb-10">
+      <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-4 pb-10">
         <div className="mb-8">
-          <h1 className="mb-2 font-semibold text-foreground text-2xl">Sign Up</h1>
-          <p className="text-sm text-muted-foreground">Create a passwordless account.</p>
+          <h1 className="text-foreground mb-2 text-2xl font-semibold">Sign Up</h1>
+          <p className="text-muted-foreground text-sm">Create a passwordless account.</p>
         </div>
 
         <div className="space-y-5">
-          <GoogleSignInButton
-            onClick={handleGoogleSignIn}
-            label="Sign up with Google"
-          />
+          <GoogleSignInButton onClick={handleGoogleSignIn} label="Sign up with Google" />
 
-          <div className="relative py-2 text-center text-sm text-muted-foreground">
-            <span className="bg-background px-2 relative z-10">Or with Phone</span>
+          <div className="text-muted-foreground relative py-2 text-center text-sm">
+            <span className="bg-background relative z-10 px-2">Or with Phone</span>
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t" />
             </div>
@@ -363,12 +394,16 @@ function SignUpFormContent({ isModal = false }: SignUpFormProps) {
                     name="country"
                     control={controlPhone}
                     render={({ field }) => (
-                      <CountrySelect className="h-11" value={field.value} onChange={field.onChange} />
+                      <CountrySelect
+                        className="h-11"
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
                     )}
                   />
                   <Input
                     type="tel"
-                    className="flex-1 h-11"
+                    className="h-11 flex-1"
                     {...registerPhone("phone")}
                     placeholder="Phone Number"
                   />
@@ -399,26 +434,26 @@ function SignUpFormContent({ isModal = false }: SignUpFormProps) {
                 />
                 <Label
                   htmlFor="signup-remember"
-                  className="text-sm text-muted-foreground cursor-pointer font-normal"
+                  className="text-muted-foreground cursor-pointer text-sm font-normal"
                 >
                   Keep me logged in
                 </Label>
               </div>
 
               {error && (
-                <p className="text-destructive text-sm bg-destructive/10 p-2 rounded text-center">
+                <p className="text-destructive bg-destructive/10 rounded p-2 text-center text-sm">
                   {error}
                 </p>
               )}
 
-              <Button type="submit" className="w-full mt-2" disabled={isLoading}>
-                {isLoading && <Loader2 className="animate-spin mr-2 h-4 w-4" />}
+              <Button type="submit" className="mt-2 w-full" disabled={isLoading}>
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isLoading ? "Sending OTP..." : "Continue"}
               </Button>
             </div>
           </form>
 
-          <div className="text-center text-sm text-muted-foreground">
+          <div className="text-muted-foreground text-center text-sm">
             Already have an account?{" "}
             {isModal ? (
               <button
@@ -441,7 +476,13 @@ function SignUpFormContent({ isModal = false }: SignUpFormProps) {
 
 export default function SignUpForm(props: SignUpFormProps) {
   return (
-    <Suspense fallback={<div className="flex justify-center p-8"><Loader2 className="animate-spin" /></div>}>
+    <Suspense
+      fallback={
+        <div className="flex justify-center p-8">
+          <Loader2 className="animate-spin" />
+        </div>
+      }
+    >
       <SignUpFormContent {...props} />
     </Suspense>
   );

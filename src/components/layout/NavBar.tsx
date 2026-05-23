@@ -55,13 +55,7 @@ interface NavMenuOverlayProps {
   onClose: () => void;
 }
 
-function NavMenuOverlay({
-  isOpen,
-  menuItems,
-  hoveredItem,
-  onHover,
-  onClose,
-}: NavMenuOverlayProps) {
+function NavMenuOverlay({ isOpen, menuItems, hoveredItem, onHover, onClose }: NavMenuOverlayProps) {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -69,11 +63,11 @@ function NavMenuOverlay({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-40 hidden md:block bg-background"
+          className="bg-background fixed inset-0 z-40 hidden md:block"
         >
           {/* Background image layer */}
           <div className="absolute inset-0 z-0">
-            <div className="absolute inset-0 z-10 bg-gradient-to-b from-background/95 via-background/85 to-background/95" />
+            <div className="from-background/95 via-background/85 to-background/95 absolute inset-0 z-10 bg-gradient-to-b" />
 
             {menuItems.map((item) => (
               <motion.div
@@ -90,14 +84,14 @@ function NavMenuOverlay({
                   src={item.image}
                   alt={item.label}
                   fill
-                  className="object-cover saturate-50 brightness-50 dark:brightness-30"
+                  className="object-cover brightness-50 saturate-50 dark:brightness-30"
                 />
               </motion.div>
             ))}
           </div>
 
           {/* Menu content */}
-          <div className="relative z-20 h-full container flex items-center">
+          <div className="relative z-20 container flex h-full items-center">
             <nav className="flex flex-col gap-6 pl-20">
               {menuItems.map((item, index) => (
                 <motion.div
@@ -113,10 +107,10 @@ function NavMenuOverlay({
                   <Link href={item.href} onClick={onClose} className="relative block">
                     <span
                       className={cn(
-                        "block text-7xl md:text-8xl font-sans font-bold tracking-tight transition-all duration-300",
+                        "block font-sans text-7xl font-bold tracking-tight transition-all duration-300 md:text-8xl",
                         hoveredItem === item.id
                           ? "gradient-text translate-x-4"
-                          : "text-foreground/60 group-hover:text-foreground"
+                          : "text-foreground/60 group-hover:text-foreground",
                       )}
                     >
                       {item.label}
@@ -126,7 +120,7 @@ function NavMenuOverlay({
                       <motion.p
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="mt-3 max-w-md text-sm tracking-wide font-medium text-muted-foreground"
+                        className="text-muted-foreground mt-3 max-w-md text-sm font-medium tracking-wide"
                       >
                         {item.description}
                       </motion.p>
@@ -136,7 +130,7 @@ function NavMenuOverlay({
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: 60 }}
-                        className="h-1 mt-2 rounded-full bg-gradient-to-r from-primary to-accent"
+                        className="from-primary to-accent mt-2 h-1 rounded-full bg-gradient-to-r"
                       />
                     )}
                   </Link>
@@ -176,7 +170,10 @@ export function Navbar({ menuItems = DEFAULT_MENU_ITEMS }: NavbarProps) {
   const router = useRouter();
   const session = authClient.useSession();
 
-  useEffect(() => setIsOpen(false), [pathname]);
+  useEffect(() => {
+    const frameId = requestAnimationFrame(() => setIsOpen(false));
+    return () => cancelAnimationFrame(frameId);
+  }, [pathname]);
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "unset";
@@ -191,8 +188,18 @@ export function Navbar({ menuItems = DEFAULT_MENU_ITEMS }: NavbarProps) {
 
   const profileOptions: NavProfileOption[] = [
     { id: "profile", label: "Profile", icon: User, onClick: () => router.push("/profile") },
-    { id: "appointments", label: "Appointments", icon: Calendar, onClick: () => router.push("/appointments") },
-    { id: "notifications", label: "Notifications", icon: Bell, onClick: () => router.push("/notifications") },
+    {
+      id: "appointments",
+      label: "Appointments",
+      icon: Calendar,
+      onClick: () => router.push("/appointments"),
+    },
+    {
+      id: "notifications",
+      label: "Notifications",
+      icon: Bell,
+      onClick: () => router.push("/notifications"),
+    },
     { id: "signout", label: "Sign Out", icon: LogOut, onClick: handleSignOut },
   ];
 
@@ -201,17 +208,17 @@ export function Navbar({ menuItems = DEFAULT_MENU_ITEMS }: NavbarProps) {
       {/* Header */}
       <header
         className={cn(
-          "hidden md:block fixed inset-x-0 top-0 z-50 transition-all duration-300",
-          isOpen ? "bg-transparent border-transparent" : "tech-nav"
+          "fixed inset-x-0 top-0 z-50 hidden transition-all duration-300 md:block",
+          isOpen ? "border-transparent bg-transparent" : "tech-nav",
         )}
       >
-        <div className="container h-20 flex items-center justify-between">
+        <div className="container flex h-20 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent text-white shadow-tech-sm group-hover:shadow-tech-md group-hover:glow-primary transition-all duration-300">
+          <Link href="/" className="group flex items-center gap-3">
+            <span className="from-primary to-accent shadow-tech-sm group-hover:shadow-tech-md group-hover:glow-primary flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br text-white transition-all duration-300">
               <Home className="h-5 w-5" />
             </span>
-            <span className="hidden sm:block font-sans font-semibold tracking-wide text-foreground">
+            <span className="text-foreground hidden font-sans font-semibold tracking-wide sm:block">
               PROPERTY<span className="gradient-text">GO</span>JB
             </span>
           </Link>
@@ -220,14 +227,7 @@ export function Navbar({ menuItems = DEFAULT_MENU_ITEMS }: NavbarProps) {
           <button
             onClick={() => setIsOpen((v) => !v)}
             aria-label="Toggle menu"
-            className="
-              hidden md:flex items-center gap-3 px-6 py-2.5 rounded-full
-              tech-button text-foreground font-medium transition-all duration-300
-              hover:border-accent hover:glow-accent
-              focus-visible:outline-none focus-visible:ring-2
-              focus-visible:ring-accent focus-visible:ring-offset-2
-              focus-visible:ring-offset-background
-            "
+            className="tech-button text-foreground hover:border-accent hover:glow-accent focus-visible:ring-accent focus-visible:ring-offset-background hidden items-center gap-3 rounded-full px-6 py-2.5 font-medium transition-all duration-300 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none md:flex"
           >
             <AnimatePresence mode="wait" initial={false}>
               {isOpen ? (
@@ -240,13 +240,13 @@ export function Navbar({ menuItems = DEFAULT_MENU_ITEMS }: NavbarProps) {
                 </motion.span>
               )}
             </AnimatePresence>
-            <span className="text-xs tracking-widest uppercase font-semibold">
+            <span className="text-xs font-semibold tracking-widest uppercase">
               {isOpen ? "Close" : "Menu"}
             </span>
           </button>
 
           {/* Profile / Sign In */}
-          <div className={cn(isOpen && "opacity-0 pointer-events-none")}>
+          <div className={cn(isOpen && "pointer-events-none opacity-0")}>
             {session.data?.user ? (
               <StaggeredDropDown
                 variant="profile"
@@ -257,7 +257,7 @@ export function Navbar({ menuItems = DEFAULT_MENU_ITEMS }: NavbarProps) {
             ) : (
               <Link
                 href={`/signin?callbackUrl=${encodeURIComponent(pathname)}`}
-                className="tech-button px-5 py-2.5 rounded-full text-sm font-medium hover:border-accent hover:glow-accent transition-all duration-300"
+                className="tech-button hover:border-accent hover:glow-accent rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-300"
               >
                 Sign In
               </Link>

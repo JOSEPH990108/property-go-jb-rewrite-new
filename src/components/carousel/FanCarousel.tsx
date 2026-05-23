@@ -1,8 +1,8 @@
 // src\components\carousel\FanCarousel.tsx
-'use client';
+"use client";
 
-import React, { useEffect, useRef } from 'react'
-import { cn } from '@/lib/utils';
+import React, { useEffect, useRef } from "react";
+import { cn } from "@/lib/utils";
 
 interface FanCarouselProps {
   children: React.ReactNode;
@@ -23,21 +23,21 @@ export function FanCarousel({ children, className }: FanCarouselProps) {
     items: [] as Element[],
     speedWheel: 0.04, // Increased sensitivity slightly
     speedDrag: -0.15, // Horizontal drag speed (Negative: Swipe Left/Drag Left -> Content moves Left -> revealing Next Item?)
-                      // Wait, let's verify visual logic.
-                      // If I drag mouse Left (deltaX < 0), `deltaX * speedDrag` is Positive.
-                      // Progress Increases.
-                      // Progress 0 -> 100.
-                      // If Index 0 is at Progress 0 (or similar mapping).
-                      // Usually Start -> End = Next.
-                      // So Positive Change = Next.
-                      // Drag Left (deltaX < 0) -> Positive Change -> Next.
-                      // This matches "Swipe Left = Next".
+    // Wait, let's verify visual logic.
+    // If I drag mouse Left (deltaX < 0), `deltaX * speedDrag` is Positive.
+    // Progress Increases.
+    // Progress 0 -> 100.
+    // If Index 0 is at Progress 0 (or similar mapping).
+    // Usually Start -> End = Next.
+    // So Positive Change = Next.
+    // Drag Left (deltaX < 0) -> Positive Change -> Next.
+    // This matches "Swipe Left = Next".
 
     speedDragY: -0.2, // Vertical drag speed.
-                      // We want Swipe Up (deltaY < 0) -> Next (Positive Change).
-                      // So `deltaY * speedDragY` should be Positive when deltaY is Negative.
-                      // Negative * Negative = Positive.
-                      // So speedDragY should be Negative.
+    // We want Swipe Up (deltaY < 0) -> Next (Positive Change).
+    // So `deltaY * speedDragY` should be Positive when deltaY is Negative.
+    // Negative * Negative = Positive.
+    // So speedDragY should be Negative.
   });
 
   const childrenArray = React.Children.toArray(children);
@@ -65,9 +65,9 @@ export function FanCarousel({ children, className }: FanCarouselProps) {
         const zIndex = getZindex(items, active)[index];
 
         // Update CSS Variables
-        item.style.setProperty('--zIndex', zIndex.toString());
-        item.style.setProperty('--active', ((index - active) / itemCount).toString());
-        item.style.setProperty('--items', itemCount.toString());
+        item.style.setProperty("--zIndex", zIndex.toString());
+        item.style.setProperty("--active", ((index - active) / itemCount).toString());
+        item.style.setProperty("--items", itemCount.toString());
       }
     });
   };
@@ -75,7 +75,7 @@ export function FanCarousel({ children, className }: FanCarouselProps) {
   // Helper: Get Z Index
   const getZindex = (array: Element[], activeIndex: number) => {
     return array.map((_, i) =>
-      activeIndex === i ? array.length : array.length - Math.abs(activeIndex - i)
+      activeIndex === i ? array.length : array.length - Math.abs(activeIndex - i),
     );
   };
 
@@ -94,16 +94,14 @@ export function FanCarousel({ children, className }: FanCarouselProps) {
 
   const handleMouseDown = (e: MouseEvent | TouchEvent) => {
     state.current.isDown = true;
-    state.current.startX =
-      (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX) || 0;
-    state.current.startY =
-      (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) || 0;
+    state.current.startX = (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX) || 0;
+    state.current.startY = (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) || 0;
   };
 
   const handleMouseMove = (e: MouseEvent | TouchEvent) => {
     if (!state.current.isDown) return;
 
-    const isTouch = e instanceof TouchEvent || 'touches' in e;
+    const isTouch = e instanceof TouchEvent || "touches" in e;
     const x = (isTouch ? (e as TouchEvent).touches[0].clientX : (e as MouseEvent).clientX) || 0;
     const y = (isTouch ? (e as TouchEvent).touches[0].clientY : (e as MouseEvent).clientY) || 0;
 
@@ -122,7 +120,6 @@ export function FanCarousel({ children, className }: FanCarouselProps) {
       const totalChange = changeX + changeY;
 
       state.current.progress += totalChange;
-
     } else {
       // Desktop Mouse Logic: Keep existing X-axis drag
       const mouseProgress = deltaX * state.current.speedDrag;
@@ -154,27 +151,27 @@ export function FanCarousel({ children, className }: FanCarouselProps) {
 
     // Bind events
     // We bind wheel to container with passive: false to allow locking
-    container.addEventListener('wheel', handleWheel, { passive: false });
+    container.addEventListener("wheel", handleWheel, { passive: false });
 
     // We bind drag to container for start
-    container.addEventListener('mousedown', handleMouseDown);
-    container.addEventListener('touchstart', handleMouseDown, { passive: false });
+    container.addEventListener("mousedown", handleMouseDown);
+    container.addEventListener("touchstart", handleMouseDown, { passive: false });
 
     // Bind move/up to window to handle dragging outside container
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('touchmove', handleMouseMove, { passive: false });
-    window.addEventListener('mouseup', handleMouseUp);
-    window.addEventListener('touchend', handleMouseUp);
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("touchmove", handleMouseMove, { passive: false });
+    window.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener("touchend", handleMouseUp);
 
     return () => {
-      container.removeEventListener('wheel', handleWheel);
-      container.removeEventListener('mousedown', handleMouseDown);
-      container.removeEventListener('touchstart', handleMouseDown);
+      container.removeEventListener("wheel", handleWheel);
+      container.removeEventListener("mousedown", handleMouseDown);
+      container.removeEventListener("touchstart", handleMouseDown);
 
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('touchmove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-      window.removeEventListener('touchend', handleMouseUp);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("touchmove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("touchend", handleMouseUp);
     };
   }, [itemCount]);
 
@@ -182,10 +179,10 @@ export function FanCarousel({ children, className }: FanCarouselProps) {
     <div
       ref={containerRef}
       className={cn(
-          "fan-carousel relative h-[600px] w-full overflow-hidden touch-none overscroll-contain",
-          className
+        "fan-carousel relative h-[600px] w-full touch-none overflow-hidden overscroll-contain",
+        className,
       )}
-      style={{ perspective: '1000px', touchAction: 'none' }} // Explicitly disable browser pan/zoom handling
+      style={{ perspective: "1000px", touchAction: "none" }} // Explicitly disable browser pan/zoom handling
     >
       <style jsx>{`
         .fan-carousel-item {
@@ -208,40 +205,44 @@ export function FanCarousel({ children, className }: FanCarouselProps) {
           left: 50%;
           user-select: none;
           transform-origin: 0% 100%;
-          box-shadow: 0 10px 50px 10px rgba(0, 0, 0, .5);
+          box-shadow: 0 10px 50px 10px rgba(0, 0, 0, 0.5);
           background: black;
           pointer-events: all;
 
           /* Transform logic */
           transform: translate(var(--x), var(--y)) rotate(var(--rot));
-          transition: transform .8s cubic-bezier(0, 0.02, 0, 1);
+          transition: transform 0.8s cubic-bezier(0, 0.02, 0, 1);
         }
 
         /* Inner Content Transition */
         .fan-carousel-item > div {
-           transition: opacity .8s cubic-bezier(0, 0.02, 0, 1);
-           opacity: var(--opacity);
+          transition: opacity 0.8s cubic-bezier(0, 0.02, 0, 1);
+          opacity: var(--opacity);
         }
       `}</style>
 
       {childrenArray.map((child, i) => (
         <div
           key={i}
-          ref={(el) => { itemsRef.current[i] = el; }}
+          ref={(el) => {
+            itemsRef.current[i] = el;
+          }}
           className="fan-carousel-item cursor-pointer"
           onClick={() => handleItemClick(i)}
-          style={{
-             // Initial vars to prevent flash of unstyled content
-             '--zIndex': itemCount - i,
-             '--active': (i - state.current.active) / itemCount,
-          } as React.CSSProperties}
+          style={
+            {
+              // Initial vars to prevent flash of unstyled content
+              "--zIndex": itemCount - i,
+              "--active": i / itemCount,
+            } as React.CSSProperties
+          }
         >
           {/* Wrapper to handle opacity transition separately from transform */}
-          <div className="w-full h-full relative">
+          <div className="relative h-full w-full">
             {child}
 
             {/* Optional Overlay/Gradient for better text readability */}
-             <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/30 via-transparent to-black/50" />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/50" />
           </div>
         </div>
       ))}

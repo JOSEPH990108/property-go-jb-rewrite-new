@@ -1,7 +1,7 @@
 // src\app\actions\bulk-import-actions.ts
-'use server';
+"use server";
 
-import { db } from '@/db';
+import { db } from "@/db";
 import {
   projects,
   projectLayouts,
@@ -26,9 +26,9 @@ import {
   towerFacingGroups,
   towerStacks,
   towerSpecialFloors,
-} from '@/db/schema';
-import { eq, and, inArray, sql } from 'drizzle-orm';
-import { z } from 'zod';
+} from "@/db/schema";
+import { eq, and, inArray } from "drizzle-orm";
+import { z } from "zod";
 import {
   BulkDeveloperSchema,
   BulkProjectSchema,
@@ -43,8 +43,7 @@ import {
   BulkImportResult,
   BulkImportError,
   BulkImportWarning,
-  BulkImportEntityType,
-} from '@/lib/bulk-import-schema';
+} from "@/lib/bulk-import-schema";
 import {
   parseCSV,
   csvToObjects,
@@ -53,8 +52,8 @@ import {
   generateDuplicateWarnings,
   keepFirstOccurrenceRows,
   buildImportResult,
-} from '@/lib/bulk-import-utils';
-import type { ValidatedBulkRow } from '@/types/bulk-import.types';
+} from "@/lib/bulk-import-utils";
+import type { ValidatedBulkRow } from "@/types/bulk-import.types";
 
 type CodeLookupTable =
   | typeof propertyCategories
@@ -84,10 +83,7 @@ type ValidatedTowerSpecialFloorRow = ValidatedBulkRow<z.infer<typeof BulkTowerSp
 // HELPER: Resolve Foreign Keys
 // ============================================
 
-async function resolveLookupId(
-  table: CodeLookupTable,
-  codeValue: string
-): Promise<string | null> {
+async function resolveLookupId(table: CodeLookupTable, codeValue: string): Promise<string | null> {
   if (!codeValue) return null;
 
   const record = await db
@@ -101,7 +97,7 @@ async function resolveLookupId(
 
 async function resolveLookupIdByName(
   table: NameLookupTable,
-  nameValue: string
+  nameValue: string,
 ): Promise<string | null> {
   if (!nameValue) return null;
 
@@ -193,7 +189,7 @@ async function resolveDeveloperId(slug: string): Promise<string | null> {
  */
 async function buildCodeLookupMap(
   table: CodeLookupTable,
-  codes: string[]
+  codes: string[],
 ): Promise<Map<string, string>> {
   const uniqueCodes = [...new Set(codes.filter(Boolean))];
   if (uniqueCodes.length === 0) return new Map();
@@ -211,7 +207,7 @@ function addAlreadyExistsWarning(
   rowNumber: number,
   entityLabel: string,
   identifier: string,
-  identifierValue: string
+  identifierValue: string,
 ) {
   warnings.push({
     rowNumber,
@@ -223,9 +219,7 @@ function addAlreadyExistsWarning(
 // BULK DEVELOPER IMPORT
 // ============================================
 
-export async function bulkImportDevelopers(
-  csvContent: string
-): Promise<BulkImportResult> {
+export async function bulkImportDevelopers(csvContent: string): Promise<BulkImportResult> {
   const startTime = Date.now();
   const errors: BulkImportError[] = [];
   const warnings: BulkImportWarning[] = [];
@@ -239,14 +233,14 @@ export async function bulkImportDevelopers(
       return buildImportResult(0, 0, errors, warnings, Date.now() - startTime);
     }
 
-    const duplicates = findDuplicates(objects, ['slug']);
+    const duplicates = findDuplicates(objects, ["slug"]);
     warnings.push(...generateDuplicateWarnings(duplicates));
-    const processedRows = keepFirstOccurrenceRows(objects, ['slug']);
+    const processedRows = keepFirstOccurrenceRows(objects, ["slug"]);
 
     const validatedRows: ValidatedDeveloperRow[] = validateRowsWithSchema(
       processedRows,
       BulkDeveloperSchema,
-      errors
+      errors,
     );
 
     for (const data of validatedRows) {
@@ -265,11 +259,11 @@ export async function bulkImportDevelopers(
           isActive: data.isActive,
         };
 
-        if (data.action === 'update') {
+        if (data.action === "update") {
           if (!existingDeveloper[0]) {
             errors.push({
               rowNumber: data._rowNumber,
-              field: 'slug',
+              field: "slug",
               message: `Developer with slug "${data.slug}" not found for update`,
             });
             continue;
@@ -281,7 +275,7 @@ export async function bulkImportDevelopers(
             .where(eq(developers.slug, data.slug));
         } else {
           if (existingDeveloper[0]) {
-            addAlreadyExistsWarning(warnings, data._rowNumber, 'Developer', 'slug', data.slug);
+            addAlreadyExistsWarning(warnings, data._rowNumber, "Developer", "slug", data.slug);
             successCount++;
             continue;
           }
@@ -293,16 +287,22 @@ export async function bulkImportDevelopers(
       } catch (err) {
         errors.push({
           rowNumber: data._rowNumber,
-          message: err instanceof Error ? err.message : 'Unknown error',
+          message: err instanceof Error ? err.message : "Unknown error",
         });
       }
     }
 
-    return buildImportResult(objects.length, successCount, errors, warnings, Date.now() - startTime);
+    return buildImportResult(
+      objects.length,
+      successCount,
+      errors,
+      warnings,
+      Date.now() - startTime,
+    );
   } catch (error) {
     errors.push({
       rowNumber: 0,
-      message: error instanceof Error ? error.message : 'CSV parsing failed',
+      message: error instanceof Error ? error.message : "CSV parsing failed",
     });
     return buildImportResult(0, 0, errors, warnings, Date.now() - startTime);
   }
@@ -312,9 +312,7 @@ export async function bulkImportDevelopers(
 // BULK PROJECT IMPORT
 // ============================================
 
-export async function bulkImportProjects(
-  csvContent: string
-): Promise<BulkImportResult> {
+export async function bulkImportProjects(csvContent: string): Promise<BulkImportResult> {
   const startTime = Date.now();
   const errors: BulkImportError[] = [];
   const warnings: BulkImportWarning[] = [];
@@ -330,15 +328,15 @@ export async function bulkImportProjects(
     }
 
     // Check for duplicates
-    const duplicates = findDuplicates(objects, ['slug']);
+    const duplicates = findDuplicates(objects, ["slug"]);
     warnings.push(...generateDuplicateWarnings(duplicates));
-    const processedRows = keepFirstOccurrenceRows(objects, ['slug']);
+    const processedRows = keepFirstOccurrenceRows(objects, ["slug"]);
 
     // Validate each row
     const validatedRows: ValidatedProjectRow[] = validateRowsWithSchema(
       processedRows,
       BulkProjectSchema,
-      errors
+      errors,
     );
 
     // Batch insert/update
@@ -359,7 +357,7 @@ export async function bulkImportProjects(
           if (!developerId) {
             errors.push({
               rowNumber: data._rowNumber,
-              field: 'developerSlug',
+              field: "developerSlug",
               message: `Developer with slug "${data.developerSlug}" not found`,
             });
             continue;
@@ -381,7 +379,7 @@ export async function bulkImportProjects(
           if (!tenureTypeId) {
             errors.push({
               rowNumber: data._rowNumber,
-              field: 'tenureTypeCode',
+              field: "tenureTypeCode",
               message: `Tenure type with code "${data.tenureTypeCode}" not found`,
             });
             continue;
@@ -420,7 +418,7 @@ export async function bulkImportProjects(
             longitude: data.longitude ? String(data.longitude) : null,
             totalUnits: data.totalUnits ? parseInt(data.totalUnits) : 0,
             launchYear: data.launchYear ? parseInt(data.launchYear) : null,
-            bookingFee: data.bookingFee ? String(data.bookingFee) : '1000.00',
+            bookingFee: data.bookingFee ? String(data.bookingFee) : "1000.00",
             maintenanceFeePerSqft: data.maintenanceFeePerSqft
               ? String(data.maintenanceFeePerSqft)
               : null,
@@ -429,11 +427,11 @@ export async function bulkImportProjects(
             isActive: true,
           };
 
-          if (data.action === 'update') {
+          if (data.action === "update") {
             if (!existingProject[0]) {
               errors.push({
                 rowNumber: data._rowNumber,
-                field: 'slug',
+                field: "slug",
                 message: `Project with slug "${data.slug}" not found for update`,
               });
               continue;
@@ -445,7 +443,7 @@ export async function bulkImportProjects(
               .where(eq(projects.slug, data.slug));
           } else {
             if (existingProject[0]) {
-              addAlreadyExistsWarning(warnings, data._rowNumber, 'Project', 'slug', data.slug);
+              addAlreadyExistsWarning(warnings, data._rowNumber, "Project", "slug", data.slug);
               successCount++;
               continue;
             }
@@ -457,17 +455,23 @@ export async function bulkImportProjects(
         } catch (err) {
           errors.push({
             rowNumber: data._rowNumber,
-            message: err instanceof Error ? err.message : 'Unknown error',
+            message: err instanceof Error ? err.message : "Unknown error",
           });
         }
       }
     }
 
-    return buildImportResult(objects.length, successCount, errors, warnings, Date.now() - startTime);
+    return buildImportResult(
+      objects.length,
+      successCount,
+      errors,
+      warnings,
+      Date.now() - startTime,
+    );
   } catch (error) {
     errors.push({
       rowNumber: 0,
-      message: error instanceof Error ? error.message : 'CSV parsing failed',
+      message: error instanceof Error ? error.message : "CSV parsing failed",
     });
     return buildImportResult(0, 0, errors, warnings, Date.now() - startTime);
   }
@@ -494,7 +498,7 @@ export async function bulkImportLayouts(csvContent: string): Promise<BulkImportR
     const validatedRows: ValidatedLayoutRow[] = validateRowsWithSchema(
       objects,
       BulkProjectLayoutSchema,
-      errors
+      errors,
     );
 
     for (const data of validatedRows) {
@@ -503,7 +507,7 @@ export async function bulkImportLayouts(csvContent: string): Promise<BulkImportR
         if (!projectId) {
           errors.push({
             rowNumber: data._rowNumber,
-            field: 'projectSlug',
+            field: "projectSlug",
             message: `Project with slug "${data.projectSlug}" not found`,
           });
           continue;
@@ -522,12 +526,15 @@ export async function bulkImportLayouts(csvContent: string): Promise<BulkImportR
           virtualTourUrl: data.virtualTourUrl || null,
         };
 
-        if (data.action === 'update') {
+        if (data.action === "update") {
           const existing = await db
             .select({ id: projectLayouts.id })
             .from(projectLayouts)
             .where(
-              and(eq(projectLayouts.projectId, projectId), eq(projectLayouts.code, data.layoutCode))
+              and(
+                eq(projectLayouts.projectId, projectId),
+                eq(projectLayouts.code, data.layoutCode),
+              ),
             )
             .limit(1);
 
@@ -544,18 +551,15 @@ export async function bulkImportLayouts(csvContent: string): Promise<BulkImportR
             .select({ id: projectLayouts.id })
             .from(projectLayouts)
             .where(
-              and(eq(projectLayouts.projectId, projectId), eq(projectLayouts.code, data.layoutCode))
+              and(
+                eq(projectLayouts.projectId, projectId),
+                eq(projectLayouts.code, data.layoutCode),
+              ),
             )
             .limit(1);
 
           if (existing[0]) {
-            addAlreadyExistsWarning(
-              warnings,
-              data._rowNumber,
-              'Layout',
-              'code',
-              data.layoutCode
-            );
+            addAlreadyExistsWarning(warnings, data._rowNumber, "Layout", "code", data.layoutCode);
             successCount++;
             continue;
           }
@@ -567,16 +571,22 @@ export async function bulkImportLayouts(csvContent: string): Promise<BulkImportR
       } catch (err) {
         errors.push({
           rowNumber: data._rowNumber,
-          message: err instanceof Error ? err.message : 'Unknown error',
+          message: err instanceof Error ? err.message : "Unknown error",
         });
       }
     }
 
-    return buildImportResult(objects.length, successCount, errors, warnings, Date.now() - startTime);
+    return buildImportResult(
+      objects.length,
+      successCount,
+      errors,
+      warnings,
+      Date.now() - startTime,
+    );
   } catch (error) {
     errors.push({
       rowNumber: 0,
-      message: error instanceof Error ? error.message : 'CSV parsing failed',
+      message: error instanceof Error ? error.message : "CSV parsing failed",
     });
     return buildImportResult(0, 0, errors, warnings, Date.now() - startTime);
   }
@@ -600,7 +610,11 @@ export async function bulkImportUnits(csvContent: string): Promise<BulkImportRes
       return buildImportResult(0, 0, errors, warnings, Date.now() - startTime);
     }
 
-    const validatedRows: ValidatedUnitRow[] = validateRowsWithSchema(objects, BulkUnitSchema, errors);
+    const validatedRows: ValidatedUnitRow[] = validateRowsWithSchema(
+      objects,
+      BulkUnitSchema,
+      errors,
+    );
     if (validatedRows.length === 0) {
       return buildImportResult(objects.length, 0, errors, warnings, Date.now() - startTime);
     }
@@ -608,20 +622,20 @@ export async function bulkImportUnits(csvContent: string): Promise<BulkImportRes
     // ── Batch pre-resolve all lookup codes in 2 queries instead of N*2 ──
     const lotTypeMap = await buildCodeLookupMap(
       lotTypes,
-      validatedRows.map((r) => r.lotTypeCode)
+      validatedRows.map((r) => r.lotTypeCode),
     );
     const bookingStatusMap = await buildCodeLookupMap(
       bookingStatuses,
-      validatedRows.map((r) => r.bookingStatusCode)
+      validatedRows.map((r) => r.bookingStatusCode),
     );
 
     // ── Per-run caches for project-scoped lookups (slug/name → id) ──
     // Key pattern: "<projectId>:<code|name>" — avoids redundant queries
     // when many rows share the same project + tower/layout/phase.
     const projectCache = new Map<string, string | null>(); // slug → projectId
-    const layoutCache = new Map<string, string | null>();  // `${projectId}:${layoutCode}`
-    const towerCache  = new Map<string, string | null>();  // `${projectId}:${towerNumber}`
-    const phaseCache  = new Map<string, string | null>();  // `${projectId}:${phaseName}`
+    const layoutCache = new Map<string, string | null>(); // `${projectId}:${layoutCode}`
+    const towerCache = new Map<string, string | null>(); // `${projectId}:${towerNumber}`
+    const phaseCache = new Map<string, string | null>(); // `${projectId}:${phaseName}`
     const positionCache = new Map<string, string | null>(); // name → id
 
     const getProjectId = async (slug: string): Promise<string | null> => {
@@ -648,7 +662,9 @@ export async function bulkImportUnits(csvContent: string): Promise<BulkImportRes
         const rec = await db
           .select({ id: projectTowers.id })
           .from(projectTowers)
-          .where(and(eq(projectTowers.projectId, projectId), eq(projectTowers.towerNumber, towerNumber)))
+          .where(
+            and(eq(projectTowers.projectId, projectId), eq(projectTowers.towerNumber, towerNumber)),
+          )
           .limit(1);
         towerCache.set(key, rec[0]?.id ?? null);
       }
@@ -680,7 +696,7 @@ export async function bulkImportUnits(csvContent: string): Promise<BulkImportRes
         if (!projectId) {
           errors.push({
             rowNumber: data._rowNumber,
-            field: 'projectSlug',
+            field: "projectSlug",
             message: `Project with slug "${data.projectSlug}" not found`,
           });
           continue;
@@ -690,7 +706,7 @@ export async function bulkImportUnits(csvContent: string): Promise<BulkImportRes
         if (!lotTypeId) {
           errors.push({
             rowNumber: data._rowNumber,
-            field: 'lotTypeCode',
+            field: "lotTypeCode",
             message: `Lot type with code "${data.lotTypeCode}" not found`,
           });
           continue;
@@ -700,17 +716,17 @@ export async function bulkImportUnits(csvContent: string): Promise<BulkImportRes
         if (!bookingStatusId) {
           errors.push({
             rowNumber: data._rowNumber,
-            field: 'bookingStatusCode',
+            field: "bookingStatusCode",
             message: `Booking status with code "${data.bookingStatusCode}" not found`,
           });
           continue;
         }
 
         const [layoutId, towerId, phaseId, positionTypeId] = await Promise.all([
-          data.layoutCode  ? getLayoutId(projectId, data.layoutCode)       : null,
-          data.towerNumber ? getTowerId(projectId, data.towerNumber)        : null,
-          data.phaseName   ? getPhaseId(projectId, data.phaseName)          : null,
-          data.positionType ? getPositionTypeId(data.positionType)          : null,
+          data.layoutCode ? getLayoutId(projectId, data.layoutCode) : null,
+          data.towerNumber ? getTowerId(projectId, data.towerNumber) : null,
+          data.phaseName ? getPhaseId(projectId, data.phaseName) : null,
+          data.positionType ? getPositionTypeId(data.positionType) : null,
         ]);
 
         const insertData = {
@@ -736,7 +752,7 @@ export async function bulkImportUnits(csvContent: string): Promise<BulkImportRes
           finalPrice: data.finalPrice ? String(data.finalPrice) : null,
         };
 
-        if (data.action === 'update') {
+        if (data.action === "update") {
           const existing = await db
             .select({ id: units.id })
             .from(units)
@@ -744,7 +760,10 @@ export async function bulkImportUnits(csvContent: string): Promise<BulkImportRes
             .limit(1);
 
           if (existing[0]) {
-            await db.update(units).set({ ...insertData, updatedAt: new Date() }).where(eq(units.id, existing[0].id));
+            await db
+              .update(units)
+              .set({ ...insertData, updatedAt: new Date() })
+              .where(eq(units.id, existing[0].id));
           } else {
             await db.insert(units).values(insertData);
           }
@@ -756,7 +775,7 @@ export async function bulkImportUnits(csvContent: string): Promise<BulkImportRes
             .limit(1);
 
           if (existing[0]) {
-            addAlreadyExistsWarning(warnings, data._rowNumber, 'Unit', 'unit number', data.unitNo);
+            addAlreadyExistsWarning(warnings, data._rowNumber, "Unit", "unit number", data.unitNo);
             successCount++;
             continue;
           }
@@ -768,14 +787,23 @@ export async function bulkImportUnits(csvContent: string): Promise<BulkImportRes
       } catch (err) {
         errors.push({
           rowNumber: data._rowNumber,
-          message: err instanceof Error ? err.message : 'Unknown error',
+          message: err instanceof Error ? err.message : "Unknown error",
         });
       }
     }
 
-    return buildImportResult(objects.length, successCount, errors, warnings, Date.now() - startTime);
+    return buildImportResult(
+      objects.length,
+      successCount,
+      errors,
+      warnings,
+      Date.now() - startTime,
+    );
   } catch (error) {
-    errors.push({ rowNumber: 0, message: error instanceof Error ? error.message : 'CSV parsing failed' });
+    errors.push({
+      rowNumber: 0,
+      message: error instanceof Error ? error.message : "CSV parsing failed",
+    });
     return buildImportResult(0, 0, errors, warnings, Date.now() - startTime);
   }
 }
@@ -801,7 +829,7 @@ export async function bulkImportPhases(csvContent: string): Promise<BulkImportRe
     const validatedRows: ValidatedPhaseRow[] = validateRowsWithSchema(
       objects,
       BulkPhaseSchema,
-      errors
+      errors,
     );
 
     for (const data of validatedRows) {
@@ -810,7 +838,7 @@ export async function bulkImportPhases(csvContent: string): Promise<BulkImportRe
         if (!projectId) {
           errors.push({
             rowNumber: data._rowNumber,
-            field: 'projectSlug',
+            field: "projectSlug",
             message: `Project with slug "${data.projectSlug}" not found`,
           });
           continue;
@@ -828,11 +856,16 @@ export async function bulkImportPhases(csvContent: string): Promise<BulkImportRe
           constructionStatusId,
         };
 
-        if (data.action === 'update') {
+        if (data.action === "update") {
           const existing = await db
             .select({ id: projectPhases.id })
             .from(projectPhases)
-            .where(and(eq(projectPhases.projectId, projectId), eq(projectPhases.phaseCode, data.phaseCode)))
+            .where(
+              and(
+                eq(projectPhases.projectId, projectId),
+                eq(projectPhases.phaseCode, data.phaseCode),
+              ),
+            )
             .limit(1);
 
           if (existing[0]) {
@@ -847,11 +880,16 @@ export async function bulkImportPhases(csvContent: string): Promise<BulkImportRe
           const existing = await db
             .select({ id: projectPhases.id })
             .from(projectPhases)
-            .where(and(eq(projectPhases.projectId, projectId), eq(projectPhases.phaseCode, data.phaseCode)))
+            .where(
+              and(
+                eq(projectPhases.projectId, projectId),
+                eq(projectPhases.phaseCode, data.phaseCode),
+              ),
+            )
             .limit(1);
 
           if (existing[0]) {
-            addAlreadyExistsWarning(warnings, data._rowNumber, 'Phase', 'code', data.phaseCode);
+            addAlreadyExistsWarning(warnings, data._rowNumber, "Phase", "code", data.phaseCode);
             successCount++;
             continue;
           }
@@ -863,16 +901,22 @@ export async function bulkImportPhases(csvContent: string): Promise<BulkImportRe
       } catch (err) {
         errors.push({
           rowNumber: data._rowNumber,
-          message: err instanceof Error ? err.message : 'Unknown error',
+          message: err instanceof Error ? err.message : "Unknown error",
         });
       }
     }
 
-    return buildImportResult(objects.length, successCount, errors, warnings, Date.now() - startTime);
+    return buildImportResult(
+      objects.length,
+      successCount,
+      errors,
+      warnings,
+      Date.now() - startTime,
+    );
   } catch (error) {
     errors.push({
       rowNumber: 0,
-      message: error instanceof Error ? error.message : 'CSV parsing failed',
+      message: error instanceof Error ? error.message : "CSV parsing failed",
     });
     return buildImportResult(0, 0, errors, warnings, Date.now() - startTime);
   }
@@ -899,7 +943,7 @@ export async function bulkImportTowers(csvContent: string): Promise<BulkImportRe
     const validatedRows: ValidatedTowerRow[] = validateRowsWithSchema(
       objects,
       BulkTowerSchema,
-      errors
+      errors,
     );
 
     for (const data of validatedRows) {
@@ -908,7 +952,7 @@ export async function bulkImportTowers(csvContent: string): Promise<BulkImportRe
         if (!projectId) {
           errors.push({
             rowNumber: data._rowNumber,
-            field: 'projectSlug',
+            field: "projectSlug",
             message: `Project with slug "${data.projectSlug}" not found`,
           });
           continue;
@@ -919,7 +963,12 @@ export async function bulkImportTowers(csvContent: string): Promise<BulkImportRe
               await db
                 .select({ id: projectPhases.id })
                 .from(projectPhases)
-                .where(and(eq(projectPhases.projectId, projectId), eq(projectPhases.name, data.phaseName)))
+                .where(
+                  and(
+                    eq(projectPhases.projectId, projectId),
+                    eq(projectPhases.name, data.phaseName),
+                  ),
+                )
                 .limit(1)
             )[0]?.id
           : null;
@@ -934,12 +983,15 @@ export async function bulkImportTowers(csvContent: string): Promise<BulkImportRe
           floorMax: data.floorMax ? parseInt(data.floorMax) : null,
         };
 
-        if (data.action === 'update') {
+        if (data.action === "update") {
           const existing = await db
             .select({ id: projectTowers.id })
             .from(projectTowers)
             .where(
-              and(eq(projectTowers.projectId, projectId), eq(projectTowers.towerNumber, data.towerNumber))
+              and(
+                eq(projectTowers.projectId, projectId),
+                eq(projectTowers.towerNumber, data.towerNumber),
+              ),
             )
             .limit(1);
 
@@ -956,7 +1008,10 @@ export async function bulkImportTowers(csvContent: string): Promise<BulkImportRe
             .select({ id: projectTowers.id })
             .from(projectTowers)
             .where(
-              and(eq(projectTowers.projectId, projectId), eq(projectTowers.towerNumber, data.towerNumber))
+              and(
+                eq(projectTowers.projectId, projectId),
+                eq(projectTowers.towerNumber, data.towerNumber),
+              ),
             )
             .limit(1);
 
@@ -964,9 +1019,9 @@ export async function bulkImportTowers(csvContent: string): Promise<BulkImportRe
             addAlreadyExistsWarning(
               warnings,
               data._rowNumber,
-              'Tower',
-              'tower number',
-              data.towerNumber
+              "Tower",
+              "tower number",
+              data.towerNumber,
             );
             successCount++;
             continue;
@@ -979,16 +1034,22 @@ export async function bulkImportTowers(csvContent: string): Promise<BulkImportRe
       } catch (err) {
         errors.push({
           rowNumber: data._rowNumber,
-          message: err instanceof Error ? err.message : 'Unknown error',
+          message: err instanceof Error ? err.message : "Unknown error",
         });
       }
     }
 
-    return buildImportResult(objects.length, successCount, errors, warnings, Date.now() - startTime);
+    return buildImportResult(
+      objects.length,
+      successCount,
+      errors,
+      warnings,
+      Date.now() - startTime,
+    );
   } catch (error) {
     errors.push({
       rowNumber: 0,
-      message: error instanceof Error ? error.message : 'CSV parsing failed',
+      message: error instanceof Error ? error.message : "CSV parsing failed",
     });
     return buildImportResult(0, 0, errors, warnings, Date.now() - startTime);
   }
@@ -1015,7 +1076,7 @@ export async function bulkImportSalesPackages(csvContent: string): Promise<BulkI
     const validatedRows: ValidatedSalesPackageRow[] = validateRowsWithSchema(
       objects,
       BulkSalesPackageSchema,
-      errors
+      errors,
     );
     if (validatedRows.length === 0) {
       return buildImportResult(objects.length, 0, errors, warnings, Date.now() - startTime);
@@ -1023,7 +1084,7 @@ export async function bulkImportSalesPackages(csvContent: string): Promise<BulkI
 
     const buyerTypeMap = await buildCodeLookupMap(
       buyerTypes,
-      validatedRows.map((r) => r.buyerTypeCode).filter(Boolean) as string[]
+      validatedRows.map((r) => r.buyerTypeCode).filter(Boolean) as string[],
     );
 
     const projectCache = new Map<string, string | null>();
@@ -1036,11 +1097,17 @@ export async function bulkImportSalesPackages(csvContent: string): Promise<BulkI
       try {
         const projectId = await getProjectId(data.projectSlug);
         if (!projectId) {
-          errors.push({ rowNumber: data._rowNumber, field: 'projectSlug', message: `Project "${data.projectSlug}" not found` });
+          errors.push({
+            rowNumber: data._rowNumber,
+            field: "projectSlug",
+            message: `Project "${data.projectSlug}" not found`,
+          });
           continue;
         }
 
-        const buyerTypeId = data.buyerTypeCode ? (buyerTypeMap.get(data.buyerTypeCode) ?? null) : null;
+        const buyerTypeId = data.buyerTypeCode
+          ? (buyerTypeMap.get(data.buyerTypeCode) ?? null)
+          : null;
 
         const insertData = {
           projectId,
@@ -1059,26 +1126,45 @@ export async function bulkImportSalesPackages(csvContent: string): Promise<BulkI
           .where(and(eq(salesPackages.projectId, projectId), eq(salesPackages.name, data.name)))
           .limit(1);
 
-        if (data.action === 'update') {
+        if (data.action === "update") {
           if (existing[0]) {
-            await db.update(salesPackages).set({ ...insertData, updatedAt: new Date() }).where(eq(salesPackages.id, existing[0].id));
+            await db
+              .update(salesPackages)
+              .set({ ...insertData, updatedAt: new Date() })
+              .where(eq(salesPackages.id, existing[0].id));
           } else {
             await db.insert(salesPackages).values(insertData);
           }
         } else {
-          if (existing[0]) { addAlreadyExistsWarning(warnings, data._rowNumber, 'Sales package', 'name', data.name); successCount++; continue; }
+          if (existing[0]) {
+            addAlreadyExistsWarning(warnings, data._rowNumber, "Sales package", "name", data.name);
+            successCount++;
+            continue;
+          }
           await db.insert(salesPackages).values(insertData);
         }
 
         successCount++;
       } catch (err) {
-        errors.push({ rowNumber: data._rowNumber, message: err instanceof Error ? err.message : 'Unknown error' });
+        errors.push({
+          rowNumber: data._rowNumber,
+          message: err instanceof Error ? err.message : "Unknown error",
+        });
       }
     }
 
-    return buildImportResult(objects.length, successCount, errors, warnings, Date.now() - startTime);
+    return buildImportResult(
+      objects.length,
+      successCount,
+      errors,
+      warnings,
+      Date.now() - startTime,
+    );
   } catch (error) {
-    errors.push({ rowNumber: 0, message: error instanceof Error ? error.message : 'CSV parsing failed' });
+    errors.push({
+      rowNumber: 0,
+      message: error instanceof Error ? error.message : "CSV parsing failed",
+    });
     return buildImportResult(0, 0, errors, warnings, Date.now() - startTime);
   }
 }
@@ -1104,14 +1190,14 @@ export async function bulkImportTowerFacingGroups(csvContent: string): Promise<B
     const validatedRows: ValidatedTowerFacingGroupRow[] = validateRowsWithSchema(
       objects,
       BulkTowerFacingGroupSchema,
-      errors
+      errors,
     );
     if (validatedRows.length === 0) {
       return buildImportResult(objects.length, 0, errors, warnings, Date.now() - startTime);
     }
 
     const projectCache = new Map<string, string | null>();
-    const towerCache   = new Map<string, string | null>();
+    const towerCache = new Map<string, string | null>();
 
     const getProjectId = async (slug: string) => {
       if (!projectCache.has(slug)) projectCache.set(slug, await resolveProjectId(slug));
@@ -1120,8 +1206,11 @@ export async function bulkImportTowerFacingGroups(csvContent: string): Promise<B
     const getTowerId = async (projectId: string, num: string) => {
       const k = `${projectId}:${num}`;
       if (!towerCache.has(k)) {
-        const r = await db.select({ id: projectTowers.id }).from(projectTowers)
-          .where(and(eq(projectTowers.projectId, projectId), eq(projectTowers.towerNumber, num))).limit(1);
+        const r = await db
+          .select({ id: projectTowers.id })
+          .from(projectTowers)
+          .where(and(eq(projectTowers.projectId, projectId), eq(projectTowers.towerNumber, num)))
+          .limit(1);
         towerCache.set(k, r[0]?.id ?? null);
       }
       return towerCache.get(k)!;
@@ -1130,10 +1219,24 @@ export async function bulkImportTowerFacingGroups(csvContent: string): Promise<B
     for (const data of validatedRows) {
       try {
         const projectId = await getProjectId(data.projectSlug);
-        if (!projectId) { errors.push({ rowNumber: data._rowNumber, field: 'projectSlug', message: `Project "${data.projectSlug}" not found` }); continue; }
+        if (!projectId) {
+          errors.push({
+            rowNumber: data._rowNumber,
+            field: "projectSlug",
+            message: `Project "${data.projectSlug}" not found`,
+          });
+          continue;
+        }
 
         const towerId = await getTowerId(projectId, data.towerNumber);
-        if (!towerId) { errors.push({ rowNumber: data._rowNumber, field: 'towerNumber', message: `Tower "${data.towerNumber}" not found in project "${data.projectSlug}"` }); continue; }
+        if (!towerId) {
+          errors.push({
+            rowNumber: data._rowNumber,
+            field: "towerNumber",
+            message: `Tower "${data.towerNumber}" not found in project "${data.projectSlug}"`,
+          });
+          continue;
+        }
 
         const insertData = {
           towerId,
@@ -1148,26 +1251,45 @@ export async function bulkImportTowerFacingGroups(csvContent: string): Promise<B
           .where(and(eq(towerFacingGroups.towerId, towerId), eq(towerFacingGroups.key, data.key)))
           .limit(1);
 
-        if (data.action === 'update') {
+        if (data.action === "update") {
           if (existing[0]) {
-            await db.update(towerFacingGroups).set({ ...insertData, updatedAt: new Date() }).where(eq(towerFacingGroups.id, existing[0].id));
+            await db
+              .update(towerFacingGroups)
+              .set({ ...insertData, updatedAt: new Date() })
+              .where(eq(towerFacingGroups.id, existing[0].id));
           } else {
             await db.insert(towerFacingGroups).values(insertData);
           }
         } else {
-          if (existing[0]) { addAlreadyExistsWarning(warnings, data._rowNumber, 'Facing group', 'key', data.key); successCount++; continue; }
+          if (existing[0]) {
+            addAlreadyExistsWarning(warnings, data._rowNumber, "Facing group", "key", data.key);
+            successCount++;
+            continue;
+          }
           await db.insert(towerFacingGroups).values(insertData);
         }
 
         successCount++;
       } catch (err) {
-        errors.push({ rowNumber: data._rowNumber, message: err instanceof Error ? err.message : 'Unknown error' });
+        errors.push({
+          rowNumber: data._rowNumber,
+          message: err instanceof Error ? err.message : "Unknown error",
+        });
       }
     }
 
-    return buildImportResult(objects.length, successCount, errors, warnings, Date.now() - startTime);
+    return buildImportResult(
+      objects.length,
+      successCount,
+      errors,
+      warnings,
+      Date.now() - startTime,
+    );
   } catch (error) {
-    errors.push({ rowNumber: 0, message: error instanceof Error ? error.message : 'CSV parsing failed' });
+    errors.push({
+      rowNumber: 0,
+      message: error instanceof Error ? error.message : "CSV parsing failed",
+    });
     return buildImportResult(0, 0, errors, warnings, Date.now() - startTime);
   }
 }
@@ -1193,31 +1315,40 @@ export async function bulkImportTowerStacks(csvContent: string): Promise<BulkImp
     const validatedRows: ValidatedTowerStackRow[] = validateRowsWithSchema(
       objects,
       BulkTowerStackSchema,
-      errors
+      errors,
     );
     if (validatedRows.length === 0) {
       return buildImportResult(objects.length, 0, errors, warnings, Date.now() - startTime);
     }
 
     const projectCache = new Map<string, string | null>();
-    const towerCache   = new Map<string, string | null>();
-    const layoutCache  = new Map<string, string | null>();
+    const towerCache = new Map<string, string | null>();
+    const layoutCache = new Map<string, string | null>();
 
-    const getProjectId = async (slug: string) => { if (!projectCache.has(slug)) projectCache.set(slug, await resolveProjectId(slug)); return projectCache.get(slug)!; };
-    const getTowerId   = async (projectId: string, num: string) => {
+    const getProjectId = async (slug: string) => {
+      if (!projectCache.has(slug)) projectCache.set(slug, await resolveProjectId(slug));
+      return projectCache.get(slug)!;
+    };
+    const getTowerId = async (projectId: string, num: string) => {
       const k = `${projectId}:${num}`;
       if (!towerCache.has(k)) {
-        const r = await db.select({ id: projectTowers.id }).from(projectTowers)
-          .where(and(eq(projectTowers.projectId, projectId), eq(projectTowers.towerNumber, num))).limit(1);
+        const r = await db
+          .select({ id: projectTowers.id })
+          .from(projectTowers)
+          .where(and(eq(projectTowers.projectId, projectId), eq(projectTowers.towerNumber, num)))
+          .limit(1);
         towerCache.set(k, r[0]?.id ?? null);
       }
       return towerCache.get(k)!;
     };
-    const getLayoutId  = async (projectId: string, code: string) => {
+    const getLayoutId = async (projectId: string, code: string) => {
       const k = `${projectId}:${code}`;
       if (!layoutCache.has(k)) {
-        const r = await db.select({ id: projectLayouts.id }).from(projectLayouts)
-          .where(and(eq(projectLayouts.projectId, projectId), eq(projectLayouts.code, code))).limit(1);
+        const r = await db
+          .select({ id: projectLayouts.id })
+          .from(projectLayouts)
+          .where(and(eq(projectLayouts.projectId, projectId), eq(projectLayouts.code, code)))
+          .limit(1);
         layoutCache.set(k, r[0]?.id ?? null);
       }
       return layoutCache.get(k)!;
@@ -1226,10 +1357,24 @@ export async function bulkImportTowerStacks(csvContent: string): Promise<BulkImp
     for (const data of validatedRows) {
       try {
         const projectId = await getProjectId(data.projectSlug);
-        if (!projectId) { errors.push({ rowNumber: data._rowNumber, field: 'projectSlug', message: `Project "${data.projectSlug}" not found` }); continue; }
+        if (!projectId) {
+          errors.push({
+            rowNumber: data._rowNumber,
+            field: "projectSlug",
+            message: `Project "${data.projectSlug}" not found`,
+          });
+          continue;
+        }
 
         const towerId = await getTowerId(projectId, data.towerNumber);
-        if (!towerId) { errors.push({ rowNumber: data._rowNumber, field: 'towerNumber', message: `Tower "${data.towerNumber}" not found in project "${data.projectSlug}"` }); continue; }
+        if (!towerId) {
+          errors.push({
+            rowNumber: data._rowNumber,
+            field: "towerNumber",
+            message: `Tower "${data.towerNumber}" not found in project "${data.projectSlug}"`,
+          });
+          continue;
+        }
 
         const layoutId = data.layoutCode ? await getLayoutId(projectId, data.layoutCode) : null;
 
@@ -1249,26 +1394,45 @@ export async function bulkImportTowerStacks(csvContent: string): Promise<BulkImp
           .where(and(eq(towerStacks.towerId, towerId), eq(towerStacks.stackNo, data.stackNo)))
           .limit(1);
 
-        if (data.action === 'update') {
+        if (data.action === "update") {
           if (existing[0]) {
-            await db.update(towerStacks).set({ ...insertData, updatedAt: new Date() }).where(eq(towerStacks.id, existing[0].id));
+            await db
+              .update(towerStacks)
+              .set({ ...insertData, updatedAt: new Date() })
+              .where(eq(towerStacks.id, existing[0].id));
           } else {
             await db.insert(towerStacks).values(insertData);
           }
         } else {
-          if (existing[0]) { addAlreadyExistsWarning(warnings, data._rowNumber, 'Stack', 'stackNo', data.stackNo); successCount++; continue; }
+          if (existing[0]) {
+            addAlreadyExistsWarning(warnings, data._rowNumber, "Stack", "stackNo", data.stackNo);
+            successCount++;
+            continue;
+          }
           await db.insert(towerStacks).values(insertData);
         }
 
         successCount++;
       } catch (err) {
-        errors.push({ rowNumber: data._rowNumber, message: err instanceof Error ? err.message : 'Unknown error' });
+        errors.push({
+          rowNumber: data._rowNumber,
+          message: err instanceof Error ? err.message : "Unknown error",
+        });
       }
     }
 
-    return buildImportResult(objects.length, successCount, errors, warnings, Date.now() - startTime);
+    return buildImportResult(
+      objects.length,
+      successCount,
+      errors,
+      warnings,
+      Date.now() - startTime,
+    );
   } catch (error) {
-    errors.push({ rowNumber: 0, message: error instanceof Error ? error.message : 'CSV parsing failed' });
+    errors.push({
+      rowNumber: 0,
+      message: error instanceof Error ? error.message : "CSV parsing failed",
+    });
     return buildImportResult(0, 0, errors, warnings, Date.now() - startTime);
   }
 }
@@ -1294,21 +1458,27 @@ export async function bulkImportTowerSpecialFloors(csvContent: string): Promise<
     const validatedRows: ValidatedTowerSpecialFloorRow[] = validateRowsWithSchema(
       objects,
       BulkTowerSpecialFloorSchema,
-      errors
+      errors,
     );
     if (validatedRows.length === 0) {
       return buildImportResult(objects.length, 0, errors, warnings, Date.now() - startTime);
     }
 
     const projectCache = new Map<string, string | null>();
-    const towerCache   = new Map<string, string | null>();
+    const towerCache = new Map<string, string | null>();
 
-    const getProjectId = async (slug: string) => { if (!projectCache.has(slug)) projectCache.set(slug, await resolveProjectId(slug)); return projectCache.get(slug)!; };
-    const getTowerId   = async (projectId: string, num: string) => {
+    const getProjectId = async (slug: string) => {
+      if (!projectCache.has(slug)) projectCache.set(slug, await resolveProjectId(slug));
+      return projectCache.get(slug)!;
+    };
+    const getTowerId = async (projectId: string, num: string) => {
       const k = `${projectId}:${num}`;
       if (!towerCache.has(k)) {
-        const r = await db.select({ id: projectTowers.id }).from(projectTowers)
-          .where(and(eq(projectTowers.projectId, projectId), eq(projectTowers.towerNumber, num))).limit(1);
+        const r = await db
+          .select({ id: projectTowers.id })
+          .from(projectTowers)
+          .where(and(eq(projectTowers.projectId, projectId), eq(projectTowers.towerNumber, num)))
+          .limit(1);
         towerCache.set(k, r[0]?.id ?? null);
       }
       return towerCache.get(k)!;
@@ -1317,10 +1487,24 @@ export async function bulkImportTowerSpecialFloors(csvContent: string): Promise<
     for (const data of validatedRows) {
       try {
         const projectId = await getProjectId(data.projectSlug);
-        if (!projectId) { errors.push({ rowNumber: data._rowNumber, field: 'projectSlug', message: `Project "${data.projectSlug}" not found` }); continue; }
+        if (!projectId) {
+          errors.push({
+            rowNumber: data._rowNumber,
+            field: "projectSlug",
+            message: `Project "${data.projectSlug}" not found`,
+          });
+          continue;
+        }
 
         const towerId = await getTowerId(projectId, data.towerNumber);
-        if (!towerId) { errors.push({ rowNumber: data._rowNumber, field: 'towerNumber', message: `Tower "${data.towerNumber}" not found in project "${data.projectSlug}"` }); continue; }
+        if (!towerId) {
+          errors.push({
+            rowNumber: data._rowNumber,
+            field: "towerNumber",
+            message: `Tower "${data.towerNumber}" not found in project "${data.projectSlug}"`,
+          });
+          continue;
+        }
 
         const insertData = {
           towerId,
@@ -1338,31 +1522,56 @@ export async function bulkImportTowerSpecialFloors(csvContent: string): Promise<
             and(
               eq(towerSpecialFloors.towerId, towerId),
               eq(towerSpecialFloors.floorKind, data.floorKind),
-              eq(towerSpecialFloors.floorLabel, data.floorLabel)
-            )
+              eq(towerSpecialFloors.floorLabel, data.floorLabel),
+            ),
           )
           .limit(1);
 
-        if (data.action === 'update') {
+        if (data.action === "update") {
           if (existing[0]) {
-            await db.update(towerSpecialFloors).set({ ...insertData, updatedAt: new Date() }).where(eq(towerSpecialFloors.id, existing[0].id));
+            await db
+              .update(towerSpecialFloors)
+              .set({ ...insertData, updatedAt: new Date() })
+              .where(eq(towerSpecialFloors.id, existing[0].id));
           } else {
             await db.insert(towerSpecialFloors).values(insertData);
           }
         } else {
-          if (existing[0]) { addAlreadyExistsWarning(warnings, data._rowNumber, 'Special floor', 'floorLabel', data.floorLabel); successCount++; continue; }
+          if (existing[0]) {
+            addAlreadyExistsWarning(
+              warnings,
+              data._rowNumber,
+              "Special floor",
+              "floorLabel",
+              data.floorLabel,
+            );
+            successCount++;
+            continue;
+          }
           await db.insert(towerSpecialFloors).values(insertData);
         }
 
         successCount++;
       } catch (err) {
-        errors.push({ rowNumber: data._rowNumber, message: err instanceof Error ? err.message : 'Unknown error' });
+        errors.push({
+          rowNumber: data._rowNumber,
+          message: err instanceof Error ? err.message : "Unknown error",
+        });
       }
     }
 
-    return buildImportResult(objects.length, successCount, errors, warnings, Date.now() - startTime);
+    return buildImportResult(
+      objects.length,
+      successCount,
+      errors,
+      warnings,
+      Date.now() - startTime,
+    );
   } catch (error) {
-    errors.push({ rowNumber: 0, message: error instanceof Error ? error.message : 'CSV parsing failed' });
+    errors.push({
+      rowNumber: 0,
+      message: error instanceof Error ? error.message : "CSV parsing failed",
+    });
     return buildImportResult(0, 0, errors, warnings, Date.now() - startTime);
   }
 }

@@ -62,7 +62,6 @@ type SelectedUnit = {
   layoutType: string;
 };
 
-
 // ─── Unit cell button ────────────────────────────────────────────────────────
 
 function UnitButton({
@@ -77,7 +76,7 @@ function UnitButton({
   if (cell.kind === "void") {
     return (
       <td className="p-0.5">
-        <div className="flex h-9 w-14 items-center justify-center rounded border border-dashed border-border/40 bg-muted/20 text-[9px] uppercase tracking-widest text-muted-foreground/50">
+        <div className="border-border/40 bg-muted/20 text-muted-foreground/50 flex h-9 w-14 items-center justify-center rounded border border-dashed text-[9px] tracking-widest uppercase">
           void
         </div>
       </td>
@@ -93,10 +92,10 @@ function UnitButton({
         className={cn(
           "flex h-9 w-14 flex-col items-start justify-center overflow-hidden rounded border px-1.5 transition-all duration-150",
           STATUS_CELL[cell.status],
-          isSelected && STATUS_SELECTED_RING[cell.status]
+          isSelected && STATUS_SELECTED_RING[cell.status],
         )}
       >
-        <span className="block truncate text-[9px] font-semibold leading-none tracking-tight">
+        <span className="block truncate text-[9px] leading-none font-semibold tracking-tight">
           {cell.unitNo}
         </span>
         <span className="mt-0.5 block truncate text-[8px] leading-none opacity-70">
@@ -119,12 +118,12 @@ function TowerGrid({
   onUnitClick: (unit: SelectedUnit) => void;
 }) {
   return (
-    <div className="overflow-x-auto rounded-xl border border-border">
+    <div className="border-border overflow-x-auto rounded-xl border">
       <table className="border-collapse text-xs" style={{ minWidth: "max-content" }}>
         <thead className="sticky top-0 z-20">
           {/* Row 1 — Facing group headers */}
           <tr>
-            <th className="sticky left-0 z-30 min-w-[72px] whitespace-nowrap border-b border-r border-border bg-card px-3 py-2 text-left text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+            <th className="border-border bg-card text-muted-foreground sticky left-0 z-30 min-w-[72px] border-r border-b px-3 py-2 text-left text-[10px] tracking-[0.2em] whitespace-nowrap uppercase">
               Floor
             </th>
             {tower.facingGroups.map((group, gi) => (
@@ -132,8 +131,8 @@ function TowerGrid({
                 key={group.key}
                 colSpan={group.stackCount}
                 className={cn(
-                  "border-b border-r border-border px-2 py-2 text-center text-[10px] font-semibold uppercase tracking-wide text-foreground/80 last:border-r-0",
-                  FACING_GROUP_COLOURS[gi % FACING_GROUP_COLOURS.length]
+                  "border-border text-foreground/80 border-r border-b px-2 py-2 text-center text-[10px] font-semibold tracking-wide uppercase last:border-r-0",
+                  FACING_GROUP_COLOURS[gi % FACING_GROUP_COLOURS.length],
                 )}
               >
                 {group.label}
@@ -143,22 +142,28 @@ function TowerGrid({
 
           {/* Row 2 — Stack type + sqft sub-headers */}
           <tr>
-            <th className="sticky left-0 z-30 border-b border-r border-border bg-card px-3 py-1 text-left text-[9px] text-muted-foreground/70">
+            <th className="border-border bg-card text-muted-foreground/70 sticky left-0 z-30 border-r border-b px-3 py-1 text-left text-[9px]">
               Unit No.
             </th>
-            {tower.stacks.map((stack, gi) => {
-              const groupIdx = tower.facingGroups.findIndex((fg) => fg.key === stack.facingGroupKey);
+            {tower.stacks.map((stack) => {
+              const groupIdx = tower.facingGroups.findIndex(
+                (fg) => fg.key === stack.facingGroupKey,
+              );
               return (
                 <th
                   key={stack.stackNo}
                   className={cn(
-                    "border-b border-r border-border px-1 py-1 text-center last:border-r-0",
-                    FACING_GROUP_COLOURS[groupIdx % FACING_GROUP_COLOURS.length]
+                    "border-border border-r border-b px-1 py-1 text-center last:border-r-0",
+                    FACING_GROUP_COLOURS[groupIdx % FACING_GROUP_COLOURS.length],
                   )}
                 >
-                  <div className="text-[9px] font-semibold text-foreground/80">{stack.layoutType}</div>
-                  <div className="text-[8px] text-muted-foreground">{stack.sqft.toLocaleString()}</div>
-                  <div className="mt-0.5 text-[8px] font-medium text-muted-foreground/60">
+                  <div className="text-foreground/80 text-[9px] font-semibold">
+                    {stack.layoutType}
+                  </div>
+                  <div className="text-muted-foreground text-[8px]">
+                    {stack.sqft.toLocaleString()}
+                  </div>
+                  <div className="text-muted-foreground/60 mt-0.5 text-[8px] font-medium">
                     {stack.stackNo}
                   </div>
                 </th>
@@ -201,12 +206,12 @@ function FloorRowElement({
   if (row.kind === "breaktank") {
     return (
       <tr className="bg-slate-100/80 dark:bg-slate-800/40">
-        <td className="sticky left-0 z-10 border-b border-r border-border bg-slate-100 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+        <td className="border-border sticky left-0 z-10 border-r border-b bg-slate-100 px-3 py-1.5 text-[10px] font-semibold tracking-widest text-slate-500 uppercase dark:bg-slate-800 dark:text-slate-400">
           {row.floorLabel}
         </td>
         <td
           colSpan={totalCols}
-          className="border-b border-border px-4 py-1.5 text-center text-[10px] font-bold uppercase tracking-[0.3em] text-slate-400 dark:text-slate-500"
+          className="border-border border-b px-4 py-1.5 text-center text-[10px] font-bold tracking-[0.3em] text-slate-400 uppercase dark:text-slate-500"
         >
           ■ ■ ■ &nbsp; MECHANICAL / BREAK TANK &nbsp; ■ ■ ■
         </td>
@@ -217,12 +222,12 @@ function FloorRowElement({
   if (row.kind === "facility") {
     return (
       <tr className="bg-blue-50/60 dark:bg-blue-950/20">
-        <td className="sticky left-0 z-10 border-b border-r border-border bg-blue-50 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-blue-600 dark:bg-blue-950/30 dark:text-blue-400">
+        <td className="border-border sticky left-0 z-10 border-r border-b bg-blue-50 px-3 py-1.5 text-[10px] font-semibold tracking-wider text-blue-600 uppercase dark:bg-blue-950/30 dark:text-blue-400">
           {row.floorLabel}
         </td>
         <td
           colSpan={totalCols}
-          className="border-b border-border px-4 py-1.5 text-center text-[10px] font-semibold uppercase tracking-[0.25em] text-blue-500 dark:text-blue-400"
+          className="border-border border-b px-4 py-1.5 text-center text-[10px] font-semibold tracking-[0.25em] text-blue-500 uppercase dark:text-blue-400"
         >
           {row.facilityLabel}
         </td>
@@ -233,14 +238,12 @@ function FloorRowElement({
   // Residential floor row
   return (
     <tr className="group hover:bg-muted/20">
-      <td className="sticky left-0 z-10 border-b border-r border-border bg-card px-3 py-0.5 text-[11px] font-medium text-muted-foreground group-hover:bg-muted/40">
+      <td className="border-border bg-card text-muted-foreground group-hover:bg-muted/40 sticky left-0 z-10 border-r border-b px-3 py-0.5 text-[11px] font-medium">
         {row.floorLabel}
       </td>
       {row.cells.map((cell, ci) => {
         const isSelected =
-          selectedUnit !== null &&
-          cell.kind === "unit" &&
-          cell.unitNo === selectedUnit.unitNo;
+          selectedUnit !== null && cell.kind === "unit" && cell.unitNo === selectedUnit.unitNo;
 
         return (
           <UnitButton
@@ -269,27 +272,19 @@ function FloorRowElement({
 
 // ─── Unit detail panel ───────────────────────────────────────────────────────
 
-function UnitDetailPanel({
-  unit,
-  onClose,
-}: {
-  unit: SelectedUnit;
-  onClose: () => void;
-}) {
+function UnitDetailPanel({ unit, onClose }: { unit: SelectedUnit; onClose: () => void }) {
   return (
-    <div className="mt-4 rounded-2xl border border-border bg-card p-5 shadow-sm">
+    <div className="border-border bg-card mt-4 rounded-2xl border p-5 shadow-sm">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-primary/80">
+          <p className="text-primary/80 text-xs tracking-[0.2em] uppercase">
             {unit.towerName} · Floor {unit.floor}
           </p>
-          <h4 className="mt-1 text-2xl font-semibold text-foreground">
-            Unit {unit.unitNo}
-          </h4>
+          <h4 className="text-foreground mt-1 text-2xl font-semibold">Unit {unit.unitNo}</h4>
           <span
             className={cn(
-              "mt-2 inline-block rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide",
-              STATUS_BADGE[unit.status]
+              "mt-2 inline-block rounded-full px-3 py-1 text-xs font-semibold tracking-wide uppercase",
+              STATUS_BADGE[unit.status],
             )}
           >
             {STATUS_LABEL[unit.status]}
@@ -299,30 +294,30 @@ function UnitDetailPanel({
         <button
           type="button"
           onClick={onClose}
-          className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-border bg-background text-foreground hover:bg-muted/30"
+          className="border-border bg-background text-foreground hover:bg-muted/30 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border"
         >
           <X className="h-3.5 w-3.5" />
         </button>
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <div className="rounded-lg border border-border bg-background p-3">
-          <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Layout</p>
-          <p className="mt-1 text-base font-semibold text-foreground">{unit.layoutType}</p>
+        <div className="border-border bg-background rounded-lg border p-3">
+          <p className="text-muted-foreground text-[10px] tracking-widest uppercase">Layout</p>
+          <p className="text-foreground mt-1 text-base font-semibold">{unit.layoutType}</p>
         </div>
-        <div className="rounded-lg border border-border bg-background p-3">
-          <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Built-up</p>
-          <p className="mt-1 text-base font-semibold text-foreground">
+        <div className="border-border bg-background rounded-lg border p-3">
+          <p className="text-muted-foreground text-[10px] tracking-widest uppercase">Built-up</p>
+          <p className="text-foreground mt-1 text-base font-semibold">
             {unit.sqft.toLocaleString()} sqft
           </p>
         </div>
-        <div className="rounded-lg border border-border bg-background p-3">
-          <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Floor</p>
-          <p className="mt-1 text-base font-semibold text-foreground">{unit.floor}</p>
+        <div className="border-border bg-background rounded-lg border p-3">
+          <p className="text-muted-foreground text-[10px] tracking-widest uppercase">Floor</p>
+          <p className="text-foreground mt-1 text-base font-semibold">{unit.floor}</p>
         </div>
-        <div className="rounded-lg border border-border bg-background p-3">
-          <p className="text-[10px] uppercase tracking-widest text-muted-foreground">From</p>
-          <p className="mt-1 text-base font-semibold text-primary">{formatPrice(unit.price)}</p>
+        <div className="border-border bg-background rounded-lg border p-3">
+          <p className="text-muted-foreground text-[10px] tracking-widest uppercase">From</p>
+          <p className="text-primary mt-1 text-base font-semibold">{formatPrice(unit.price)}</p>
         </div>
       </div>
 
@@ -330,13 +325,13 @@ function UnitDetailPanel({
         <div className="mt-4 flex flex-wrap gap-3">
           <button
             type="button"
-            className="inline-flex h-10 items-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-10 items-center gap-2 rounded-xl px-5 text-sm font-semibold shadow-sm"
           >
             Book a Viewing
           </button>
           <button
             type="button"
-            className="inline-flex h-10 items-center gap-2 rounded-xl border border-border bg-background px-5 text-sm font-medium text-foreground hover:bg-muted/30"
+            className="border-border bg-background text-foreground hover:bg-muted/30 inline-flex h-10 items-center gap-2 rounded-xl border px-5 text-sm font-medium"
           >
             Request Info
           </button>
@@ -346,7 +341,7 @@ function UnitDetailPanel({
         <div className="mt-4">
           <button
             type="button"
-            className="inline-flex h-10 items-center gap-2 rounded-xl border border-border bg-background px-5 text-sm font-medium text-foreground hover:bg-muted/30"
+            className="border-border bg-background text-foreground hover:bg-muted/30 inline-flex h-10 items-center gap-2 rounded-xl border px-5 text-sm font-medium"
           >
             Contact Agent
           </button>
@@ -382,7 +377,7 @@ function AvailabilitySummary({ tower }: { tower: TowerAvailability }) {
       <span className="rounded-full bg-rose-100 px-3 py-1 font-medium text-rose-700 dark:bg-rose-900/50 dark:text-rose-300">
         {counts.sold} Sold ({pct(counts.sold)}%)
       </span>
-      <span className="rounded-full border border-border bg-background px-3 py-1 text-muted-foreground">
+      <span className="border-border bg-background text-muted-foreground rounded-full border px-3 py-1">
         {counts.total} total units
       </span>
     </div>
@@ -405,13 +400,13 @@ export function UnitAvailabilityChart({ data }: { data: ProjectUnitChart }) {
   if (!activeTower) return null;
 
   return (
-    <section className="rounded-2xl border border-border bg-card/95 p-5 shadow-sm">
+    <section className="border-border bg-card/95 rounded-2xl border p-5 shadow-sm">
       {/* Header */}
-      <div className="flex flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="border-border flex flex-col gap-3 border-b pb-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-xs uppercase tracking-[0.22em] text-primary/80">Live Availability</p>
-          <h2 className="mt-1 text-2xl font-semibold text-foreground">Unit Availability</h2>
-          <p className="mt-0.5 text-sm text-muted-foreground">
+          <p className="text-primary/80 text-xs tracking-[0.22em] uppercase">Live Availability</p>
+          <h2 className="text-foreground mt-1 text-2xl font-semibold">Unit Availability</h2>
+          <p className="text-muted-foreground mt-0.5 text-sm">
             Click any unit cell to see details and pricing.
           </p>
         </div>
@@ -433,7 +428,7 @@ export function UnitAvailabilityChart({ data }: { data: ProjectUnitChart }) {
           <button
             type="button"
             onClick={() => setCollapsed((v) => !v)}
-            className="inline-flex h-8 items-center gap-1.5 rounded-xl border border-border bg-background px-3 text-xs font-medium text-foreground hover:bg-muted/30"
+            className="border-border bg-background text-foreground hover:bg-muted/30 inline-flex h-8 items-center gap-1.5 rounded-xl border px-3 text-xs font-medium"
           >
             {collapsed ? (
               <>
@@ -467,7 +462,7 @@ export function UnitAvailabilityChart({ data }: { data: ProjectUnitChart }) {
                     "inline-flex h-9 items-center gap-2 rounded-xl border px-4 text-sm font-medium transition-all",
                     tower.towerId === activeTowerId
                       ? "border-primary bg-primary/10 text-primary"
-                      : "border-border bg-background text-foreground hover:bg-muted/30"
+                      : "border-border bg-background text-foreground hover:bg-muted/30",
                   )}
                 >
                   <Building2 className="h-3.5 w-3.5" />
@@ -483,7 +478,7 @@ export function UnitAvailabilityChart({ data }: { data: ProjectUnitChart }) {
           </div>
 
           {/* Legend */}
-          <div className="mt-3 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+          <div className="text-muted-foreground mt-3 flex flex-wrap items-center gap-4 text-xs">
             <div className="flex items-center gap-1.5">
               <span className="h-3 w-7 rounded border border-emerald-300 bg-emerald-100 dark:border-emerald-700 dark:bg-emerald-900/40" />
               Available
@@ -497,13 +492,13 @@ export function UnitAvailabilityChart({ data }: { data: ProjectUnitChart }) {
               Sold
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="h-3 w-7 rounded border border-dashed border-border/40 bg-muted/20" />
+              <span className="border-border/40 bg-muted/20 h-3 w-7 rounded border border-dashed" />
               Void / Not applicable
             </div>
           </div>
 
           {/* Hint for horizontal scroll on mobile */}
-          <p className="mt-2 text-[10px] italic text-muted-foreground/60 sm:hidden">
+          <p className="text-muted-foreground/60 mt-2 text-[10px] italic sm:hidden">
             Scroll horizontally to see all unit stacks →
           </p>
 

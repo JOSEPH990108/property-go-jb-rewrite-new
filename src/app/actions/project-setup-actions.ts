@@ -1,8 +1,8 @@
-'use server';
+"use server";
 
-import { randomUUID } from 'crypto';
-import { eq, asc } from 'drizzle-orm';
-import { db } from '@/db';
+import { randomUUID } from "crypto";
+import { asc } from "drizzle-orm";
+import { db } from "@/db";
 import {
   projects,
   projectPhases,
@@ -24,9 +24,9 @@ import {
   areas,
   constructionStatuses,
   buyerTypes,
-} from '@/db/schema';
-import { requireAdmin } from '@/lib/server-auth';
-import type { ActionResult } from '@/types/action-result.types';
+} from "@/db/schema";
+import { requireAdmin } from "@/lib/server-auth";
+import type { ActionResult } from "@/types/action-result.types";
 
 // ── Dropdown option types ────────────────────────────────────────────────────
 
@@ -182,19 +182,53 @@ export async function getProjectWizardOptions(): Promise<ActionResult<DropdownOp
   const admin = await requireAdmin();
   if (!admin.ok) return { success: false, error: admin.error };
 
-  const [devs, cats, types, statuses, tenures, titles, regs, areasData, constrStatuses, buyerTypesData] =
-    await Promise.all([
-      db.select({ value: developers.id, label: developers.name }).from(developers).orderBy(asc(developers.name)),
-      db.select({ value: propertyCategories.id, label: propertyCategories.name }).from(propertyCategories).orderBy(asc(propertyCategories.sortOrder)),
-      db.select({ value: propertyTypes.id, label: propertyTypes.name }).from(propertyTypes).orderBy(asc(propertyTypes.sortOrder)),
-      db.select({ value: projectStatuses.id, label: projectStatuses.name }).from(projectStatuses).orderBy(asc(projectStatuses.sortOrder)),
-      db.select({ value: tenureTypes.id, label: tenureTypes.name }).from(tenureTypes).orderBy(asc(tenureTypes.sortOrder)),
-      db.select({ value: titleTypes.id, label: titleTypes.name }).from(titleTypes).orderBy(asc(titleTypes.sortOrder)),
-      db.select({ value: regions.id, label: regions.name }).from(regions).orderBy(asc(regions.name)),
-      db.select({ value: areas.id, label: areas.name }).from(areas).orderBy(asc(areas.name)),
-      db.select({ value: constructionStatuses.id, label: constructionStatuses.name }).from(constructionStatuses).orderBy(asc(constructionStatuses.sortOrder)),
-      db.select({ value: buyerTypes.id, label: buyerTypes.name }).from(buyerTypes).orderBy(asc(buyerTypes.sortOrder)),
-    ]);
+  const [
+    devs,
+    cats,
+    types,
+    statuses,
+    tenures,
+    titles,
+    regs,
+    areasData,
+    constrStatuses,
+    buyerTypesData,
+  ] = await Promise.all([
+    db
+      .select({ value: developers.id, label: developers.name })
+      .from(developers)
+      .orderBy(asc(developers.name)),
+    db
+      .select({ value: propertyCategories.id, label: propertyCategories.name })
+      .from(propertyCategories)
+      .orderBy(asc(propertyCategories.sortOrder)),
+    db
+      .select({ value: propertyTypes.id, label: propertyTypes.name })
+      .from(propertyTypes)
+      .orderBy(asc(propertyTypes.sortOrder)),
+    db
+      .select({ value: projectStatuses.id, label: projectStatuses.name })
+      .from(projectStatuses)
+      .orderBy(asc(projectStatuses.sortOrder)),
+    db
+      .select({ value: tenureTypes.id, label: tenureTypes.name })
+      .from(tenureTypes)
+      .orderBy(asc(tenureTypes.sortOrder)),
+    db
+      .select({ value: titleTypes.id, label: titleTypes.name })
+      .from(titleTypes)
+      .orderBy(asc(titleTypes.sortOrder)),
+    db.select({ value: regions.id, label: regions.name }).from(regions).orderBy(asc(regions.name)),
+    db.select({ value: areas.id, label: areas.name }).from(areas).orderBy(asc(areas.name)),
+    db
+      .select({ value: constructionStatuses.id, label: constructionStatuses.name })
+      .from(constructionStatuses)
+      .orderBy(asc(constructionStatuses.sortOrder)),
+    db
+      .select({ value: buyerTypes.id, label: buyerTypes.name })
+      .from(buyerTypes)
+      .orderBy(asc(buyerTypes.sortOrder)),
+  ]);
 
   return {
     success: true,
@@ -207,7 +241,10 @@ export async function getProjectWizardOptions(): Promise<ActionResult<DropdownOp
       titleTypes: titles.map((r) => ({ value: String(r.value), label: String(r.label) })),
       regions: regs.map((r) => ({ value: String(r.value), label: String(r.label) })),
       areas: areasData.map((r) => ({ value: String(r.value), label: String(r.label) })),
-      constructionStatuses: constrStatuses.map((r) => ({ value: String(r.value), label: String(r.label) })),
+      constructionStatuses: constrStatuses.map((r) => ({
+        value: String(r.value),
+        label: String(r.label),
+      })),
       buyerTypes: buyerTypesData.map((r) => ({ value: String(r.value), label: String(r.label) })),
     },
   };
@@ -221,8 +258,16 @@ export async function createFullProject(
   const admin = await requireAdmin();
   if (!admin.ok) return { success: false, error: admin.error };
 
-  if (!input.project.slug || !input.project.name || !input.project.developerId || !input.project.tenureTypeId) {
-    return { success: false, error: 'Project slug, name, developer, and tenure type are required.' };
+  if (
+    !input.project.slug ||
+    !input.project.name ||
+    !input.project.developerId ||
+    !input.project.tenureTypeId
+  ) {
+    return {
+      success: false,
+      error: "Project slug, name, developer, and tenure type are required.",
+    };
   }
 
   try {
@@ -251,7 +296,7 @@ export async function createFullProject(
           latitude: p.latitude || null,
           longitude: p.longitude || null,
           landAreaAcres: p.landAreaAcres || null,
-          bookingFee: p.bookingFee || '1000.00',
+          bookingFee: p.bookingFee || "1000.00",
           bookingFeeBumi: p.bookingFeeBumi || null,
           maintenanceFeePerSqft: p.maintenanceFeePerSqft || null,
           sinkingFundPerSqft: p.sinkingFundPerSqft || null,
@@ -325,7 +370,7 @@ export async function createFullProject(
             hasYard: layout.hasYard,
             isDualKey: layout.isDualKey,
             ceilingHeightM: layout.ceilingHeightM || null,
-            furnishingStatus: layout.furnishingStatus || 'UNFURNISHED',
+            furnishingStatus: layout.furnishingStatus || "UNFURNISHED",
           })
           .returning();
         layoutMap[layout.code] = ly.id;
@@ -434,7 +479,7 @@ export async function createFullProject(
 
     return { success: true, data: { projectId: result } };
   } catch (err) {
-    const msg = err instanceof Error ? err.message : 'Unknown error';
+    const msg = err instanceof Error ? err.message : "Unknown error";
     return { success: false, error: `Failed to create project: ${msg}` };
   }
 }

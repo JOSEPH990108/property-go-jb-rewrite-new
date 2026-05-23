@@ -1,8 +1,8 @@
-'use server';
+"use server";
 
-import { db } from '@/db';
-import { projects, projectTowers, units, bookingStatuses, projectLayouts } from '@/db/schema';
-import { eq, and, asc } from 'drizzle-orm';
+import { db } from "@/db";
+import { projects, projectTowers, units, bookingStatuses, projectLayouts } from "@/db/schema";
+import { eq, asc } from "drizzle-orm";
 import type {
   ProjectUnitChart,
   TowerAvailability,
@@ -11,15 +11,15 @@ import type {
   FloorRow,
   UnitCell,
   UnitStatus,
-} from '@/lib/unit-chart-data';
+} from "@/lib/unit-chart-data";
 
 // ---------------------------------------------------------------------------
 // mapStatusCode — convert DB booking status code to UnitStatus enum
 // ---------------------------------------------------------------------------
 function mapStatusCode(code: string): UnitStatus {
-  if (code === 'available') return 'available';
-  if (code === 'reserved') return 'reserved';
-  return 'sold';
+  if (code === "available") return "available";
+  if (code === "reserved") return "reserved";
+  return "sold";
 }
 
 // ---------------------------------------------------------------------------
@@ -38,32 +38,32 @@ function buildTowerFromRows(
     basePrice: string;
     statusCode: string;
     layoutCode: string | null;
-  }>
+  }>,
 ): TowerAvailability {
   // Collect unique stacks (sorted numerically) with their facing
   const stackMap = new Map<string, { facing: string; sqft: number; layoutType: string }>();
 
   for (const row of rows) {
-    const stackKey = row.stack ?? 'XX';
+    const stackKey = row.stack ?? "XX";
     if (!stackMap.has(stackKey)) {
       stackMap.set(stackKey, {
-        facing: row.facing ?? 'Not specified',
+        facing: row.facing ?? "Not specified",
         sqft: row.builtUpSqft ? Math.round(parseFloat(row.builtUpSqft)) : 0,
-        layoutType: row.layoutCode ?? '-',
+        layoutType: row.layoutCode ?? "-",
       });
     }
   }
 
   // Sort stacks numerically
   const sortedStacks = [...stackMap.entries()].sort(([a], [b]) =>
-    a.localeCompare(b, undefined, { numeric: true })
+    a.localeCompare(b, undefined, { numeric: true }),
   );
 
   // Build facing groups: group consecutive stacks with the same facing
   const facingGroups: FacingGroupDef[] = [];
   const stacks: StackDef[] = [];
 
-  let prevFacing = '';
+  let prevFacing = "";
   let groupIndex = 0;
 
   for (const [stackNo, info] of sortedStacks) {
@@ -93,33 +93,31 @@ function buildTowerFromRows(
   for (const row of rows) {
     const floorNum = row.floor ?? 0;
     if (!floorMap.has(floorNum)) {
-      floorMap.set(floorNum, new Array(stacks.length).fill({ kind: 'void' } as UnitCell));
+      floorMap.set(floorNum, new Array(stacks.length).fill({ kind: "void" } as UnitCell));
     }
 
-    const idx = stackIndex.get(row.stack ?? 'XX');
+    const idx = stackIndex.get(row.stack ?? "XX");
     if (idx === undefined) continue;
 
-    const price = row.finalPrice
-      ? parseFloat(row.finalPrice)
-      : parseFloat(row.basePrice);
+    const price = row.finalPrice ? parseFloat(row.finalPrice) : parseFloat(row.basePrice);
 
     floorMap.get(floorNum)![idx] = {
-      kind: 'unit',
+      kind: "unit",
       unitNo: row.unitNo,
       status: mapStatusCode(row.statusCode),
       sqft: row.builtUpSqft ? Math.round(parseFloat(row.builtUpSqft)) : 0,
       price: Math.round(price),
-      facing: stacks[idx]?.facingGroupKey ?? '',
-      layoutType: row.layoutCode ?? '-',
+      facing: stacks[idx]?.facingGroupKey ?? "",
+      layoutType: row.layoutCode ?? "-",
     };
   }
 
   const floorRows: FloorRow[] = [...floorMap.entries()]
     .sort(([a], [b]) => b - a) // Highest floor first
     .map(([floor, cells]) => ({
-      kind: 'residential' as const,
+      kind: "residential" as const,
       floor,
-      floorLabel: String(floor).padStart(2, '0'),
+      floorLabel: String(floor).padStart(2, "0"),
       cells,
     }));
 
@@ -131,9 +129,7 @@ function buildTowerFromRows(
 // Returns real DB data if the project has units, otherwise returns null
 // (caller falls back to demo data).
 // ---------------------------------------------------------------------------
-export async function getProjectUnitAvailability(
-  slug: string
-): Promise<ProjectUnitChart | null> {
+export async function getProjectUnitAvailability(slug: string): Promise<ProjectUnitChart | null> {
   try {
     // 1. Find the project
     const project = await db.query.projects.findFirst({
@@ -177,7 +173,7 @@ export async function getProjectUnitAvailability(
     const towerUnitMap = new Map<string, typeof unitRows>();
 
     for (const row of unitRows) {
-      const tid = row.towerId ?? '__no_tower__';
+      const tid = row.towerId ?? "__no_tower__";
       if (!towerUnitMap.has(tid)) towerUnitMap.set(tid, []);
       towerUnitMap.get(tid)!.push(row);
     }
@@ -191,9 +187,9 @@ export async function getProjectUnitAvailability(
       .filter((t): t is TowerAvailability => t !== null);
 
     // Also handle units not assigned to any tower
-    const noTowerUnits = towerUnitMap.get('__no_tower__');
+    const noTowerUnits = towerUnitMap.get("__no_tower__");
     if (noTowerUnits && noTowerUnits.length > 0) {
-      towers.push(buildTowerFromRows('__no_tower__', 'Main Block', noTowerUnits));
+      towers.push(buildTowerFromRows("__no_tower__", "Main Block", noTowerUnits));
     }
 
     if (towers.length === 0) return null;

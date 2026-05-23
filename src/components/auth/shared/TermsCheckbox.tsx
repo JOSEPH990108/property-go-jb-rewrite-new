@@ -4,7 +4,7 @@
 // Reusable Terms of Service acceptance checkbox.
 // Used by both SignInForm and SignUpForm.
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -53,12 +53,10 @@ export function TermsCheckbox({
     });
   };
 
-  // Reset state when the dialog closes so it re-evaluates next time.
-  useEffect(() => {
-    if (!isDialogOpen) {
-      setHasReachedEnd(false);
-    }
-  }, [isDialogOpen]);
+  const handleDialogOpenChange = (open: boolean) => {
+    setIsDialogOpen(open);
+    if (!open) setHasReachedEnd(false);
+  };
 
   const handleTermsScroll = () => {
     const container = termsContainerRef.current;
@@ -84,7 +82,7 @@ export function TermsCheckbox({
 
   return (
     <>
-      <div className="flex items-start gap-2 p-3 bg-muted/30 rounded-lg border border-border/50">
+      <div className="bg-muted/30 border-border/50 flex items-start gap-2 rounded-lg border p-3">
         <Checkbox
           id={id}
           checked={checked}
@@ -92,76 +90,68 @@ export function TermsCheckbox({
           className="mt-0.5"
         />
         <div className="grid gap-1.5 leading-none">
-          <Label
-            htmlFor={id}
-            className="text-sm font-medium leading-none cursor-pointer"
-          >
+          <Label htmlFor={id} className="cursor-pointer text-sm leading-none font-medium">
             I agree to the Terms of Service and Privacy Policy
           </Label>
-          <p className="text-xs text-muted-foreground">{description}</p>
-          {requiredError && (
-            <p className="text-destructive text-xs">{requiredError}</p>
-          )}
+          <p className="text-muted-foreground text-xs">{description}</p>
+          {requiredError && <p className="text-destructive text-xs">{requiredError}</p>}
         </div>
       </div>
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Dialog open={isDialogOpen} onOpenChange={handleDialogOpenChange}>
         <DialogContent className="sm:max-w-2xl" showCloseButton={false}>
           <DialogHeader>
             <DialogTitle>Terms and Conditions</DialogTitle>
             <DialogDescription>
-              Please review all terms. The confirmation button will be enabled once you reach the end.
+              Please review all terms. The confirmation button will be enabled once you reach the
+              end.
             </DialogDescription>
           </DialogHeader>
 
           <div
             ref={termsRefCallback}
             onScroll={handleTermsScroll}
-            className="max-h-[45vh] overflow-y-auto rounded-md border border-border/60 bg-background/40 p-4 text-sm text-muted-foreground space-y-4"
+            className="border-border/60 bg-background/40 text-muted-foreground max-h-[45vh] space-y-4 overflow-y-auto rounded-md border p-4 text-sm"
           >
             <p>
-              1. Service Scope: This platform provides property listing, comparison, and communication tools. We may update, suspend,
-              or discontinue features with reasonable notice.
+              1. Service Scope: This platform provides property listing, comparison, and
+              communication tools. We may update, suspend, or discontinue features with reasonable
+              notice.
             </p>
             <p>
-              2. Account Responsibility: You are responsible for all activities under your account and for keeping your login access secure.
-              You must provide accurate and current information.
+              2. Account Responsibility: You are responsible for all activities under your account
+              and for keeping your login access secure. You must provide accurate and current
+              information.
             </p>
             <p>
-              3. Acceptable Use: You agree not to misuse the service, attempt unauthorized access, scrape private data, or interfere with
-              normal platform operations.
+              3. Acceptable Use: You agree not to misuse the service, attempt unauthorized access,
+              scrape private data, or interfere with normal platform operations.
             </p>
             <p>
-              4. Privacy and Data: We process personal data in accordance with our privacy policy. By proceeding, you consent to data
-              collection and processing needed to provide the service.
+              4. Privacy and Data: We process personal data in accordance with our privacy policy.
+              By proceeding, you consent to data collection and processing needed to provide the
+              service.
             </p>
             <p>
-              5. Communication Consent: You consent to receiving authentication, account, and transactional messages through supported
-              channels such as SMS or email.
+              5. Communication Consent: You consent to receiving authentication, account, and
+              transactional messages through supported channels such as SMS or email.
             </p>
             <p>
-              6. Limitation of Liability: To the extent permitted by law, the platform is provided on an as-is basis and we are not liable
-              for indirect, incidental, or consequential losses.
+              6. Limitation of Liability: To the extent permitted by law, the platform is provided
+              on an as-is basis and we are not liable for indirect, incidental, or consequential
+              losses.
             </p>
             <p>
-              7. Changes to Terms: We may update these terms periodically. Continued use of the platform after updates indicates acceptance
-              of the revised terms.
+              7. Changes to Terms: We may update these terms periodically. Continued use of the
+              platform after updates indicates acceptance of the revised terms.
             </p>
           </div>
 
           <div className="flex items-center justify-end gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setIsDialogOpen(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
               Cancel
             </Button>
-            <Button
-              type="button"
-              onClick={handleConfirmTerms}
-              disabled={!hasReachedEnd}
-            >
+            <Button type="button" onClick={handleConfirmTerms} disabled={!hasReachedEnd}>
               I Understand
             </Button>
           </div>

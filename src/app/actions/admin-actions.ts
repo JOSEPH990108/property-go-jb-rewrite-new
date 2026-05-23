@@ -1,11 +1,11 @@
 // src\app\actions\admin-actions.ts
-'use server';
+"use server";
 
-import { randomUUID } from 'crypto';
-import { revalidatePath } from 'next/cache';
-import { and, desc, eq } from 'drizzle-orm';
-import { z } from 'zod';
-import { db } from '@/db';
+import { randomUUID } from "crypto";
+import { revalidatePath } from "next/cache";
+import { and, desc, eq } from "drizzle-orm";
+import { z } from "zod";
+import { db } from "@/db";
 import {
   appointments,
   areas,
@@ -18,10 +18,9 @@ import {
   roles,
   tenureTypes,
   user,
-} from '@/db/schema';
-import { auth } from '@/lib/auth';
-import { requireAdmin } from '@/lib/server-auth';
-import type { ActionResult } from '@/types/action-result.types';
+} from "@/db/schema";
+import { requireAdmin } from "@/lib/server-auth";
+import type { ActionResult } from "@/types/action-result.types";
 
 type AdminResult<T = undefined> = ActionResult<T>;
 
@@ -59,43 +58,43 @@ export type AdminDashboardData = {
     image: string | null;
   }>;
   lookups: {
-    developers: typeof developers.$inferSelect[];
-    categories: typeof propertyCategories.$inferSelect[];
-    types: typeof propertyTypes.$inferSelect[];
-    statuses: typeof projectStatuses.$inferSelect[];
-    tenures: typeof tenureTypes.$inferSelect[];
-    regions: typeof regions.$inferSelect[];
-    areas: typeof areas.$inferSelect[];
+    developers: (typeof developers.$inferSelect)[];
+    categories: (typeof propertyCategories.$inferSelect)[];
+    types: (typeof propertyTypes.$inferSelect)[];
+    statuses: (typeof projectStatuses.$inferSelect)[];
+    tenures: (typeof tenureTypes.$inferSelect)[];
+    regions: (typeof regions.$inferSelect)[];
+    areas: (typeof areas.$inferSelect)[];
   };
 };
 
 const propertyPayloadSchema = z.object({
-  name: z.string().min(2, 'Property name is required'),
+  name: z.string().min(2, "Property name is required"),
   slug: z
     .string()
-    .min(2, 'Slug is required')
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Use lowercase letters, numbers, and hyphens only'),
+    .min(2, "Slug is required")
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Use lowercase letters, numbers, and hyphens only"),
   description: z.string().optional().nullable(),
   address: z.string().optional().nullable(),
   launchYear: z.number().int().min(1990).max(2100).optional().nullable(),
   totalUnits: z.number().int().min(0).optional().nullable(),
   isPublished: z.boolean().default(false),
-  developerId: z.string().min(1, 'Developer is required'),
+  developerId: z.string().min(1, "Developer is required"),
   propertyCategoryId: z.string().optional().nullable(),
   propertyTypeId: z.string().optional().nullable(),
   projectStatusId: z.string().optional().nullable(),
-  tenureTypeId: z.string().min(1, 'Tenure type is required'),
+  tenureTypeId: z.string().min(1, "Tenure type is required"),
   regionId: z.string().optional().nullable(),
   areaId: z.string().optional().nullable(),
 });
 
 const agentPayloadSchema = z.object({
-  name: z.string().min(2, 'Agent name is required'),
-  email: z.string().email('Valid email is required'),
+  name: z.string().min(2, "Agent name is required"),
+  email: z.string().email("Valid email is required"),
   phoneNumber: z.string().optional().nullable(),
   agencyName: z.string().optional().nullable(),
   renNumber: z.string().optional().nullable(),
-  image: z.string().url('Image URL must be valid').optional().nullable(),
+  image: z.string().url("Image URL must be valid").optional().nullable(),
 });
 
 function nullable<T>(value: T | null | undefined): T | null {
@@ -107,23 +106,34 @@ export async function getAdminDashboardData(): Promise<AdminResult<AdminDashboar
     const admin = await requireAdmin();
     if (!admin.ok) return { success: false, error: admin.error };
 
-    const [devs, categoriesData, typesData, statusesData, tenuresData, regionsData, areasData, allProjects, agentRole] =
-      await Promise.all([
-        db.query.developers.findMany({ orderBy: [desc(developers.createdAt)] }),
-        db.query.propertyCategories.findMany(),
-        db.query.propertyTypes.findMany(),
-        db.query.projectStatuses.findMany(),
-        db.query.tenureTypes.findMany(),
-        db.query.regions.findMany(),
-        db.query.areas.findMany(),
-        db.query.projects.findMany({
-          orderBy: [desc(projects.createdAt)],
-          with: { developer: true, category: true, type: true, status: true },
-        }),
-        db.query.roles.findFirst({ where: eq(roles.code, 'AGENT') }),
-      ]);
+    const [
+      devs,
+      categoriesData,
+      typesData,
+      statusesData,
+      tenuresData,
+      regionsData,
+      areasData,
+      allProjects,
+      agentRole,
+    ] = await Promise.all([
+      db.query.developers.findMany({ orderBy: [desc(developers.createdAt)] }),
+      db.query.propertyCategories.findMany(),
+      db.query.propertyTypes.findMany(),
+      db.query.projectStatuses.findMany(),
+      db.query.tenureTypes.findMany(),
+      db.query.regions.findMany(),
+      db.query.areas.findMany(),
+      db.query.projects.findMany({
+        orderBy: [desc(projects.createdAt)],
+        with: { developer: true, category: true, type: true, status: true },
+      }),
+      db.query.roles.findFirst({ where: eq(roles.code, "AGENT") }),
+    ]);
 
-    const regionMap = new Map(regionsData.map((row: typeof regions.$inferSelect) => [row.id, row.name]));
+    const regionMap = new Map(
+      regionsData.map((row: typeof regions.$inferSelect) => [row.id, row.name]),
+    );
     const areaMap = new Map(areasData.map((row: typeof areas.$inferSelect) => [row.id, row.name]));
 
     const properties = allProjects.map((row) => ({
@@ -146,8 +156,8 @@ export async function getAdminDashboardData(): Promise<AdminResult<AdminDashboar
       categoryName: row.category?.name ?? null,
       typeName: row.type?.name ?? null,
       statusName: row.status?.name ?? null,
-      regionName: row.regionId ? regionMap.get(row.regionId) ?? null : null,
-      areaName: row.areaId ? areaMap.get(row.areaId) ?? null : null,
+      regionName: row.regionId ? (regionMap.get(row.regionId) ?? null) : null,
+      areaName: row.areaId ? (areaMap.get(row.areaId) ?? null) : null,
     }));
 
     const agents =
@@ -184,12 +194,14 @@ export async function getAdminDashboardData(): Promise<AdminResult<AdminDashboar
       },
     };
   } catch (error) {
-    console.error('Failed to load admin dashboard:', error);
-    return { success: false, error: 'Failed to load admin dashboard data' };
+    console.error("Failed to load admin dashboard:", error);
+    return { success: false, error: "Failed to load admin dashboard data" };
   }
 }
 
-export async function createProperty(payload: z.infer<typeof propertyPayloadSchema>): Promise<AdminResult> {
+export async function createProperty(
+  payload: z.infer<typeof propertyPayloadSchema>,
+): Promise<AdminResult> {
   try {
     const admin = await requireAdmin();
     if (!admin.ok) return { success: false, error: admin.error };
@@ -215,20 +227,26 @@ export async function createProperty(payload: z.infer<typeof propertyPayloadSche
       updatedAt: new Date(),
     });
 
-    revalidatePath('/admin');
-    revalidatePath('/properties');
+    revalidatePath("/admin");
+    revalidatePath("/properties");
 
     return { success: true, data: undefined };
   } catch (error) {
-    console.error('Create property failed:', error);
+    console.error("Create property failed:", error);
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.issues[0]?.message ?? 'Invalid form data' };
+      return { success: false, error: error.issues[0]?.message ?? "Invalid form data" };
     }
-    return { success: false, error: 'Unable to create property (check slug uniqueness and required fields)' };
+    return {
+      success: false,
+      error: "Unable to create property (check slug uniqueness and required fields)",
+    };
   }
 }
 
-export async function updateProperty(id: string, payload: z.infer<typeof propertyPayloadSchema>): Promise<AdminResult> {
+export async function updateProperty(
+  id: string,
+  payload: z.infer<typeof propertyPayloadSchema>,
+): Promise<AdminResult> {
   try {
     const admin = await requireAdmin();
     if (!admin.ok) return { success: false, error: admin.error };
@@ -256,16 +274,16 @@ export async function updateProperty(id: string, payload: z.infer<typeof propert
       })
       .where(eq(projects.id, id));
 
-    revalidatePath('/admin');
-    revalidatePath('/properties');
+    revalidatePath("/admin");
+    revalidatePath("/properties");
 
     return { success: true, data: undefined };
   } catch (error) {
-    console.error('Update property failed:', error);
+    console.error("Update property failed:", error);
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.issues[0]?.message ?? 'Invalid form data' };
+      return { success: false, error: error.issues[0]?.message ?? "Invalid form data" };
     }
-    return { success: false, error: 'Unable to update property' };
+    return { success: false, error: "Unable to update property" };
   }
 }
 
@@ -276,27 +294,30 @@ export async function deleteProperty(id: string): Promise<AdminResult> {
 
     await db.delete(projects).where(eq(projects.id, id));
 
-    revalidatePath('/admin');
-    revalidatePath('/properties');
+    revalidatePath("/admin");
+    revalidatePath("/properties");
 
     return { success: true, data: undefined };
   } catch (error) {
-    console.error('Delete property failed:', error);
+    console.error("Delete property failed:", error);
     return {
       success: false,
-      error: 'Unable to delete property. It may be linked to appointments, units, or other records.',
+      error:
+        "Unable to delete property. It may be linked to appointments, units, or other records.",
     };
   }
 }
 
-export async function createAgent(payload: z.infer<typeof agentPayloadSchema>): Promise<AdminResult> {
+export async function createAgent(
+  payload: z.infer<typeof agentPayloadSchema>,
+): Promise<AdminResult> {
   try {
     const admin = await requireAdmin();
     if (!admin.ok) return { success: false, error: admin.error };
 
     const data = agentPayloadSchema.parse(payload);
-    const agentRole = await db.query.roles.findFirst({ where: eq(roles.code, 'AGENT') });
-    if (!agentRole) return { success: false, error: 'AGENT role is missing in seed data' };
+    const agentRole = await db.query.roles.findFirst({ where: eq(roles.code, "AGENT") });
+    if (!agentRole) return { success: false, error: "AGENT role is missing in seed data" };
 
     await db.insert(user).values({
       id: randomUUID(),
@@ -312,25 +333,28 @@ export async function createAgent(payload: z.infer<typeof agentPayloadSchema>): 
       updatedAt: new Date(),
     });
 
-    revalidatePath('/admin');
+    revalidatePath("/admin");
     return { success: true, data: undefined };
   } catch (error) {
-    console.error('Create agent failed:', error);
+    console.error("Create agent failed:", error);
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.issues[0]?.message ?? 'Invalid form data' };
+      return { success: false, error: error.issues[0]?.message ?? "Invalid form data" };
     }
-    return { success: false, error: 'Unable to create agent (check email uniqueness)' };
+    return { success: false, error: "Unable to create agent (check email uniqueness)" };
   }
 }
 
-export async function updateAgent(id: string, payload: z.infer<typeof agentPayloadSchema>): Promise<AdminResult> {
+export async function updateAgent(
+  id: string,
+  payload: z.infer<typeof agentPayloadSchema>,
+): Promise<AdminResult> {
   try {
     const admin = await requireAdmin();
     if (!admin.ok) return { success: false, error: admin.error };
 
     const data = agentPayloadSchema.parse(payload);
-    const agentRole = await db.query.roles.findFirst({ where: eq(roles.code, 'AGENT') });
-    if (!agentRole) return { success: false, error: 'AGENT role is missing in seed data' };
+    const agentRole = await db.query.roles.findFirst({ where: eq(roles.code, "AGENT") });
+    if (!agentRole) return { success: false, error: "AGENT role is missing in seed data" };
 
     await db
       .update(user)
@@ -346,14 +370,14 @@ export async function updateAgent(id: string, payload: z.infer<typeof agentPaylo
       })
       .where(and(eq(user.id, id), eq(user.roleId, agentRole.id)));
 
-    revalidatePath('/admin');
+    revalidatePath("/admin");
     return { success: true, data: undefined };
   } catch (error) {
-    console.error('Update agent failed:', error);
+    console.error("Update agent failed:", error);
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.issues[0]?.message ?? 'Invalid form data' };
+      return { success: false, error: error.issues[0]?.message ?? "Invalid form data" };
     }
-    return { success: false, error: 'Unable to update agent' };
+    return { success: false, error: "Unable to update agent" };
   }
 }
 
@@ -361,10 +385,11 @@ export async function deleteAgent(id: string): Promise<AdminResult> {
   try {
     const admin = await requireAdmin();
     if (!admin.ok) return { success: false, error: admin.error };
-    if (admin.user.id === id) return { success: false, error: 'You cannot delete your own account' };
+    if (admin.user.id === id)
+      return { success: false, error: "You cannot delete your own account" };
 
-    const agentRole = await db.query.roles.findFirst({ where: eq(roles.code, 'AGENT') });
-    if (!agentRole) return { success: false, error: 'AGENT role is missing in seed data' };
+    const agentRole = await db.query.roles.findFirst({ where: eq(roles.code, "AGENT") });
+    if (!agentRole) return { success: false, error: "AGENT role is missing in seed data" };
 
     const linked = await db.query.appointments.findFirst({
       where: eq(appointments.agentId, id),
@@ -374,35 +399,38 @@ export async function deleteAgent(id: string): Promise<AdminResult> {
     if (linked) {
       return {
         success: false,
-        error: 'This agent has appointment history. Reassign or clear those records before deletion.',
+        error:
+          "This agent has appointment history. Reassign or clear those records before deletion.",
       };
     }
 
     await db.delete(user).where(and(eq(user.id, id), eq(user.roleId, agentRole.id)));
 
-    revalidatePath('/admin');
+    revalidatePath("/admin");
     return { success: true, data: undefined };
   } catch (error) {
-    console.error('Delete agent failed:', error);
-    return { success: false, error: 'Unable to delete agent' };
+    console.error("Delete agent failed:", error);
+    return { success: false, error: "Unable to delete agent" };
   }
 }
 
 // ─── Developer CRUD ──────────────────────────────────────────────────────────
 
 const developerPayloadSchema = z.object({
-  name: z.string().min(2, 'Developer name is required'),
+  name: z.string().min(2, "Developer name is required"),
   slug: z
     .string()
-    .min(2, 'Slug is required')
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Use lowercase letters, numbers, and hyphens only'),
+    .min(2, "Slug is required")
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Use lowercase letters, numbers, and hyphens only"),
   description: z.string().optional().nullable(),
   legalName: z.string().optional().nullable(),
   countryCode: z.string().max(10).optional().nullable(),
   isFeatured: z.boolean().default(false),
 });
 
-export async function createDeveloper(payload: z.infer<typeof developerPayloadSchema>): Promise<AdminResult> {
+export async function createDeveloper(
+  payload: z.infer<typeof developerPayloadSchema>,
+): Promise<AdminResult> {
   try {
     const admin = await requireAdmin();
     if (!admin.ok) return { success: false, error: admin.error };
@@ -420,18 +448,21 @@ export async function createDeveloper(payload: z.infer<typeof developerPayloadSc
       updatedAt: new Date(),
     });
 
-    revalidatePath('/admin');
+    revalidatePath("/admin");
     return { success: true, data: undefined };
   } catch (error) {
-    console.error('Create developer failed:', error);
+    console.error("Create developer failed:", error);
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.issues[0]?.message ?? 'Invalid form data' };
+      return { success: false, error: error.issues[0]?.message ?? "Invalid form data" };
     }
-    return { success: false, error: 'Unable to create developer (check slug uniqueness)' };
+    return { success: false, error: "Unable to create developer (check slug uniqueness)" };
   }
 }
 
-export async function updateDeveloper(id: string, payload: z.infer<typeof developerPayloadSchema>): Promise<AdminResult> {
+export async function updateDeveloper(
+  id: string,
+  payload: z.infer<typeof developerPayloadSchema>,
+): Promise<AdminResult> {
   try {
     const admin = await requireAdmin();
     if (!admin.ok) return { success: false, error: admin.error };
@@ -451,14 +482,14 @@ export async function updateDeveloper(id: string, payload: z.infer<typeof develo
       })
       .where(eq(developers.id, id));
 
-    revalidatePath('/admin');
+    revalidatePath("/admin");
     return { success: true, data: undefined };
   } catch (error) {
-    console.error('Update developer failed:', error);
+    console.error("Update developer failed:", error);
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.issues[0]?.message ?? 'Invalid form data' };
+      return { success: false, error: error.issues[0]?.message ?? "Invalid form data" };
     }
-    return { success: false, error: 'Unable to update developer' };
+    return { success: false, error: "Unable to update developer" };
   }
 }
 
@@ -473,15 +504,18 @@ export async function deleteDeveloper(id: string): Promise<AdminResult> {
     });
 
     if (linked) {
-      return { success: false, error: 'This developer has associated projects. Remove or reassign them first.' };
+      return {
+        success: false,
+        error: "This developer has associated projects. Remove or reassign them first.",
+      };
     }
 
     await db.delete(developers).where(eq(developers.id, id));
 
-    revalidatePath('/admin');
+    revalidatePath("/admin");
     return { success: true, data: undefined };
   } catch (error) {
-    console.error('Delete developer failed:', error);
-    return { success: false, error: 'Unable to delete developer' };
+    console.error("Delete developer failed:", error);
+    return { success: false, error: "Unable to delete developer" };
   }
 }

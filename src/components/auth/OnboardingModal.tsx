@@ -105,7 +105,9 @@ export default function OnboardingModal() {
     if (hasDismissedToday) {
       setIsDismissedToday(true);
       setIsOpen(false);
-      return () => { isCancelled = true; };
+      return () => {
+        isCancelled = true;
+      };
     }
 
     getOnboardingStatus().then((res) => {
@@ -125,13 +127,17 @@ export default function OnboardingModal() {
       }
     });
 
-    return () => { isCancelled = true; };
+    return () => {
+      isCancelled = true;
+    };
   }, [session, isPending, isDismissedToday]);
+
+  const handleReferralInputChange = referral.handleInputChange;
 
   // Reset referral status when code changes
   useEffect(() => {
-    referral.handleInputChange(watchedReferralCode);
-  }, [watchedReferralCode, referral.handleInputChange]);
+    handleReferralInputChange(watchedReferralCode);
+  }, [watchedReferralCode, handleReferralInputChange]);
 
   const onSubmit = async (data: ReferralFormData) => {
     setIsLoading(true);
@@ -212,7 +218,7 @@ export default function OnboardingModal() {
             aria-label="Close referral modal"
             onClick={handleDismiss}
             disabled={isDismissing}
-            className="absolute top-4 right-4 rounded-lg p-1.5 text-muted-foreground transition-all duration-200 hover:bg-secondary hover:text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 disabled:pointer-events-none"
+            className="text-muted-foreground hover:bg-secondary hover:text-foreground focus:ring-accent absolute top-4 right-4 rounded-lg p-1.5 transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:pointer-events-none"
           >
             <X className="h-4 w-4" />
           </button>
@@ -232,14 +238,14 @@ export default function OnboardingModal() {
           />
 
           {error && (
-            <p className="text-destructive text-sm bg-destructive/10 p-2 rounded text-center">
+            <p className="text-destructive bg-destructive/10 rounded p-2 text-center text-sm">
               {error}
             </p>
           )}
 
           <div className="space-y-2 pt-2">
             <Button type="submit" className="w-full" disabled={isLoading || referral.isLoading}>
-              {isLoading && <Loader2 className="animate-spin mr-2 h-4 w-4" />}
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isLoading ? "Completing..." : "Complete Setup"}
             </Button>
             <Button
