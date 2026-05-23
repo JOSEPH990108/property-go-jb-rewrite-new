@@ -3,7 +3,7 @@
 
 import { useCallback, useEffect, useState, useTransition } from "react";
 import { flexRender, getCoreRowModel, useReactTable, type ColumnDef } from "@tanstack/react-table";
-import { ChevronLeft, ChevronRight, Loader2, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2, Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -18,6 +18,7 @@ import {
   type TableMetaResult,
   type ColumnMeta,
 } from "@/app/actions/admin-crud-actions";
+import { AdminRowActions } from "@/components/admin/shared/AdminRowActions";
 import { TABLE_REGISTRY } from "@/lib/admin-table-registry";
 import {
   Dialog,
@@ -170,28 +171,10 @@ export function AdminCrudPage({ tableName }: AdminCrudPageProps) {
       header: "",
       id: "actions",
       cell: ({ row }) => (
-        <div className="flex items-center gap-1">
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              openEdit(row.original);
-            }}
-            className="text-foreground/60 hover:bg-primary/10 hover:text-primary inline-flex h-8 w-8 items-center justify-center rounded-xl transition"
-          >
-            <Pencil className="h-3.5 w-3.5" />
-          </button>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setDeleteTarget(row.original);
-            }}
-            className="text-foreground/60 hover:bg-destructive/10 hover:text-destructive inline-flex h-8 w-8 items-center justify-center rounded-xl transition"
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-          </button>
-        </div>
+        <AdminRowActions
+          onEdit={() => openEdit(row.original)}
+          onDelete={() => setDeleteTarget(row.original)}
+        />
       ),
     });
 
