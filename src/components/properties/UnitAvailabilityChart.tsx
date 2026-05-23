@@ -145,7 +145,7 @@ function TowerGrid({
             <th className="border-border bg-card text-muted-foreground/70 sticky left-0 z-30 border-r border-b px-3 py-1 text-left text-[9px]">
               Unit No.
             </th>
-            {tower.stacks.map((stack, gi) => {
+            {tower.stacks.map((stack) => {
               const groupIdx = tower.facingGroups.findIndex(
                 (fg) => fg.key === stack.facingGroupKey,
               );

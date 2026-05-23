@@ -29,8 +29,6 @@ export function ContactAgentCard({ projectName, agentPhone }: ContactAgentCardPr
     const formData = new FormData(e.currentTarget);
     const name = formData.get("name") as string;
     const phone = formData.get("phone") as string;
-    const message = formData.get("message") as string;
-
     if (!name.trim() || !phone.trim()) {
       toast.error("Please fill in your name and phone number");
       return;

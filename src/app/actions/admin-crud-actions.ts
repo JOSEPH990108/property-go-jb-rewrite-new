@@ -6,7 +6,6 @@ import { revalidatePath } from "next/cache";
 import { and, asc, desc, eq, ilike, or, sql, type SQL } from "drizzle-orm";
 import { getTableColumns } from "drizzle-orm";
 import { db } from "@/db";
-import { user, roles } from "@/db/schema";
 import { requireAdmin } from "@/lib/server-auth";
 import { TABLE_REGISTRY, type TableConfig } from "@/lib/admin-table-registry";
 import type { ActionResult } from "@/types/action-result.types";
@@ -14,6 +13,13 @@ import type { ActionResult } from "@/types/action-result.types";
 // ── Types ────────────────────────────────────────────────────────────────────
 
 type CrudResult<T = undefined> = ActionResult<T>;
+
+type ColumnRuntimeMeta = {
+  dataType?: string;
+  notNull?: boolean;
+  hasDefault?: boolean;
+  primary?: boolean;
+};
 
 export type TableListResult = {
   records: Record<string, unknown>[];
@@ -59,13 +65,17 @@ export async function getTableMeta(tableName: string): Promise<CrudResult<TableM
     if (!config) return { success: false, error: `Unknown table: ${tableName}` };
 
     const cols = getTableColumns(config.table);
-    const columns: ColumnMeta[] = Object.entries(cols).map(([name, col]) => ({
-      name,
-      dataType: (col as any).dataType ?? "string",
-      notNull: (col as any).notNull ?? false,
-      hasDefault: (col as any).hasDefault ?? false,
-      isPrimaryKey: (col as any).primary ?? false,
-    }));
+    const columns: ColumnMeta[] = Object.entries(cols).map(([name, col]) => {
+      const columnMeta = col as ColumnRuntimeMeta;
+
+      return {
+        name,
+        dataType: columnMeta.dataType ?? "string",
+        notNull: columnMeta.notNull ?? false,
+        hasDefault: columnMeta.hasDefault ?? false,
+        isPrimaryKey: columnMeta.primary ?? false,
+      };
+    });
 
     // Resolve FK options
     const overrides = config.columnOverrides ?? {};

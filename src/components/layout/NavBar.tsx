@@ -170,7 +170,10 @@ export function Navbar({ menuItems = DEFAULT_MENU_ITEMS }: NavbarProps) {
   const router = useRouter();
   const session = authClient.useSession();
 
-  useEffect(() => setIsOpen(false), [pathname]);
+  useEffect(() => {
+    const frameId = requestAnimationFrame(() => setIsOpen(false));
+    return () => cancelAnimationFrame(frameId);
+  }, [pathname]);
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "unset";

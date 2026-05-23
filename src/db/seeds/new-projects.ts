@@ -3,7 +3,8 @@ import { loadEnvConfig } from "@next/env";
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
 import * as schema from "../schema";
-import { eq } from "drizzle-orm";
+
+type ProjectAmenityInsert = typeof schema.projectAmenities.$inferInsert;
 
 // 1. Load Environment
 const projectDir = process.cwd();
@@ -116,20 +117,16 @@ async function seedNewProjects() {
 
     // --- Helper: Link Amenities ---
     const linkAmenities = async (projectId: string, slugs: string[]) => {
-      const values = slugs
+      const values: ProjectAmenityInsert[] = slugs
         .map((slug) => {
           const amenityId = amenityMap.get(slug);
           if (!amenityId) console.warn(`⚠️ Amenity '${slug}' not found for project linking.`);
           return amenityId ? { projectId, amenityId } : null;
         })
-        .filter(Boolean); // Remove nulls
+        .filter((value): value is ProjectAmenityInsert => value !== null);
 
       if (values.length > 0) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await tx
-          .insert(schema.projectAmenities)
-          .values(values as any)
-          .onConflictDoNothing();
+        await tx.insert(schema.projectAmenities).values(values).onConflictDoNothing();
       }
     };
 

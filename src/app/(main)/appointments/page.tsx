@@ -1,6 +1,7 @@
 // src\app\(main)\appointments\page.tsx
 import { getUserAppointments } from "@/app/actions/appointment-actions";
 import { AppointmentManager } from "@/components/features/appointments/appointment-manager";
+import type { Appointment } from "@/types/appointment";
 import { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
@@ -31,10 +32,7 @@ export default async function AppointmentsPage() {
         </p>
       </div>
 
-      {/*
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            */}
-      <AppointmentManager initialAppointments={data as any} />
+      <AppointmentManager initialAppointments={data as Appointment[]} />
     </div>
   );
 }

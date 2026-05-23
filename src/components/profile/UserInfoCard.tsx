@@ -65,7 +65,7 @@ export function UserInfoCard({ user }: UserInfoCardProps) {
       } else {
         toast.error(result.error || "Failed to update profile");
       }
-    } catch (error) {
+    } catch {
       toast.error("An error occurred");
     } finally {
       setIsLoading(false);

@@ -27,7 +27,7 @@ import { Input } from "@/components/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { authClient } from "@/lib/auth-client";
 import { Loader2, Phone } from "lucide-react";
-import parsePhoneNumber from "libphonenumber-js";
+import parsePhoneNumber, { type CountryCode } from "libphonenumber-js";
 import { CountrySelect } from "@/components/custom/ui/CountrySelector";
 
 // Schema for Phone Input
@@ -72,7 +72,7 @@ export function PhoneVerificationModal({
     setIsLoading(true);
     try {
       // 1. Format phone number
-      const parsedPhone = parsePhoneNumber(values.phoneNumber, values.country as any);
+      const parsedPhone = parsePhoneNumber(values.phoneNumber, values.country as CountryCode);
       if (!parsedPhone || !parsedPhone.isValid()) {
         phoneForm.setError("phoneNumber", { message: "Invalid phone number" });
         setIsLoading(false);

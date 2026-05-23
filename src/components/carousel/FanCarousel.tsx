@@ -233,7 +233,7 @@ export function FanCarousel({ children, className }: FanCarouselProps) {
             {
               // Initial vars to prevent flash of unstyled content
               "--zIndex": itemCount - i,
-              "--active": (i - state.current.active) / itemCount,
+              "--active": i / itemCount,
             } as React.CSSProperties
           }
         >

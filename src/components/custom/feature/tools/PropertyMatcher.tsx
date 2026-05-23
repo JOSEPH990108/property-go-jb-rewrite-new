@@ -188,16 +188,21 @@ export default function PropertyMatcher() {
       case "vibe":
         return (
           <div className="grid grid-cols-2 gap-4">
-            {[
-              { val: "Nature", icon: <Trees />, desc: "Greenery" },
-              { val: "Shopping", icon: <ShoppingBag />, desc: "Malls" },
-              { val: "Quiet", icon: <Armchair />, desc: "Peaceful" },
-              { val: "City", icon: <Coffee />, desc: "Urban" },
-            ].map((v) => (
+            {(
+              [
+                { val: "Nature", icon: <Trees />, desc: "Greenery" },
+                { val: "Shopping", icon: <ShoppingBag />, desc: "Malls" },
+                { val: "Quiet", icon: <Armchair />, desc: "Peaceful" },
+                { val: "City", icon: <Coffee />, desc: "Urban" },
+              ] satisfies {
+                val: NonNullable<typeof answers.vibe>;
+                icon: React.ReactNode;
+                desc: string;
+              }[]
+            ).map((v) => (
               <SelectionCard
                 key={v.val}
                 active={answers.vibe === v.val}
-                // @ts-ignore
                 onClick={() => setAnswer("vibe", v.val)}
                 icon={v.icon}
                 title={v.val}

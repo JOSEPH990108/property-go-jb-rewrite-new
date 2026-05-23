@@ -35,7 +35,7 @@ export function AgentScanner() {
         setResult({ success: false, message: res.error });
         toast.error("Scan Failed", { description: res.error });
       }
-    } catch (error) {
+    } catch {
       setResult({ success: false, message: "System error occurred" });
     } finally {
       setIsLoading(false);

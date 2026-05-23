@@ -333,7 +333,7 @@ export function findDuplicates(rows: ParsedCsvRow[], keyFields: string[]): Map<s
 export function generateDuplicateWarnings(duplicates: Map<string, number[]>): BulkImportWarning[] {
   const warnings: BulkImportWarning[] = [];
 
-  duplicates.forEach((rowNumbers, key) => {
+  duplicates.forEach((rowNumbers) => {
     warnings.push({
       rowNumber: rowNumbers[0],
       message: `Duplicate entry found in rows: ${rowNumbers.join(", ")}. Only first occurrence will be processed.`,

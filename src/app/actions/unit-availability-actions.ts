@@ -2,7 +2,7 @@
 
 import { db } from "@/db";
 import { projects, projectTowers, units, bookingStatuses, projectLayouts } from "@/db/schema";
-import { eq, and, asc } from "drizzle-orm";
+import { eq, asc } from "drizzle-orm";
 import type {
   ProjectUnitChart,
   TowerAvailability,

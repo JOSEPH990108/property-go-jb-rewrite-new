@@ -4,7 +4,7 @@
 // Reusable Terms of Service acceptance checkbox.
 // Used by both SignInForm and SignUpForm.
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -53,12 +53,10 @@ export function TermsCheckbox({
     });
   };
 
-  // Reset state when the dialog closes so it re-evaluates next time.
-  useEffect(() => {
-    if (!isDialogOpen) {
-      setHasReachedEnd(false);
-    }
-  }, [isDialogOpen]);
+  const handleDialogOpenChange = (open: boolean) => {
+    setIsDialogOpen(open);
+    if (!open) setHasReachedEnd(false);
+  };
 
   const handleTermsScroll = () => {
     const container = termsContainerRef.current;
@@ -100,7 +98,7 @@ export function TermsCheckbox({
         </div>
       </div>
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Dialog open={isDialogOpen} onOpenChange={handleDialogOpenChange}>
         <DialogContent className="sm:max-w-2xl" showCloseButton={false}>
           <DialogHeader>
             <DialogTitle>Terms and Conditions</DialogTitle>

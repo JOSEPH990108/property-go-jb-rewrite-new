@@ -2,16 +2,8 @@
 "use server";
 
 import { db } from "@/db";
-import {
-  user,
-  referralRewards,
-  redemptions,
-  rewardConfig,
-  referralTiers,
-  giftCatalog,
-  voucherCatalog,
-} from "@/db/schema";
-import { eq, and, count, desc, gt, lte, asc } from "drizzle-orm";
+import { user, referralRewards, redemptions, rewardConfig, referralTiers } from "@/db/schema";
+import { eq, and, count, desc, lte, asc } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { randomBytes } from "crypto";
@@ -299,7 +291,7 @@ export async function executeVisitRewards(userId: string, referrerId: string | n
     });
 
     if (existingReward) {
-      console.log(`User ${userId} already visited. No new reward.`);
+      console.warn(`User ${userId} already visited. No new reward.`);
       return { success: true, message: "Already visited" };
     }
 

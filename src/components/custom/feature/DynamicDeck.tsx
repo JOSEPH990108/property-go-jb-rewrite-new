@@ -1,7 +1,7 @@
 // src\components\custom\feature\DynamicDeck.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { DeckItem } from "@/types";
@@ -10,18 +10,23 @@ interface DynamicDeckProps {
   items: DeckItem[];
 }
 
+function getStableRotation(seed: string) {
+  let hash = 0;
+
+  for (let index = 0; index < seed.length; index += 1) {
+    hash = (hash * 31 + seed.charCodeAt(index)) % 2400;
+  }
+
+  return hash / 100 - 12;
+}
+
 export default function DynamicDeck({ items }: DynamicDeckProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
 
   // Stable random rotations for the "messy" look.
   // We generate one rotation value per item index so it stays consistent.
-  const [rotations, setRotations] = useState<number[]>([]);
-
-  useEffect(() => {
-    // Generate a random rotation between -12 and 12 degrees for every item
-    setRotations(items.map(() => Math.random() * 24 - 12));
-  }, [items]);
+  const rotations = useMemo(() => items.map((item) => getStableRotation(String(item.id))), [items]);
 
   const handleNext = () => {
     setDirection(1);

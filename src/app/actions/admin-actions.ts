@@ -19,7 +19,6 @@ import {
   tenureTypes,
   user,
 } from "@/db/schema";
-import { auth } from "@/lib/auth";
 import { requireAdmin } from "@/lib/server-auth";
 import type { ActionResult } from "@/types/action-result.types";
 

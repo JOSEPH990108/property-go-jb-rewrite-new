@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import type {
   TowerRow,
   LayoutRow,
@@ -77,7 +76,7 @@ export function Step5TowerConfig({
             const updateFG = (i: number, field: keyof FacingGroupRow, value: string) => {
               const updated = [...facingGroups];
               const idx = facingGroups.findIndex(
-                (fg, j) =>
+                (fg, _j) =>
                   fg.towerNumber === tower.towerNumber &&
                   facingGroups.filter((f) => f.towerNumber === tower.towerNumber).indexOf(fg) === i,
               );
@@ -88,7 +87,7 @@ export function Step5TowerConfig({
             const updateStack = (i: number, field: keyof StackRow, value: string) => {
               const updated = [...stacks];
               const idx = stacks.findIndex(
-                (s, j) =>
+                (s, _j) =>
                   s.towerNumber === tower.towerNumber &&
                   stacks.filter((st) => st.towerNumber === tower.towerNumber).indexOf(s) === i,
               );

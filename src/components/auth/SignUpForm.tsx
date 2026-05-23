@@ -99,9 +99,11 @@ function SignUpFormContent({ isModal = false }: SignUpFormProps) {
 
   const watchedReferralCode = watchReferral("referralCode");
 
+  const handleReferralInputChange = referral.handleInputChange;
+
   useEffect(() => {
-    referral.handleInputChange(watchedReferralCode);
-  }, [watchedReferralCode, referral.handleInputChange]);
+    handleReferralInputChange(watchedReferralCode);
+  }, [watchedReferralCode, handleReferralInputChange]);
 
   const getFullPhoneNumber = () => {
     const data = getValuesPhone();
@@ -160,7 +162,11 @@ function SignUpFormContent({ isModal = false }: SignUpFormProps) {
         const destination = res.redirectTo || callbackUrl;
 
         if (isModal) {
-          destination !== "/" ? (window.location.href = destination) : window.location.reload();
+          if (destination !== "/") {
+            window.location.href = destination;
+          } else {
+            window.location.reload();
+          }
         } else {
           show("Success!", "Redirecting...");
           window.location.href = destination;
@@ -211,7 +217,11 @@ function SignUpFormContent({ isModal = false }: SignUpFormProps) {
       const destination = updateRes.redirectTo || callbackUrl;
 
       if (isModal) {
-        destination !== "/" ? (window.location.href = destination) : window.location.reload();
+        if (destination !== "/") {
+          window.location.href = destination;
+        } else {
+          window.location.reload();
+        }
       } else {
         show("All Set!", "Redirecting...");
         window.location.href = destination;

@@ -7,8 +7,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAmortizationSchedule } from "@/hooks/useAmortizationSchedule";
 import { formatCurrency } from "@/lib/utils";
 
-// Helper for CSV Download
-const saveAs = typeof window !== "undefined" ? require("file-saver").saveAs : () => {};
+function downloadBlob(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+}
 
 export default function LoanAmortizationTable() {
   const schedule = useAmortizationSchedule();
@@ -47,7 +54,7 @@ export default function LoanAmortizationTable() {
       .map((r) => `${r.year},${r.month},${r.principal},${r.interest},${r.total},${r.balance}`)
       .join("\n");
     const blob = new Blob([header + body], { type: "text/csv;charset=utf-8" });
-    saveAs(blob, "amortization_schedule.csv");
+    downloadBlob(blob, "amortization_schedule.csv");
   };
 
   return (

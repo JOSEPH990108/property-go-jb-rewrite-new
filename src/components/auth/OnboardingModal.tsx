@@ -132,10 +132,12 @@ export default function OnboardingModal() {
     };
   }, [session, isPending, isDismissedToday]);
 
+  const handleReferralInputChange = referral.handleInputChange;
+
   // Reset referral status when code changes
   useEffect(() => {
-    referral.handleInputChange(watchedReferralCode);
-  }, [watchedReferralCode, referral.handleInputChange]);
+    handleReferralInputChange(watchedReferralCode);
+  }, [watchedReferralCode, handleReferralInputChange]);
 
   const onSubmit = async (data: ReferralFormData) => {
     setIsLoading(true);

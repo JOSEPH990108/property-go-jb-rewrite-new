@@ -1,15 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useTheme } from "@/hooks/useTheme";
+import { useIsClient } from "@/hooks/useIsClient";
 import { AnimatePresence, motion } from "framer-motion";
 import { Moon, Sun } from "lucide-react";
 
 export function ThemeToggleButton() {
   const { theme, toggleTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
+  const mounted = useIsClient();
 
   if (!mounted) {
     return <div aria-hidden className="border-border bg-muted h-11 w-11 rounded-full border" />;

@@ -7,7 +7,6 @@ import {
   Calendar,
   CircleDollarSign,
   Contact,
-  Database,
   FileText,
   Gift,
   Grid2x2,

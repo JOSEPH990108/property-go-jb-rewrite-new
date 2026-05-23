@@ -5,24 +5,18 @@ import { motion, type Variants } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
-  ArrowUpRight,
-  BookOpen,
   Building2,
   CheckCircle2,
   ChevronRight,
   HardHat,
-  HelpCircle,
   LayoutDashboard,
   MapPin,
-  MessageCircle,
-  Newspaper,
   Pencil,
   Plus,
   Search,
   Settings,
   Sparkles,
   Trash2,
-  UserPlus2,
   Users,
   Rocket,
   Home,
@@ -153,15 +147,6 @@ const dashboardTabs: Array<{
   },
 ];
 
-const utilityCards: Array<{ title: string; subtitle: string; icon: typeof MessageCircle }> = [
-  { title: "Community", subtitle: "Connect with operators", icon: MessageCircle },
-  { title: "Academy", subtitle: "Guides and playbooks", icon: BookOpen },
-  { title: "Help Center", subtitle: "Docs and support", icon: HelpCircle },
-  { title: "Partner Directory", subtitle: "Find implementation teams", icon: UserPlus2 },
-  { title: "Blog", subtitle: "Latest product notes", icon: Newspaper },
-  { title: "Use Cases", subtitle: "Explore proven workflow patterns", icon: Rocket },
-];
-
 const railUtilityIcons = [Home, Share2, Link2, Globe, Ellipsis];
 
 const workspaceChips = [
@@ -229,46 +214,6 @@ function formatCompactNumber(value: number) {
   return new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(
     value,
   );
-}
-
-function metricDelta(current: number, total: number) {
-  if (total <= 0) return "0% of portfolio";
-  return `${Math.round((current / total) * 100)}% of portfolio`;
-}
-
-function buildPropertyInsight(properties: AdminDashboardData["properties"]) {
-  const published = properties.filter((item) => item.isPublished).length;
-  const draft = properties.length - published;
-  const totalUnits = properties.reduce((sum, item) => sum + (item.totalUnits ?? 0), 0);
-  const averageUnits = properties.length ? Math.round(totalUnits / properties.length) : 0;
-  const latestLaunch = properties.reduce((max, item) => Math.max(max, item.launchYear ?? 0), 0);
-
-  return [
-    {
-      label: "Portfolio",
-      value: formatCompactNumber(properties.length),
-      note: `${formatCompactNumber(totalUnits)} scheduled units`,
-      tone: "dark" as const,
-    },
-    {
-      label: "Published",
-      value: formatCompactNumber(published),
-      note: metricDelta(published, properties.length),
-      tone: "lime" as const,
-    },
-    {
-      label: "Drafts",
-      value: formatCompactNumber(draft),
-      note: `${draft === 0 ? "Release ready" : "Needs review before launch"}`,
-      tone: "soft" as const,
-    },
-    {
-      label: "Avg Units",
-      value: formatCompactNumber(averageUnits),
-      note: latestLaunch ? `Latest launch ${latestLaunch}` : "Awaiting launch data",
-      tone: "soft" as const,
-    },
-  ];
 }
 
 function buildAgentInsight(agents: AdminDashboardData["agents"]) {
@@ -402,7 +347,6 @@ export function AdminPortal({ data }: Props) {
     },
     [],
   );
-  const propertyInsights = useMemo(() => buildPropertyInsight(properties), [properties]);
   const agentInsights = useMemo(() => buildAgentInsight(agents), [agents]);
   const portfolioMix = useMemo(() => buildPortfolioMix(properties), [properties]);
   const totalUnits = useMemo(
@@ -2113,18 +2057,6 @@ function InfoTile({ title, value }: { title: string; value: string }) {
     <div className="border-border bg-secondary rounded-[22px] border p-4">
       <div className="text-muted-foreground text-xs tracking-[0.22em] uppercase">{title}</div>
       <div className="font-lato text-foreground mt-2 text-sm leading-6 font-medium">{value}</div>
-    </div>
-  );
-}
-
-function SideMetric({ label, value, note }: { label: string; value: string; note: string }) {
-  return (
-    <div className="border-border bg-secondary rounded-[22px] border p-4">
-      <div className="text-muted-foreground text-xs tracking-[0.22em] uppercase">{label}</div>
-      <div className="font-lato text-foreground mt-2 text-2xl font-semibold tracking-[-0.04em]">
-        {value}
-      </div>
-      <p className="text-muted-foreground mt-2 text-sm leading-6">{note}</p>
     </div>
   );
 }

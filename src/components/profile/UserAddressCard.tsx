@@ -35,7 +35,7 @@ export function UserAddressCard({ nationality, userName }: UserAddressCardProps)
         toast.error("Failed to update location");
         // Revert on error could be implemented here
       }
-    } catch (error) {
+    } catch {
       toast.error("An error occurred");
     }
   }

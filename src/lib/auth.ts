@@ -38,7 +38,7 @@ export const auth = betterAuth({
     nextCookies(),
     phoneNumber({
       sendOTP: async ({ phoneNumber, code }) => {
-        console.log(`[SMS] Sending ${code} to ${phoneNumber}`);
+        console.warn(`[SMS] Sending ${code} to ${phoneNumber}`);
         await sendSMS(phoneNumber, `Your OTP code is ${code}`);
       },
       signUpOnVerification: {

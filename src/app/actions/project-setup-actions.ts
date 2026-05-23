@@ -1,7 +1,7 @@
 "use server";
 
 import { randomUUID } from "crypto";
-import { eq, asc } from "drizzle-orm";
+import { asc } from "drizzle-orm";
 import { db } from "@/db";
 import {
   projects,

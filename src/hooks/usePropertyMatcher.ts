@@ -29,7 +29,7 @@ export const usePropertyMatcher = () => {
   const calculateMatches = (): MatchedProject[] => {
     return MOCK_PROJECTS.map((p) => {
       let score = 0;
-      let reasons: string[] = [];
+      const reasons: string[] = [];
 
       // 1. HARD FILTERS (Deal Breakers)
       if (p.minPrice > answers.budget) return null;

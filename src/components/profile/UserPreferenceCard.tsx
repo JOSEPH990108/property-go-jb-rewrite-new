@@ -1,8 +1,9 @@
 // src\components\profile\UserPreferenceCard.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useTheme } from "next-themes";
+import { useIsClient } from "@/hooks/useIsClient";
 import { BaseCard } from "@/components/shared/base-card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -31,11 +32,7 @@ interface UserPreferenceCardProps {
 
 export function UserPreferenceCard({ preferences }: UserPreferenceCardProps) {
   const { setTheme, theme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useIsClient();
 
   const [language, setLanguage] = useState(preferences.language || "en");
   const [currency, setCurrency] = useState(preferences.currency || "MYR");

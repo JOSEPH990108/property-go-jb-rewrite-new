@@ -3,8 +3,7 @@
 
 import { useCallback, useEffect, useState, useTransition } from "react";
 import { flexRender, getCoreRowModel, useReactTable, type ColumnDef } from "@tanstack/react-table";
-import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Loader2, Pencil, Plus, Search, Trash2, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -19,7 +18,7 @@ import {
   type TableMetaResult,
   type ColumnMeta,
 } from "@/app/actions/admin-crud-actions";
-import { TABLE_REGISTRY, type ColumnOverride, type TableConfig } from "@/lib/admin-table-registry";
+import { TABLE_REGISTRY } from "@/lib/admin-table-registry";
 import {
   Dialog,
   DialogContent,

@@ -722,7 +722,6 @@ async function seed() {
     }
 
     // 3. MBW BOULEVARD
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_mbwBlvd] = await tx
       .insert(schema.projects)
       .values({
@@ -744,7 +743,6 @@ async function seed() {
       .returning();
 
     // 4. SUNWAY MAJESTIC
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_sunway] = await tx
       .insert(schema.projects)
       .values({
@@ -766,7 +764,6 @@ async function seed() {
       .returning();
 
     // 5. PARAGON
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_paragon] = await tx
       .insert(schema.projects)
       .values({

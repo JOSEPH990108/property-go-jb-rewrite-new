@@ -2,7 +2,7 @@
 "use server";
 
 import { db } from "@/db";
-import { appointments, appointmentStatuses, projects, user, roles } from "@/db/schema";
+import { appointments, appointmentStatuses, user, roles } from "@/db/schema";
 import { eq, and, lt, desc } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";

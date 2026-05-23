@@ -76,7 +76,7 @@ export function BookingForm({ projectId }: BookingFormProps) {
       } else {
         toast.error("Booking Failed", { description: res.error });
       }
-    } catch (error) {
+    } catch {
       toast.error("An unexpected error occurred");
     } finally {
       setIsLoading(false);
