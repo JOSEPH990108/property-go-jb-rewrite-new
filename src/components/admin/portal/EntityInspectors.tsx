@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { StateBlock } from "@/components/shared/StateBlock";
+import { StatusBadge } from "@/components/shared/StatusBadge";
 import { cn } from "@/lib/utils";
 
 type PropertyRow = AdminDashboardData["properties"][number];
@@ -87,16 +88,7 @@ export function PropertyInspector({ property, onEdit, onDelete }: PropertyInspec
                 </h3>
                 <p className="text-primary-foreground/65 mt-2 text-sm">/{property.slug}</p>
               </div>
-              <Badge
-                variant={property.isPublished ? "accent" : "outline"}
-                className={cn(
-                  property.isPublished
-                    ? ""
-                    : "border-primary-foreground/30 bg-primary-foreground/15 text-primary-foreground",
-                )}
-              >
-                {property.isPublished ? "Published" : "Draft"}
-              </Badge>
+              <StatusBadge status={property.isPublished ? "published" : "draft"} />
             </div>
 
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
@@ -246,7 +238,9 @@ export function DeveloperInspector({ developer, onEdit, onDelete }: DeveloperIns
                 </h3>
                 <p className="text-primary-foreground/65 mt-2 text-sm">/{developer.slug}</p>
               </div>
-              {developer.isFeatured && <Badge variant="accent">Featured</Badge>}
+              {developer.isFeatured && (
+                <StatusBadge status="featured" label="Featured" tone="accent" />
+              )}
             </div>
 
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
