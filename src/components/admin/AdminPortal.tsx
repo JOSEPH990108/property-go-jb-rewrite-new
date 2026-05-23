@@ -6,14 +6,12 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   Building2,
-  CheckCircle2,
   ChevronRight,
   HardHat,
   LayoutDashboard,
   MapPin,
   Pencil,
   Plus,
-  Search,
   Settings,
   Sparkles,
   Trash2,
@@ -46,6 +44,11 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { FieldShell } from "@/components/shared/FieldShell";
+import { FilterChip } from "@/components/shared/FilterChip";
+import { FilterToolbar } from "@/components/shared/FilterToolbar";
+import { SearchField } from "@/components/shared/SearchField";
+import { StateBlock } from "@/components/shared/StateBlock";
 import {
   Dialog,
   DialogContent,
@@ -55,7 +58,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -833,21 +835,27 @@ export function AdminPortal({ data }: Props) {
                     title="Project portfolio"
                     description="Properties grouped by developer. Click a card to inspect or edit."
                   >
-                    <div className="mb-4 flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
-                      <SearchField
-                        value={propertyQuery}
-                        placeholder="Search properties, areas, developers, slugs..."
-                        onChange={setPropertyQuery}
-                      />
-                      <div className="flex flex-wrap gap-2">
-                        {(["all", "published", "draft"] as PropertyFilter[]).map((filter) => (
-                          <FilterChip
-                            key={filter}
-                            active={propertyFilter === filter}
-                            onClick={() => setPropertyFilter(filter)}
-                            label={filter}
-                          />
-                        ))}
+                    <FilterToolbar
+                      className="mb-4"
+                      search={
+                        <SearchField
+                          value={propertyQuery}
+                          placeholder="Search properties, areas, developers, slugs..."
+                          onChange={setPropertyQuery}
+                          inputClassName="border-border bg-card h-11 rounded-full pl-11 text-sm shadow-none"
+                        />
+                      }
+                      filters={(["all", "published", "draft"] as PropertyFilter[]).map((filter) => (
+                        <FilterChip
+                          key={filter}
+                          active={propertyFilter === filter}
+                          onClick={() => setPropertyFilter(filter)}
+                          className="capitalize"
+                        >
+                          {filter}
+                        </FilterChip>
+                      ))}
+                      actions={
                         <Button
                           variant="outline"
                           className="border-border bg-card rounded-full px-4"
@@ -856,8 +864,8 @@ export function AdminPortal({ data }: Props) {
                           <Plus className="h-4 w-4" />
                           New Property
                         </Button>
-                      </div>
-                    </div>
+                      }
+                    />
 
                     <ScrollArea className="h-[680px] pr-3">
                       {propertiesByDeveloper.length ? (
@@ -892,11 +900,12 @@ export function AdminPortal({ data }: Props) {
                           ))}
                         </div>
                       ) : (
-                        <EmptyState
+                        <StateBlock
                           title="No properties match this view"
                           description="Try clearing filters or create a new property record."
-                          actionLabel="New Property"
-                          onAction={openNewProperty}
+                          density="compact"
+                          className="border-border bg-secondary rounded-[24px]"
+                          action={{ label: "New Property", onClick: openNewProperty }}
                         />
                       )}
                     </ScrollArea>
@@ -925,21 +934,27 @@ export function AdminPortal({ data }: Props) {
                     title="Agent directory"
                     description="A dynamic roster for communications, agencies, and compliance data."
                   >
-                    <div className="mb-4 flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
-                      <SearchField
-                        value={agentQuery}
-                        placeholder="Search by agent, agency, REN, or email..."
-                        onChange={setAgentQuery}
-                      />
-                      <Button
-                        variant="outline"
-                        className="border-border bg-card rounded-full px-4"
-                        onClick={openNewAgent}
-                      >
-                        <Plus className="h-4 w-4" />
-                        Add Agent
-                      </Button>
-                    </div>
+                    <FilterToolbar
+                      className="mb-4"
+                      search={
+                        <SearchField
+                          value={agentQuery}
+                          placeholder="Search by agent, agency, REN, or email..."
+                          onChange={setAgentQuery}
+                          inputClassName="border-border bg-card h-11 rounded-full pl-11 text-sm shadow-none"
+                        />
+                      }
+                      actions={
+                        <Button
+                          variant="outline"
+                          className="border-border bg-card rounded-full px-4"
+                          onClick={openNewAgent}
+                        >
+                          <Plus className="h-4 w-4" />
+                          Add Agent
+                        </Button>
+                      }
+                    />
 
                     <ScrollArea className="h-[620px] pr-3">
                       <div className="grid gap-3">
@@ -956,11 +971,12 @@ export function AdminPortal({ data }: Props) {
                             />
                           ))
                         ) : (
-                          <EmptyState
+                          <StateBlock
                             title="No agents match this view"
                             description="Adjust the search or add a new roster entry."
-                            actionLabel="New Agent"
-                            onAction={openNewAgent}
+                            density="compact"
+                            className="border-border bg-secondary rounded-[24px]"
+                            action={{ label: "New Agent", onClick: openNewAgent }}
                           />
                         )}
                       </div>
@@ -987,21 +1003,27 @@ export function AdminPortal({ data }: Props) {
                     title="Developer directory"
                     description="Manage property developers, legal entities, and featured flags."
                   >
-                    <div className="mb-4 flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
-                      <SearchField
-                        value={developerQuery}
-                        placeholder="Search by name, slug, legal name, or country..."
-                        onChange={setDeveloperQuery}
-                      />
-                      <Button
-                        variant="outline"
-                        className="border-border bg-card rounded-full px-4"
-                        onClick={openNewDeveloper}
-                      >
-                        <Plus className="h-4 w-4" />
-                        Add Developer
-                      </Button>
-                    </div>
+                    <FilterToolbar
+                      className="mb-4"
+                      search={
+                        <SearchField
+                          value={developerQuery}
+                          placeholder="Search by name, slug, legal name, or country..."
+                          onChange={setDeveloperQuery}
+                          inputClassName="border-border bg-card h-11 rounded-full pl-11 text-sm shadow-none"
+                        />
+                      }
+                      actions={
+                        <Button
+                          variant="outline"
+                          className="border-border bg-card rounded-full px-4"
+                          onClick={openNewDeveloper}
+                        >
+                          <Plus className="h-4 w-4" />
+                          Add Developer
+                        </Button>
+                      }
+                    />
 
                     <ScrollArea className="h-[620px] pr-3">
                       <div className="grid gap-3">
@@ -1018,11 +1040,12 @@ export function AdminPortal({ data }: Props) {
                             />
                           ))
                         ) : (
-                          <EmptyState
+                          <StateBlock
                             title="No developers match this view"
                             description="Adjust the search or add a new developer entry."
-                            actionLabel="New Developer"
-                            onAction={openNewDeveloper}
+                            density="compact"
+                            className="border-border bg-secondary rounded-[24px]"
+                            action={{ label: "New Developer", onClick: openNewDeveloper }}
                           />
                         )}
                       </div>
@@ -1613,53 +1636,6 @@ function MiniPropertyRow({
   );
 }
 
-function SearchField({
-  value,
-  placeholder,
-  onChange,
-}: {
-  value: string;
-  placeholder: string;
-  onChange: (value: string) => void;
-}) {
-  return (
-    <div className="relative w-full xl:max-w-md">
-      <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2" />
-      <Input
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        placeholder={placeholder}
-        className="border-border bg-card h-11 rounded-full pl-11 text-sm shadow-none"
-      />
-    </div>
-  );
-}
-
-function FilterChip({
-  active,
-  onClick,
-  label,
-}: {
-  active: boolean;
-  onClick: () => void;
-  label: string;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "rounded-full px-4 py-2 text-sm capitalize transition duration-200",
-        active
-          ? "bg-primary text-primary-foreground"
-          : "bg-card text-muted-foreground hover:bg-accent",
-      )}
-    >
-      {label}
-    </button>
-  );
-}
-
 function PropertyCard({
   property,
   selected,
@@ -1970,9 +1946,11 @@ function PropertyInspector({
           </div>
         </div>
       ) : (
-        <EmptyState
+        <StateBlock
           title="No property selected"
           description="Choose a record from the roster to inspect its metadata and publishing state."
+          density="compact"
+          className="border-border bg-secondary rounded-[24px]"
         />
       )}
     </SurfaceCard>
@@ -2034,9 +2012,11 @@ function AgentInspector({
           </div>
         </div>
       ) : (
-        <EmptyState
+        <StateBlock
           title="No agent selected"
           description="Select a roster entry to review agency, REN, and communication data."
+          density="compact"
+          className="border-border bg-secondary rounded-[24px]"
         />
       )}
     </SurfaceCard>
@@ -2061,60 +2041,10 @@ function InfoTile({ title, value }: { title: string; value: string }) {
   );
 }
 
-function EmptyState({
-  title,
-  description,
-  actionLabel,
-  onAction,
-}: {
-  title: string;
-  description: string;
-  actionLabel?: string;
-  onAction?: () => void;
-}) {
-  return (
-    <div className="border-border bg-secondary rounded-[24px] border border-dashed p-6 text-center">
-      <div className="bg-card text-muted-foreground mx-auto flex h-12 w-12 items-center justify-center rounded-full">
-        <CheckCircle2 className="h-5 w-5" />
-      </div>
-      <h4 className="font-lato text-foreground mt-4 text-lg font-semibold tracking-[-0.03em]">
-        {title}
-      </h4>
-      <p className="text-muted-foreground mt-2 text-sm leading-6">{description}</p>
-      {actionLabel && onAction ? (
-        <Button
-          variant="outline"
-          className="border-border bg-card mt-4 rounded-full px-4"
-          onClick={onAction}
-        >
-          {actionLabel}
-        </Button>
-      ) : null}
-    </div>
-  );
-}
-
 function EmptyChartState({ message }: { message: string }) {
   return (
     <div className="border-border bg-secondary text-muted-foreground rounded-[24px] border border-dashed p-6 text-sm">
       {message}
-    </div>
-  );
-}
-
-function FieldShell({
-  label,
-  children,
-  className,
-}: {
-  label: string;
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <div className={className}>
-      <Label className="text-foreground mb-2 block text-sm font-medium">{label}</Label>
-      {children}
     </div>
   );
 }
@@ -2599,9 +2529,11 @@ function DeveloperInspector({
           </div>
         </div>
       ) : (
-        <EmptyState
+        <StateBlock
           title="No developer selected"
           description="Select a developer from the directory to inspect their details."
+          density="compact"
+          className="border-border bg-secondary rounded-[24px]"
         />
       )}
     </SurfaceCard>
