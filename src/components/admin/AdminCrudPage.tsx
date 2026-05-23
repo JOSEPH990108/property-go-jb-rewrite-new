@@ -19,6 +19,7 @@ import {
   type ColumnMeta,
 } from "@/app/actions/admin-crud-actions";
 import { AdminRowActions } from "@/components/admin/shared/AdminRowActions";
+import { AdminTableShell } from "@/components/admin/shared/AdminTableShell";
 import { AdminTableToolbar } from "@/components/admin/shared/AdminTableToolbar";
 import { TABLE_REGISTRY } from "@/lib/admin-table-registry";
 import {
@@ -432,96 +433,93 @@ export function AdminCrudPage({ tableName }: AdminCrudPageProps) {
   return (
     <>
       {/* ── Data Table ─────────────────────────────────────────────────── */}
-      <section className="border-border bg-card/95 rounded-[28px] border p-5 shadow-[0_20px_60px_rgba(15,23,42,0.1)] backdrop-blur-md">
-        <AdminTableToolbar
-          eyebrow="CRUD Table"
-          title={config.label}
-          description={config.description}
-          searchValue={search}
-          onSearchChange={setSearch}
-          onCreate={openCreate}
-        />
-
-        {/* Table */}
-        <div className="border-border bg-background mt-5 overflow-hidden rounded-[24px] border">
-          <div className="overflow-x-auto">
-            <table className="divide-border text-foreground min-w-full divide-y text-left text-sm">
-              <thead className="bg-muted/35 text-foreground/60 text-xs tracking-[0.24em] uppercase">
-                {table.getHeaderGroups().map((hg) => (
-                  <tr key={hg.id}>
-                    {hg.headers.map((header) => (
-                      <th key={header.id} className="px-4 py-4 font-medium">
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(header.column.columnDef.header, header.getContext())}
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
-              <tbody className="divide-border/70 divide-y">
-                {isPending && !data ? (
-                  <tr>
-                    <td colSpan={tableColumns.length} className="px-4 py-10 text-center">
-                      <Loader2 className="text-primary mx-auto h-5 w-5 animate-spin" />
-                    </td>
-                  </tr>
-                ) : table.getRowModel().rows.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan={tableColumns.length}
-                      className="text-foreground/60 px-4 py-10 text-center text-sm"
-                    >
-                      No records found.
-                    </td>
-                  </tr>
-                ) : (
-                  table.getRowModel().rows.map((row) => (
-                    <tr key={row.id} className="hover:bg-primary/5 transition">
-                      {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id} className="px-4 py-3.5 align-middle">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </td>
-                      ))}
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Pagination */}
-        {data && data.totalPages > 1 && (
-          <div className="mt-4 flex items-center justify-between">
-            <p className="text-foreground/60 text-sm">
-              Showing {(data.page - 1) * data.limit + 1}–
-              {Math.min(data.page * data.limit, data.total)} of {data.total}
-            </p>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page <= 1}
-                className="border-border bg-background text-foreground hover:bg-muted/50 inline-flex h-9 w-9 items-center justify-center rounded-xl border transition disabled:opacity-40"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </button>
-              <span className="text-foreground flex h-9 items-center px-3 text-sm">
-                {data.page} / {data.totalPages}
-              </span>
-              <button
-                type="button"
-                onClick={() => setPage((p) => Math.min(data.totalPages, p + 1))}
-                disabled={page >= data.totalPages}
-                className="border-border bg-background text-foreground hover:bg-muted/50 inline-flex h-9 w-9 items-center justify-center rounded-xl border transition disabled:opacity-40"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </button>
+      <AdminTableShell
+        toolbar={
+          <AdminTableToolbar
+            eyebrow="CRUD Table"
+            title={config.label}
+            description={config.description}
+            searchValue={search}
+            onSearchChange={setSearch}
+            onCreate={openCreate}
+          />
+        }
+        pagination={
+          data && data.totalPages > 1 ? (
+            <div className="mt-4 flex items-center justify-between">
+              <p className="text-foreground/60 text-sm">
+                Showing {(data.page - 1) * data.limit + 1}–
+                {Math.min(data.page * data.limit, data.total)} of {data.total}
+              </p>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page <= 1}
+                  className="border-border bg-background text-foreground hover:bg-muted/50 inline-flex h-9 w-9 items-center justify-center rounded-xl border transition disabled:opacity-40"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+                <span className="text-foreground flex h-9 items-center px-3 text-sm">
+                  {data.page} / {data.totalPages}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setPage((p) => Math.min(data.totalPages, p + 1))}
+                  disabled={page >= data.totalPages}
+                  className="border-border bg-background text-foreground hover:bg-muted/50 inline-flex h-9 w-9 items-center justify-center rounded-xl border transition disabled:opacity-40"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
             </div>
-          </div>
-        )}
-      </section>
+          ) : null
+        }
+      >
+        <table className="divide-border text-foreground min-w-full divide-y text-left text-sm">
+          <thead className="bg-muted/35 text-foreground/60 text-xs tracking-[0.24em] uppercase">
+            {table.getHeaderGroups().map((hg) => (
+              <tr key={hg.id}>
+                {hg.headers.map((header) => (
+                  <th key={header.id} className="px-4 py-4 font-medium">
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(header.column.columnDef.header, header.getContext())}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody className="divide-border/70 divide-y">
+            {isPending && !data ? (
+              <tr>
+                <td colSpan={tableColumns.length} className="px-4 py-10 text-center">
+                  <Loader2 className="text-primary mx-auto h-5 w-5 animate-spin" />
+                </td>
+              </tr>
+            ) : table.getRowModel().rows.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={tableColumns.length}
+                  className="text-foreground/60 px-4 py-10 text-center text-sm"
+                >
+                  No records found.
+                </td>
+              </tr>
+            ) : (
+              table.getRowModel().rows.map((row) => (
+                <tr key={row.id} className="hover:bg-primary/5 transition">
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id} className="px-4 py-3.5 align-middle">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </AdminTableShell>
 
       {/* ── Create / Edit Dialog ───────────────────────────────────────── */}
       <Dialog open={dialogMode !== null} onOpenChange={(open) => !open && setDialogMode(null)}>
