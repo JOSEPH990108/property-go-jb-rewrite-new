@@ -2,7 +2,6 @@
 "use client";
 
 import { Calculator, DollarSign, Settings2, RotateCcw, Calendar } from "lucide-react";
-import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { motion } from "framer-motion";
 
@@ -11,6 +10,13 @@ import { useLoanCalculatorStore } from "@/stores/loan-calculator-store";
 import { useLoanCalculation } from "@/hooks/useLoanCalculation";
 import { formatCurrency } from "@/lib/utils";
 import LoanAmortizationTable from "./LoanAmortizationTable";
+import {
+  BreakdownRow,
+  CalculatorMetricCard,
+  CalculatorSection,
+  CalculatorShell,
+  SliderNumberField,
+} from "@/components/shared/calculator/CalculatorPrimitives";
 
 // --- SVG Math for Pie Chart (From LoanStatistic.tsx) ---
 function polarToCartesian(
@@ -62,119 +68,77 @@ export default function ProMortgageCalculator() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-7xl p-4 pb-20 font-sans text-zinc-900 md:p-6 dark:text-zinc-100">
-      {/* Header */}
-      <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
-        <div className="flex items-center gap-3">
-          <div className="rounded-xl bg-indigo-600 p-3 shadow-lg shadow-indigo-600/20">
-            <Calculator className="h-6 w-6 text-white" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Pro Mortgage Calculator</h1>
-            <p className="text-sm text-zinc-500">Integrated Analysis & Amortization</p>
-          </div>
-        </div>
+    <CalculatorShell
+      title="Pro Mortgage Calculator"
+      description="Integrated Analysis & Amortization"
+      icon={Calculator}
+      action={
         <button
           onClick={handleReset}
           className="flex items-center justify-center gap-2 rounded-lg bg-zinc-100 px-4 py-2 text-xs font-medium transition hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700"
         >
           <RotateCcw className="h-3 w-3" /> Reset All
         </button>
-      </div>
-
+      }
+    >
       <div className="grid grid-cols-1 gap-8 xl:grid-cols-12">
         {/* --- LEFT COLUMN: INPUTS --- */}
         <div className="space-y-6 xl:col-span-4">
           {/* 1. Core Inputs */}
-          <div className="space-y-6 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-            <h3 className="flex items-center gap-2 font-bold text-zinc-800 dark:text-zinc-200">
-              <Settings2 className="h-4 w-4" /> Loan Parameters
-            </h3>
-
+          <CalculatorSection title="Loan Parameters" icon={Settings2}>
             {/* Price */}
-            <div className="space-y-3">
-              <label className="text-xs font-bold tracking-wider text-zinc-400 uppercase">
-                Property Price
-              </label>
-              <div className="relative">
-                <span className="absolute top-1/2 left-4 -translate-y-1/2 text-sm font-medium text-zinc-400">
-                  RM
-                </span>
-                <input
-                  type="number"
-                  value={store.spaPrice}
-                  onChange={(e) => store.setSpaPrice(Number(e.target.value))}
-                  className="w-full rounded-xl border border-zinc-200 bg-zinc-50 py-3 pr-4 pl-10 font-mono text-lg font-bold transition-all outline-none focus:ring-2 focus:ring-indigo-500 dark:border-zinc-800 dark:bg-black"
-                />
-              </div>
-              <Slider
-                min={100000}
-                max={3000000}
-                step={10000}
-                value={[store.spaPrice]}
-                onValueChange={([v]) => store.setSpaPrice(v)}
-                className="py-2"
-              />
-            </div>
+            <SliderNumberField
+              label="Property Price"
+              value={store.spaPrice}
+              onChange={store.setSpaPrice}
+              min={100000}
+              max={3000000}
+              step={10000}
+              prefix="RM"
+            />
 
             {/* Downpayment */}
-            <div className="space-y-3">
-              <div className="flex justify-between">
-                <label className="text-xs font-bold tracking-wider text-zinc-400 uppercase">
-                  Down Payment
-                </label>
+            <SliderNumberField
+              label="Down Payment"
+              value={store.downPaymentRate}
+              onChange={store.setDownPaymentRate}
+              min={0}
+              max={40}
+              step={1}
+              suffix="%"
+              badge={
                 <span className="rounded bg-indigo-50 px-2 py-0.5 font-mono text-xs font-bold text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-400">
                   {formatCurrency(results.downPaymentAmount)}
                 </span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Slider
-                  min={0}
-                  max={40}
-                  step={1}
-                  value={[store.downPaymentRate]}
-                  onValueChange={([v]) => store.setDownPaymentRate(v)}
-                  className="flex-1"
-                />
-                <div className="relative w-20">
-                  <input
-                    type="number"
-                    value={store.downPaymentRate}
-                    onChange={(e) => store.setDownPaymentRate(Number(e.target.value))}
-                    className="w-full rounded-lg border border-zinc-200 bg-zinc-50 py-2 pr-6 pl-2 text-center text-sm font-bold dark:border-zinc-800 dark:bg-black"
-                  />
-                  <span className="absolute top-1/2 right-2 -translate-y-1/2 text-xs text-zinc-400">
-                    %
-                  </span>
-                </div>
-              </div>
-            </div>
+              }
+              inputClassName="text-center text-sm"
+            />
 
             {/* Rate & Tenure */}
             <div className="grid grid-cols-2 gap-4">
-              <InputGroup
+              <SliderNumberField
                 label="Interest Rate"
                 suffix="%"
                 value={store.interestRate}
                 onChange={store.setInterestRate}
                 step={0.05}
+                showSlider={false}
+                inputClassName="py-2.5 text-sm"
               />
-              <InputGroup
+              <SliderNumberField
                 label="Tenure"
                 suffix="Yrs"
                 value={store.tenureYears}
                 onChange={store.setTenureYears}
                 max={35}
+                showSlider={false}
+                inputClassName="py-2.5 text-sm"
               />
             </div>
-          </div>
+          </CalculatorSection>
 
           {/* 2. Advanced Details (Sinking Fund & Rebates) */}
-          <div className="space-y-5 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-            <h3 className="flex items-center gap-2 font-bold text-zinc-800 dark:text-zinc-200">
-              <DollarSign className="h-4 w-4" /> Advanced Costs
-            </h3>
-
+          <CalculatorSection title="Advanced Costs" icon={DollarSign} contentClassName="space-y-5">
             {/* Sinking Fund Inputs */}
             <div className="space-y-3 rounded-xl bg-zinc-50 p-3 dark:bg-zinc-800/50">
               <div className="flex items-center justify-between">
@@ -256,7 +220,7 @@ export default function ProMortgageCalculator() {
                 )}
               </div>
             </div>
-          </div>
+          </CalculatorSection>
         </div>
 
         {/* --- RIGHT COLUMN: ANALYTICS & RESULTS --- */}
@@ -264,38 +228,25 @@ export default function ProMortgageCalculator() {
           {/* 1. Dashboard Row: Repayment + Pie Chart */}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {/* Card A: Monthly Payment & Dates */}
-            <div className="relative flex flex-col justify-between overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-900 to-zinc-900 p-6 text-white shadow-xl">
-              {/* Background Decor */}
-              <div className="pointer-events-none absolute top-0 right-0 -mt-10 -mr-10 h-40 w-40 rounded-full bg-indigo-500/20 blur-3xl" />
-
-              <div>
-                <p className="mb-1 text-xs font-bold tracking-widest text-indigo-200 uppercase">
-                  Estimated Monthly
-                </p>
-                <h2 className="text-4xl font-bold tracking-tighter text-white sm:text-5xl">
-                  {formatCurrency(results.monthlyInstallment)}
-                </h2>
+            <CalculatorMetricCard
+              label="Estimated Monthly"
+              value={formatCurrency(results.monthlyInstallment)}
+            >
+              <div className="flex items-center justify-between border-b border-white/10 pb-2 text-sm">
+                <span className="flex items-center gap-2 text-indigo-200">
+                  <Calendar className="h-4 w-4" /> Last Payment
+                </span>
+                <span className="font-mono font-bold">
+                  {results.lastPaymentDate ? results.lastPaymentDate.toLocaleDateString() : "-"}
+                </span>
               </div>
-
-              <div className="mt-8 space-y-3">
-                <div className="flex items-center justify-between border-b border-white/10 pb-2 text-sm">
-                  <span className="flex items-center gap-2 text-indigo-200">
-                    <Calendar className="h-4 w-4" /> Last Payment
-                  </span>
-                  <span className="font-mono font-bold">
-                    {results.lastPaymentDate ? results.lastPaymentDate.toLocaleDateString() : "-"}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="flex items-center gap-2 text-indigo-200">
-                    <DollarSign className="h-4 w-4" /> Total Interest
-                  </span>
-                  <span className="font-mono font-bold">
-                    {formatCurrency(results.totalInterest)}
-                  </span>
-                </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="flex items-center gap-2 text-indigo-200">
+                  <DollarSign className="h-4 w-4" /> Total Interest
+                </span>
+                <span className="font-mono font-bold">{formatCurrency(results.totalInterest)}</span>
               </div>
-            </div>
+            </CalculatorMetricCard>
 
             {/* Card B: Visual Breakdown (Pie Chart from LoanStatistic) */}
             <div className="relative flex flex-col items-center justify-center rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
@@ -389,39 +340,11 @@ export default function ProMortgageCalculator() {
           </div>
         </div>
       </div>
-    </div>
+    </CalculatorShell>
   );
 }
 
 // --- Helper Components ---
-
-interface InputGroupProps {
-  label: string;
-  suffix: string;
-  value: number;
-  onChange: (v: number) => void;
-  step?: number;
-  max?: number;
-}
-
-const InputGroup = ({ label, suffix, value, onChange, step = 1, max }: InputGroupProps) => (
-  <div className="space-y-1">
-    <label className="text-xs font-bold tracking-wider text-zinc-400 uppercase">{label}</label>
-    <div className="relative">
-      <input
-        type="number"
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        step={step}
-        max={max}
-        className="w-full rounded-xl border border-zinc-200 bg-zinc-50 py-2.5 pr-8 pl-3 text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500 dark:border-zinc-800 dark:bg-black"
-      />
-      <span className="absolute top-1/2 right-3 -translate-y-1/2 text-xs font-bold text-zinc-400">
-        {suffix}
-      </span>
-    </div>
-  </div>
-);
 
 const ToggleRow = ({
   label,
@@ -453,25 +376,18 @@ const CostRow = ({
   highlight?: boolean;
   note?: string;
 }) => (
-  <div className="flex items-center justify-between text-sm">
-    <div className="flex items-center gap-1">
-      <span
-        className={`${highlight ? "font-bold text-zinc-900 dark:text-zinc-100" : "text-zinc-500 dark:text-zinc-400"}`}
-      >
-        {label}
-      </span>
-      {note && <span className="text-[10px] text-zinc-400">{note}</span>}
-    </div>
-    <span
-      className={`font-mono ${highlight ? "font-bold text-zinc-900 dark:text-white" : "text-zinc-700 dark:text-zinc-300"}`}
-    >
-      {value === 0 ? (
+  <BreakdownRow
+    label={label}
+    note={note}
+    highlight={highlight}
+    value={
+      value === 0 ? (
         <span className="rounded bg-green-100 px-2 py-0.5 text-[10px] font-bold text-green-600 uppercase dark:bg-green-900/30">
           Waived
         </span>
       ) : (
         formatCurrency(value)
-      )}
-    </span>
-  </div>
+      )
+    }
+  />
 );
