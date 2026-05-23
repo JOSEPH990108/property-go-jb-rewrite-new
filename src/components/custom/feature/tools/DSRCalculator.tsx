@@ -1,9 +1,15 @@
 // src\components\custom\feature\tools\DSRCalculator.tsx
 "use client";
 
-import { useState, useMemo, useEffect, type ElementType } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
 import { CreditCard, Wallet, ArrowRightLeft, Settings2, RefreshCw, TrendingUp } from "lucide-react";
+
+import {
+  BreakdownRow,
+  CalculatorSection,
+  CalculatorShell,
+} from "@/components/shared/calculator/CalculatorPrimitives";
 
 // --- Types ---
 type CalculatorMode = "MY" | "SG";
@@ -127,31 +133,27 @@ export default function DsrCalculatorLive() {
   const currentCurrency = mode === "SG" ? "SGD" : "MYR";
 
   return (
-    <div className="mx-auto min-h-[600px] w-full max-w-5xl rounded-3xl border border-zinc-800 bg-zinc-950 p-4 font-sans text-zinc-100 shadow-2xl md:p-8">
-      {/* --- Header --- */}
-      <div className="mb-8 flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white">Loan Eligibility</h1>
-          <div className="mt-1 flex items-center gap-2">
-            <p className="text-sm text-zinc-400">
-              {mode === "SG" ? "Cross-Border Calculation" : "Standard Calculation"}
-            </p>
-            {mode === "SG" && (
-              <div className="flex items-center gap-2 rounded border border-blue-900/30 bg-blue-900/20 px-2 py-0.5 text-xs text-blue-300">
-                <span>Rate: {exchangeRate.toFixed(4)}</span>
-                <button
-                  onClick={fetchLiveRate}
-                  disabled={isLoadingRate}
-                  className="transition-colors hover:text-white"
-                >
-                  <RefreshCw className={`h-3 w-3 ${isLoadingRate ? "animate-spin" : ""}`} />
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Country Toggle */}
+    <CalculatorShell
+      title="Loan Eligibility"
+      description={
+        <span className="flex items-center gap-2">
+          <span>{mode === "SG" ? "Cross-Border Calculation" : "Standard Calculation"}</span>
+          {mode === "SG" && (
+            <span className="flex items-center gap-2 rounded border border-blue-900/30 bg-blue-900/20 px-2 py-0.5 text-xs text-blue-300">
+              <span>Rate: {exchangeRate.toFixed(4)}</span>
+              <button
+                onClick={fetchLiveRate}
+                disabled={isLoadingRate}
+                className="transition-colors hover:text-white"
+              >
+                <RefreshCw className={`h-3 w-3 ${isLoadingRate ? "animate-spin" : ""}`} />
+              </button>
+            </span>
+          )}
+        </span>
+      }
+      icon={Wallet}
+      action={
         <div className="relative flex items-center rounded-xl border border-zinc-800 bg-zinc-900 p-1">
           <motion.div
             className="absolute top-1 bottom-1 w-[120px] rounded-lg bg-zinc-800 shadow-sm"
@@ -172,8 +174,9 @@ export default function DsrCalculatorLive() {
             🇸🇬 Singapore
           </button>
         </div>
-      </div>
-
+      }
+      className="min-h-[600px] max-w-5xl rounded-3xl border border-zinc-800 bg-zinc-950 p-4 text-zinc-100 shadow-2xl md:p-8"
+    >
       {/* Mobile Tabs */}
       <div className="mb-6 flex w-full rounded-lg border border-zinc-800 bg-zinc-900 p-1 md:hidden">
         <button
@@ -193,118 +196,124 @@ export default function DsrCalculatorLive() {
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
         {/* --- LEFT: Inputs --- */}
         <div className="space-y-8 lg:col-span-7">
-          <div className={`${activeTab === "income" ? "block" : "hidden md:block"}`}>
-            <SectionHeader icon={Wallet} title={`Monthly Income (${currentCurrency})`} />
-            <div className="mt-6 space-y-6">
-              <CustomSlider
-                label="Basic Salary"
-                value={values.basicSalary}
-                max={20000}
-                currency={currentCurrency}
-                exchangeRate={mode === "SG" ? exchangeRate : undefined}
-                onChange={(v) => updateVal("basicSalary", v)}
-              />
-              <CustomSlider
-                label="Fixed Allowance"
-                value={values.fixedAllowance}
-                max={5000}
-                currency={currentCurrency}
-                exchangeRate={mode === "SG" ? exchangeRate : undefined}
-                onChange={(v) => updateVal("fixedAllowance", v)}
-              />
+          <CalculatorSection
+            title={`Monthly Income (${currentCurrency})`}
+            icon={Wallet}
+            tone="dark"
+            className={`${activeTab === "income" ? "block" : "hidden md:block"} border-0 bg-transparent p-0 shadow-none`}
+            contentClassName="space-y-6"
+          >
+            <CustomSlider
+              label="Basic Salary"
+              value={values.basicSalary}
+              max={20000}
+              currency={currentCurrency}
+              exchangeRate={mode === "SG" ? exchangeRate : undefined}
+              onChange={(v) => updateVal("basicSalary", v)}
+            />
+            <CustomSlider
+              label="Fixed Allowance"
+              value={values.fixedAllowance}
+              max={5000}
+              currency={currentCurrency}
+              exchangeRate={mode === "SG" ? exchangeRate : undefined}
+              onChange={(v) => updateVal("fixedAllowance", v)}
+            />
 
-              <div className="relative overflow-hidden rounded-xl border border-zinc-800/50 bg-zinc-900/50 p-4">
-                <div className="absolute top-0 left-0 h-full w-1 bg-blue-500/50" />
-                <div className="mb-2 flex justify-between">
-                  <label className="text-sm font-medium text-zinc-300">Commission / OT</label>
-                  <span className="rounded bg-blue-500/10 px-2 py-1 text-[10px] font-bold tracking-wider text-blue-400 uppercase">
-                    Recognized @ {values.variableRecognition}%
-                  </span>
-                </div>
-                <CustomSlider
-                  label=""
-                  value={values.variableIncome}
-                  max={15000}
-                  currency={currentCurrency}
-                  exchangeRate={mode === "SG" ? exchangeRate : undefined}
-                  onChange={(v) => updateVal("variableIncome", v)}
-                  hideLabel
-                />
-                <div className="mt-4 flex gap-2">
-                  {[50, 80, 100].map((pct) => (
-                    <button
-                      key={pct}
-                      onClick={() => updateVal("variableRecognition", pct)}
-                      className={`rounded-lg border px-3 py-1.5 text-xs transition-all ${
-                        values.variableRecognition === pct
-                          ? "border-blue-500 bg-blue-600 font-bold text-white shadow-lg shadow-blue-900/20"
-                          : "border-zinc-700 bg-zinc-800 text-zinc-400 hover:border-zinc-500"
-                      }`}
-                    >
-                      {pct}%
-                    </button>
-                  ))}
-                </div>
+            <div className="relative overflow-hidden rounded-xl border border-zinc-800/50 bg-zinc-900/50 p-4">
+              <div className="absolute top-0 left-0 h-full w-1 bg-blue-500/50" />
+              <div className="mb-2 flex justify-between">
+                <label className="text-sm font-medium text-zinc-300">Commission / OT</label>
+                <span className="rounded bg-blue-500/10 px-2 py-1 text-[10px] font-bold tracking-wider text-blue-400 uppercase">
+                  Recognized @ {values.variableRecognition}%
+                </span>
+              </div>
+              <CustomSlider
+                label=""
+                value={values.variableIncome}
+                max={15000}
+                currency={currentCurrency}
+                exchangeRate={mode === "SG" ? exchangeRate : undefined}
+                onChange={(v) => updateVal("variableIncome", v)}
+                hideLabel
+              />
+              <div className="mt-4 flex gap-2">
+                {[50, 80, 100].map((pct) => (
+                  <button
+                    key={pct}
+                    onClick={() => updateVal("variableRecognition", pct)}
+                    className={`rounded-lg border px-3 py-1.5 text-xs transition-all ${
+                      values.variableRecognition === pct
+                        ? "border-blue-500 bg-blue-600 font-bold text-white shadow-lg shadow-blue-900/20"
+                        : "border-zinc-700 bg-zinc-800 text-zinc-400 hover:border-zinc-500"
+                    }`}
+                  >
+                    {pct}%
+                  </button>
+                ))}
               </div>
             </div>
-          </div>
+          </CalculatorSection>
 
-          <div className={`${activeTab === "debt" ? "block" : "hidden md:block"}`}>
-            <SectionHeader icon={CreditCard} title={`Existing Commitments (${currentCurrency})`} />
-            <div className="mt-6 space-y-6">
-              <CustomSlider
-                label="Fixed Loans (Car, Personal)"
-                value={values.fixedLoans}
-                max={10000}
-                currency={currentCurrency}
-                exchangeRate={mode === "SG" ? exchangeRate : undefined}
-                onChange={(v) => updateVal("fixedLoans", v)}
-              />
+          <CalculatorSection
+            title={`Existing Commitments (${currentCurrency})`}
+            icon={CreditCard}
+            tone="dark"
+            className={`${activeTab === "debt" ? "block" : "hidden md:block"} border-0 bg-transparent p-0 shadow-none`}
+            contentClassName="space-y-6"
+          >
+            <CustomSlider
+              label="Fixed Loans (Car, Personal)"
+              value={values.fixedLoans}
+              max={10000}
+              currency={currentCurrency}
+              exchangeRate={mode === "SG" ? exchangeRate : undefined}
+              onChange={(v) => updateVal("fixedLoans", v)}
+            />
 
-              <div className="relative overflow-hidden rounded-xl border border-red-900/20 bg-red-900/10 p-4">
-                <div className="absolute top-0 left-0 h-full w-1 bg-red-500/50" />
-                <div className="mb-2 flex items-end justify-between">
-                  <label className="text-sm font-medium text-red-200">CC Outstanding Balance</label>
-                  <div className="text-right">
-                    <span className="block text-[10px] tracking-wider text-red-400 uppercase">
-                      Commitment (5%)
-                    </span>
-                    <span className="text-sm font-bold text-red-100">
-                      {formatCurrency(results.ccCommitmentNative, currentCurrency)}
-                    </span>
-                  </div>
-                </div>
-                <CustomSlider
-                  label=""
-                  value={values.ccBalance}
-                  max={50000}
-                  onChange={(v) => updateVal("ccBalance", v)}
-                  currency={currentCurrency}
-                  hideLabel
-                  trackColor="bg-red-900/40"
-                  thumbColor="bg-red-500"
-                />
-              </div>
-
-              <div className="border-t border-zinc-800 pt-6">
-                <div className="mb-4 flex items-center gap-2">
-                  <div className="rounded border border-emerald-900/50 bg-emerald-900/30 p-1.5">
-                    <ArrowRightLeft className="h-4 w-4 text-emerald-500" />
-                  </div>
-                  <span className="text-sm font-medium text-emerald-400">
-                    New Property (Always MYR)
+            <div className="relative overflow-hidden rounded-xl border border-red-900/20 bg-red-900/10 p-4">
+              <div className="absolute top-0 left-0 h-full w-1 bg-red-500/50" />
+              <div className="mb-2 flex items-end justify-between">
+                <label className="text-sm font-medium text-red-200">CC Outstanding Balance</label>
+                <div className="text-right">
+                  <span className="block text-[10px] tracking-wider text-red-400 uppercase">
+                    Commitment (5%)
+                  </span>
+                  <span className="text-sm font-bold text-red-100">
+                    {formatCurrency(results.ccCommitmentNative, currentCurrency)}
                   </span>
                 </div>
-                <CustomSlider
-                  label="Estimated Installment"
-                  value={values.newLoanInstallment}
-                  max={15000}
-                  currency="MYR"
-                  onChange={(v) => updateVal("newLoanInstallment", v)}
-                />
               </div>
+              <CustomSlider
+                label=""
+                value={values.ccBalance}
+                max={50000}
+                onChange={(v) => updateVal("ccBalance", v)}
+                currency={currentCurrency}
+                hideLabel
+                trackColor="bg-red-900/40"
+                thumbColor="bg-red-500"
+              />
             </div>
-          </div>
+
+            <div className="border-t border-zinc-800 pt-6">
+              <div className="mb-4 flex items-center gap-2">
+                <div className="rounded border border-emerald-900/50 bg-emerald-900/30 p-1.5">
+                  <ArrowRightLeft className="h-4 w-4 text-emerald-500" />
+                </div>
+                <span className="text-sm font-medium text-emerald-400">
+                  New Property (Always MYR)
+                </span>
+              </div>
+              <CustomSlider
+                label="Estimated Installment"
+                value={values.newLoanInstallment}
+                max={15000}
+                currency="MYR"
+                onChange={(v) => updateVal("newLoanInstallment", v)}
+              />
+            </div>
+          </CalculatorSection>
         </div>
 
         {/* --- RIGHT: Results --- */}
@@ -397,11 +406,13 @@ export default function DsrCalculatorLive() {
             </div>
 
             {/* Summary */}
-            <div className="space-y-4 rounded-2xl border border-zinc-800/50 bg-zinc-900/50 p-6">
-              <h4 className="flex items-center gap-2 text-sm font-semibold text-zinc-300">
-                <Settings2 className="h-4 w-4" /> Calculation Breakdown
-              </h4>
-
+            <CalculatorSection
+              title="Calculation Breakdown"
+              icon={Settings2}
+              tone="dark"
+              contentClassName="space-y-4"
+              className="border-zinc-800/50"
+            >
               {mode === "SG" && (
                 <div className="flex items-center justify-between rounded-lg border border-blue-900/30 bg-blue-900/20 p-3 text-xs text-blue-200">
                   <span>Rate: 1 SGD = {exchangeRate.toFixed(4)} MYR</span>
@@ -420,32 +431,20 @@ export default function DsrCalculatorLive() {
                   </span>
                 </div>
               </div>
-            </div>
+            </CalculatorSection>
           </div>
         </div>
       </div>
-    </div>
+    </CalculatorShell>
   );
 }
 
-// --- Sub-Components ---
-
-const SectionHeader = ({ icon: Icon, title }: { icon: ElementType; title: string }) => (
-  <div className="flex items-center gap-3 border-b border-zinc-800 pb-4">
-    <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-2.5 shadow-sm">
-      <Icon className="h-5 w-5 text-zinc-400" />
-    </div>
-    <h3 className="text-lg font-bold tracking-tight text-white">{title}</h3>
-  </div>
-);
-
 const Row = ({ label, value, isMinus }: { label: string; value: number; isMinus?: boolean }) => (
-  <div className="flex items-center justify-between text-sm">
-    <span className="text-zinc-500">{label}</span>
-    <span className={`font-mono ${isMinus ? "text-red-400" : "text-zinc-300"}`}>
-      {isMinus ? "-" : ""} {formatCurrency(value, "MYR")}
-    </span>
-  </div>
+  <BreakdownRow
+    label={label}
+    value={`${isMinus ? "-" : ""} ${formatCurrency(value, "MYR")}`}
+    className="text-sm"
+  />
 );
 
 interface CustomSliderProps {

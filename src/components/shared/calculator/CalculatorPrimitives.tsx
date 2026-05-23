@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 
 interface CalculatorShellProps {
   title: string;
-  description: string;
+  description: ReactNode;
   icon: LucideIcon;
   action?: ReactNode;
   children: ReactNode;
@@ -52,27 +52,48 @@ interface CalculatorSectionProps {
   icon?: LucideIcon;
   action?: ReactNode;
   children: ReactNode;
+  tone?: "default" | "dark";
   className?: string;
   contentClassName?: string;
 }
+
+const calculatorSectionToneClasses: Record<NonNullable<CalculatorSectionProps["tone"]>, string> = {
+  default: "border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900",
+  dark: "border-zinc-800 bg-zinc-900/50",
+};
+
+const calculatorSectionTitleToneClasses: Record<
+  NonNullable<CalculatorSectionProps["tone"]>,
+  string
+> = {
+  default: "text-zinc-800 dark:text-zinc-200",
+  dark: "text-white",
+};
 
 export function CalculatorSection({
   title,
   icon: Icon,
   action,
   children,
+  tone = "default",
   className,
   contentClassName,
 }: CalculatorSectionProps) {
   return (
     <section
       className={cn(
-        "rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900",
+        "rounded-2xl border p-6 shadow-sm",
+        calculatorSectionToneClasses[tone],
         className,
       )}
     >
       <div className="flex items-center justify-between gap-3">
-        <h3 className="flex items-center gap-2 font-bold text-zinc-800 dark:text-zinc-200">
+        <h3
+          className={cn(
+            "flex items-center gap-2 font-bold",
+            calculatorSectionTitleToneClasses[tone],
+          )}
+        >
           {Icon && <Icon className="h-4 w-4" />}
           {title}
         </h3>
