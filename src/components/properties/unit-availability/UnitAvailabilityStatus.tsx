@@ -36,13 +36,27 @@ const UNIT_STATUS_SUMMARY_CLASS: Record<UnitStatus, string> = {
   sold: "bg-rose-100 text-rose-700 dark:bg-rose-900/50 dark:text-rose-300",
 };
 
+export const UNIT_STATUS_ADMIN_CHIP_CLASS: Record<UnitStatus, string> = {
+  available: "border-emerald-300/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-200",
+  reserved: "border-amber-300/30 bg-amber-500/10 text-amber-700 dark:text-amber-200",
+  sold: "border-rose-300/30 bg-rose-500/10 text-rose-700 dark:text-rose-200",
+};
+
+export const UNIT_STATUS_ADMIN_NODE_CLASS: Record<UnitStatus, string> = {
+  available:
+    "border-emerald-300/30 bg-emerald-500/15 text-emerald-800 shadow-[0_0_16px_rgba(16,185,129,0.2)] dark:text-emerald-100 dark:shadow-[0_0_18px_rgba(52,211,153,0.28)]",
+  reserved:
+    "border-amber-300/30 bg-amber-500/15 text-amber-800 shadow-[0_0_16px_rgba(245,158,11,0.2)] dark:text-amber-100 dark:shadow-[0_0_18px_rgba(251,191,36,0.25)]",
+  sold: "border-rose-300/30 bg-rose-500/15 text-rose-800 shadow-[0_0_16px_rgba(244,63,94,0.2)] dark:text-rose-100 dark:shadow-[0_0_18px_rgba(251,113,133,0.25)]",
+};
+
 const UNIT_STATUS_LEGEND_CLASS: Record<UnitStatus, string> = {
   available: "border-emerald-300 bg-emerald-100 dark:border-emerald-700 dark:bg-emerald-900/40",
   reserved: "border-amber-300 bg-amber-100 dark:border-amber-700 dark:bg-amber-900/40",
   sold: "border-rose-300 bg-rose-100 dark:border-rose-700 dark:bg-rose-900/40",
 };
 
-const unitStatuses: UnitStatus[] = ["available", "reserved", "sold"];
+export const UNIT_STATUSES: UnitStatus[] = ["available", "reserved", "sold"];
 
 export function getUnitStatusLabel(status: UnitStatus) {
   return UNIT_STATUS_LABEL[status];
@@ -62,7 +76,7 @@ export function UnitStatusBadge({ status }: { status: UnitStatus }) {
 export function UnitStatusLegend() {
   return (
     <div className="text-muted-foreground mt-3 flex flex-wrap items-center gap-4 text-xs">
-      {unitStatuses.map((status) => (
+      {UNIT_STATUSES.map((status) => (
         <div key={status} className="flex items-center gap-1.5">
           <span className={`h-3 w-7 rounded border ${UNIT_STATUS_LEGEND_CLASS[status]}`} />
           {UNIT_STATUS_LABEL[status]}
@@ -92,7 +106,7 @@ export function UnitAvailabilitySummary({ tower }: { tower: TowerAvailability })
 
   return (
     <div className="flex flex-wrap items-center gap-2 text-xs">
-      {unitStatuses.map((status) => (
+      {UNIT_STATUSES.map((status) => (
         <span
           key={status}
           className={`rounded-full px-3 py-1 font-medium ${UNIT_STATUS_SUMMARY_CLASS[status]}`}
