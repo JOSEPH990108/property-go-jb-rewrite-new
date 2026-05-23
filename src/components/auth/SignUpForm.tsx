@@ -4,7 +4,7 @@
 import { useState, Suspense, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Loader2, ArrowRight } from "lucide-react";
@@ -13,8 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CountrySelect } from "@/components/custom/ui/CountrySelector";
 import { AuthStepShell } from "@/components/auth/shared/AuthStepShell";
+import { PhoneNumberField } from "@/components/auth/shared/PhoneNumberField";
 import { OTPStep } from "@/components/auth/shared/OTPStep";
 import { ReferralCodeInput } from "@/components/auth/shared/ReferralCodeInput";
 import { GoogleSignInButton } from "@/components/auth/shared/GoogleSignInButton";
@@ -366,27 +366,11 @@ function SignUpFormContent({ isModal = false }: SignUpFormProps) {
 
         <form onSubmit={handleSubmitPhone(onRequestOtp)}>
           <div className="space-y-4">
-            <div className="space-y-1.5">
-              <Label>Phone Number*</Label>
-              <div className="flex gap-2">
-                <Controller
-                  name="country"
-                  control={controlPhone}
-                  render={({ field }) => (
-                    <CountrySelect className="h-11" value={field.value} onChange={field.onChange} />
-                  )}
-                />
-                <Input
-                  type="tel"
-                  className="h-11 flex-1"
-                  {...registerPhone("phone")}
-                  placeholder="Phone Number"
-                />
-              </div>
-              {errorsPhone.phone && (
-                <p className="text-destructive text-xs">{errorsPhone.phone.message}</p>
-              )}
-            </div>
+            <PhoneNumberField
+              control={controlPhone}
+              register={registerPhone}
+              error={errorsPhone.phone}
+            />
 
             <TermsCheckbox
               id="signup-terms"
