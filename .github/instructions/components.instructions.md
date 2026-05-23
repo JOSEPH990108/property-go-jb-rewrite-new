@@ -2,6 +2,7 @@
 description: "Use when creating or modifying React components, pages, or layouts. Covers Shadcn/ui, Radix, Tailwind CSS 4, and component organization."
 applyTo: ["src/components/**", "src/app/**/page.tsx", "src/app/**/layout.tsx"]
 ---
+
 # Component Conventions
 
 - Use `cn()` from `@/lib/utils` for combining Tailwind classes (clsx + tailwind-merge)

@@ -26,9 +26,7 @@ export async function GET(request: Request) {
 
     // Send new Google users through onboarding (handled on home page)
     const isNewUser =
-      !dbUser?.onboardingCompleted ||
-      dbUser?.name?.startsWith("User +") ||
-      !dbUser?.name;
+      !dbUser?.onboardingCompleted || dbUser?.name?.startsWith("User +") || !dbUser?.name;
 
     if (isNewUser) {
       return NextResponse.redirect(new URL("/", request.url));

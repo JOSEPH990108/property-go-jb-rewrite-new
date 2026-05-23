@@ -1,7 +1,7 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import path from 'node:path';
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import path from "node:path";
 
-import { prepareAvailabilityImportArtifacts } from '../src/lib/bulk-import-availability-prep';
+import { prepareAvailabilityImportArtifacts } from "../src/lib/bulk-import-availability-prep";
 
 type CliOptions = {
   input?: string;
@@ -20,27 +20,27 @@ function parseArgs(argv: string[]): CliOptions {
     const next = argv[index + 1];
 
     switch (arg) {
-      case '--input':
+      case "--input":
         options.input = next;
         index += 1;
         break;
-      case '--outputDir':
+      case "--outputDir":
         options.outputDir = next;
         index += 1;
         break;
-      case '--projectSlug':
+      case "--projectSlug":
         options.projectSlug = next;
         index += 1;
         break;
-      case '--towerNumber':
+      case "--towerNumber":
         options.towerNumber = next;
         index += 1;
         break;
-      case '--phaseName':
+      case "--phaseName":
         options.phaseName = next;
         index += 1;
         break;
-      case '--unavailableStatusCode':
+      case "--unavailableStatusCode":
         options.unavailableStatusCode = next;
         index += 1;
         break;
@@ -53,13 +53,15 @@ function parseArgs(argv: string[]): CliOptions {
 }
 
 function printUsage(): void {
-  console.log([
-    'Usage:',
-    '  npm run bulk:prepare:availability -- --input <raw.csv> --projectSlug <slug> [--outputDir <dir>] [--towerNumber <tower>] [--phaseName <phase>] [--unavailableStatusCode <code>]',
-    '',
-    'Example:',
-    '  npm run bulk:prepare:availability -- --input "samples/raw/paragon.csv" --projectSlug paragon-signature-suites --towerNumber TOWER-1 --outputDir "samples/bulk-import/paragon-signature-suite/generated"',
-  ].join('\n'));
+  console.log(
+    [
+      "Usage:",
+      "  npm run bulk:prepare:availability -- --input <raw.csv> --projectSlug <slug> [--outputDir <dir>] [--towerNumber <tower>] [--phaseName <phase>] [--unavailableStatusCode <code>]",
+      "",
+      "Example:",
+      '  npm run bulk:prepare:availability -- --input "samples/raw/paragon.csv" --projectSlug paragon-signature-suites --towerNumber TOWER-1 --outputDir "samples/bulk-import/paragon-signature-suite/generated"',
+    ].join("\n"),
+  );
 }
 
 async function main(): Promise<void> {
@@ -72,8 +74,10 @@ async function main(): Promise<void> {
   }
 
   const inputPath = path.resolve(options.input);
-  const outputDir = path.resolve(options.outputDir ?? path.join('samples', 'bulk-import', options.projectSlug));
-  const csvContent = await readFile(inputPath, 'utf8');
+  const outputDir = path.resolve(
+    options.outputDir ?? path.join("samples", "bulk-import", options.projectSlug),
+  );
+  const csvContent = await readFile(inputPath, "utf8");
 
   const artifacts = prepareAvailabilityImportArtifacts(csvContent, {
     projectSlug: options.projectSlug,
@@ -85,10 +89,14 @@ async function main(): Promise<void> {
   await mkdir(outputDir, { recursive: true });
 
   await Promise.all([
-    writeFile(path.join(outputDir, 'units.csv'), artifacts.unitsCsv, 'utf8'),
-    writeFile(path.join(outputDir, 'layout-summary.csv'), artifacts.layoutSummaryCsv, 'utf8'),
-    writeFile(path.join(outputDir, 'availability-audit.csv'), artifacts.auditCsv, 'utf8'),
-    writeFile(path.join(outputDir, 'prep-summary.json'), JSON.stringify(artifacts.summary, null, 2), 'utf8'),
+    writeFile(path.join(outputDir, "units.csv"), artifacts.unitsCsv, "utf8"),
+    writeFile(path.join(outputDir, "layout-summary.csv"), artifacts.layoutSummaryCsv, "utf8"),
+    writeFile(path.join(outputDir, "availability-audit.csv"), artifacts.auditCsv, "utf8"),
+    writeFile(
+      path.join(outputDir, "prep-summary.json"),
+      JSON.stringify(artifacts.summary, null, 2),
+      "utf8",
+    ),
   ]);
 
   console.log(`Prepared ${artifacts.summary.preparedUnits} unit rows for ${options.projectSlug}.`);

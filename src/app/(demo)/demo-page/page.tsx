@@ -1,19 +1,9 @@
 // src\app\(demo)\demo-page\page.tsx
 "use client";
 
-
 import Image from "next/image";
 import { motion } from "framer-motion";
-import {
-  MapPin,
-  BedDouble,
-  Bath,
-  Star,
-  Check,
-  Shield,
-  Ruler,
-  LogIn,
-} from "lucide-react";
+import { MapPin, BedDouble, Bath, Star, Check, Shield, Ruler, LogIn } from "lucide-react";
 
 // --- Components Imports ---
 
@@ -108,30 +98,25 @@ const ArchitectureContent = () => (
         alt="Modern Architecture"
         className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
-        <p className="text-white font-serif italic text-lg">
+      <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/60 to-transparent p-6">
+        <p className="font-serif text-lg text-white italic">
           "A silhouette that defines the skyline."
         </p>
       </div>
     </div>
     <div className="prose prose-zinc dark:prose-invert max-w-none">
-      <h3 className="text-2xl font-serif text-foreground">The Glass Monolith</h3>
+      <h3 className="text-foreground font-serif text-2xl">The Glass Monolith</h3>
       <p className="text-muted-foreground leading-relaxed">
-        Designed by award-winning architects, the façade features a signature
-        double-glazed curtain wall system that maximizes natural light while
-        ensuring thermal comfort.
+        Designed by award-winning architects, the façade features a signature double-glazed curtain
+        wall system that maximizes natural light while ensuring thermal comfort.
       </p>
-      <div className="grid grid-cols-2 gap-4 mt-4">
-        <div className="p-4 bg-muted/30 rounded-lg border border-border">
-          <span className="block text-xs uppercase tracking-widest text-accent mb-1">
-            Height
-          </span>
+      <div className="mt-4 grid grid-cols-2 gap-4">
+        <div className="bg-muted/30 border-border rounded-lg border p-4">
+          <span className="text-accent mb-1 block text-xs tracking-widest uppercase">Height</span>
           <span className="text-xl font-bold">45 Stories</span>
         </div>
-        <div className="p-4 bg-muted/30 rounded-lg border border-border">
-          <span className="block text-xs uppercase tracking-widest text-accent mb-1">
-            Style
-          </span>
+        <div className="bg-muted/30 border-border rounded-lg border p-4">
+          <span className="text-accent mb-1 block text-xs tracking-widest uppercase">Style</span>
           <span className="text-xl font-bold">Neo-Futurist</span>
         </div>
       </div>
@@ -141,13 +126,12 @@ const ArchitectureContent = () => (
 
 const InteriorsContent = () => (
   <div className="space-y-6">
-    <h3 className="text-2xl font-serif text-foreground">Bespoke Elegance</h3>
+    <h3 className="text-foreground font-serif text-2xl">Bespoke Elegance</h3>
     <p className="text-muted-foreground">
-      Every inch is meticulously crafted. From the imported Italian marble
-      flooring to the gold-leaf ceiling accents, the interiors whisper quiet
-      luxury.
+      Every inch is meticulously crafted. From the imported Italian marble flooring to the gold-leaf
+      ceiling accents, the interiors whisper quiet luxury.
     </p>
-    <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
+    <ul className="grid grid-cols-1 gap-3 md:grid-cols-2">
       {[
         "Italian Statuario Marble",
         "Walnut Veneer Cabinetry",
@@ -156,26 +140,23 @@ const InteriorsContent = () => (
         "Double Volume Ceilings",
         "Private Lift Lobby",
       ].map((item) => (
-        <li
-          key={item}
-          className="flex items-center gap-3 text-sm text-foreground/80"
-        >
-          <div className="flex-shrink-0 w-5 h-5 rounded-full bg-accent/10 flex items-center justify-center">
-            <Check className="w-3 h-3 text-accent" />
+        <li key={item} className="text-foreground/80 flex items-center gap-3 text-sm">
+          <div className="bg-accent/10 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full">
+            <Check className="text-accent h-3 w-3" />
           </div>
           {item}
         </li>
       ))}
     </ul>
-    <div className="grid grid-cols-2 gap-4 h-40">
+    <div className="grid h-40 grid-cols-2 gap-4">
       <img
         src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=2600&auto=format&fit=crop"
-        className="w-full h-full object-cover rounded-lg"
+        className="h-full w-full rounded-lg object-cover"
         alt="Interior 1"
       />
       <img
         src="https://images.unsplash.com/photo-1616486338812-3dadae4b4f9d?q=80&w=2670&auto=format&fit=crop"
-        className="w-full h-full object-cover rounded-lg"
+        className="h-full w-full rounded-lg object-cover"
         alt="Interior 2"
       />
     </div>
@@ -185,33 +166,31 @@ const InteriorsContent = () => (
 const AmenitiesContent = () => (
   <div className="space-y-8">
     <div className="flex items-start gap-4">
-      <div className="p-3 bg-accent/10 rounded-lg text-accent">
-        <Shield className="w-6 h-6" />
+      <div className="bg-accent/10 text-accent rounded-lg p-3">
+        <Shield className="h-6 w-6" />
       </div>
       <div>
-        <h4 className="text-lg font-bold text-foreground">Concierge Service</h4>
-        <p className="text-sm text-muted-foreground">
+        <h4 className="text-foreground text-lg font-bold">Concierge Service</h4>
+        <p className="text-muted-foreground text-sm">
           24/7 white-glove service for all your needs.
         </p>
       </div>
     </div>
     <div className="flex items-start gap-4">
-      <div className="p-3 bg-accent/10 rounded-lg text-accent">
-        <MapPin className="w-6 h-6" />
+      <div className="bg-accent/10 text-accent rounded-lg p-3">
+        <MapPin className="h-6 w-6" />
       </div>
       <div>
-        <h4 className="text-lg font-bold text-foreground">Prime Location</h4>
-        <p className="text-sm text-muted-foreground">
-          Direct access to RTS Link and Marina Bay.
-        </p>
+        <h4 className="text-foreground text-lg font-bold">Prime Location</h4>
+        <p className="text-muted-foreground text-sm">Direct access to RTS Link and Marina Bay.</p>
       </div>
     </div>
-    <div className="p-6 bg-gradient-to-br from-zinc-900 to-black text-white rounded-xl shadow-2xl">
-      <h4 className="font-serif text-xl text-accent mb-2">The Sky Deck</h4>
-      <p className="text-white/70 text-sm mb-4">
+    <div className="rounded-xl bg-gradient-to-br from-zinc-900 to-black p-6 text-white shadow-2xl">
+      <h4 className="text-accent mb-2 font-serif text-xl">The Sky Deck</h4>
+      <p className="mb-4 text-sm text-white/70">
         An infinity pool suspended 200m in the air, offering panoramic views.
       </p>
-      <button className="text-xs font-bold uppercase tracking-widest border-b border-accent pb-1 hover:text-accent transition-colors">
+      <button className="border-accent hover:text-accent border-b pb-1 text-xs font-bold tracking-widest uppercase transition-colors">
         View Gallery
       </button>
     </div>
@@ -226,11 +205,9 @@ const TAB_ITEMS: TabItem[] = [
     id: "plans",
     label: "Floor Plans",
     content: (
-      <div className="flex flex-col items-center justify-center h-64 border-2 border-dashed border-border rounded-xl bg-muted/20">
-        <Ruler className="w-10 h-10 text-muted-foreground mb-3" />
-        <p className="text-muted-foreground font-medium">
-          Interactive Plans Loading...
-        </p>
+      <div className="border-border bg-muted/20 flex h-64 flex-col items-center justify-center rounded-xl border-2 border-dashed">
+        <Ruler className="text-muted-foreground mb-3 h-10 w-10" />
+        <p className="text-muted-foreground font-medium">Interactive Plans Loading...</p>
       </div>
     ),
   },
@@ -289,25 +266,24 @@ export default function DemoPage() {
   const { setLoginOpen } = useUIStore();
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-40">
-
+    <div className="bg-background text-foreground min-h-screen pb-40">
       {/* 1. LAYOUT COMPONENTS: NavBar (Visual Representation) */}
       {/* Because (demo) might not have the main layout nav, we render it here */}
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative h-[60vh] flex items-center justify-center overflow-hidden bg-brand-950">
+      <section className="bg-brand-950 relative flex h-[60vh] items-center justify-center overflow-hidden">
         <Image
           src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1920&q=80"
           alt="Hero"
           fill
           className="object-cover opacity-40"
         />
-        <div className="relative z-10 text-center px-4">
+        <div className="relative z-10 px-4 text-center">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-serif font-bold text-white mb-6"
+            className="mb-6 font-serif text-5xl font-bold text-white md:text-7xl"
           >
             Component Gallery
           </motion.h1>
@@ -315,15 +291,14 @@ export default function DemoPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-xl text-white/80 max-w-2xl mx-auto"
+            className="mx-auto max-w-2xl text-xl text-white/80"
           >
             Comprehensive showcase of all custom components, tools, and features.
           </motion.p>
         </div>
       </section>
 
-      <div className="container mx-auto px-4 space-y-32 py-20">
-
+      <div className="container mx-auto space-y-32 px-4 py-20">
         {/* =======================================================
             SECTION: CAROUSELS
            ======================================================= */}
@@ -331,31 +306,36 @@ export default function DemoPage() {
           <SectionHeader title="01. Carousels" description="Interactive media showcases." />
 
           <div className="space-y-16">
-
             {/* 3D Rotate Carousel */}
             <div>
-              <h3 className="text-xl font-bold mb-6">3D Rotate Carousel</h3>
-              <div className="h-[400px] w-full bg-zinc-900/5 dark:bg-zinc-900/50 rounded-2xl overflow-hidden relative">
-                 <RotateCarousel radius={300} duration={30}>
-                    {CAROUSEL_IMAGES.slice(0, 4).map((src, i) => (
-                      <div key={i} className="w-[200px] h-[280px] rounded-xl overflow-hidden border-2 border-white/20">
-                         <img src={src} className="w-full h-full object-cover" alt={`Slide ${i}`} />
-                      </div>
-                    ))}
-                 </RotateCarousel>
+              <h3 className="mb-6 text-xl font-bold">3D Rotate Carousel</h3>
+              <div className="relative h-[400px] w-full overflow-hidden rounded-2xl bg-zinc-900/5 dark:bg-zinc-900/50">
+                <RotateCarousel radius={300} duration={30}>
+                  {CAROUSEL_IMAGES.slice(0, 4).map((src, i) => (
+                    <div
+                      key={i}
+                      className="h-[280px] w-[200px] overflow-hidden rounded-xl border-2 border-white/20"
+                    >
+                      <img src={src} className="h-full w-full object-cover" alt={`Slide ${i}`} />
+                    </div>
+                  ))}
+                </RotateCarousel>
               </div>
             </div>
 
             {/* Fan Carousel */}
             <div>
-              <h3 className="text-xl font-bold mb-6">Fan Carousel</h3>
+              <h3 className="mb-6 text-xl font-bold">Fan Carousel</h3>
               <FanCarousel className="h-[500px]">
                 {CAROUSEL_IMAGES.map((src, i) => (
-                  <div key={i} className="w-full h-full rounded-xl overflow-hidden shadow-2xl bg-black">
-                     <img src={src} className="w-full h-full object-cover" alt={`Fan ${i}`} />
-                     <div className="absolute bottom-4 left-4 text-white font-bold text-xl drop-shadow-md">
-                        Residence {i + 1}
-                     </div>
+                  <div
+                    key={i}
+                    className="h-full w-full overflow-hidden rounded-xl bg-black shadow-2xl"
+                  >
+                    <img src={src} className="h-full w-full object-cover" alt={`Fan ${i}`} />
+                    <div className="absolute bottom-4 left-4 text-xl font-bold text-white drop-shadow-md">
+                      Residence {i + 1}
+                    </div>
                   </div>
                 ))}
               </FanCarousel>
@@ -363,64 +343,74 @@ export default function DemoPage() {
 
             {/* Scroll Carousel */}
             <div>
-              <h3 className="text-xl font-bold mb-6">Scroll Carousel</h3>
+              <h3 className="mb-6 text-xl font-bold">Scroll Carousel</h3>
               <div className="flex justify-center">
-                 <ScrollCarousel autoScroll interval={4000} className="max-w-xl">
-                   {CAROUSEL_IMAGES.slice(0, 3).map((src, i) => (
-                      <div key={i} className="relative w-full h-64 rounded-xl overflow-hidden">
-                        <img src={src} className="object-cover w-full h-full" alt="Scroll Item"/>
-                        <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                           <h4 className="text-white text-2xl font-serif">Feature {i + 1}</h4>
-                        </div>
+                <ScrollCarousel autoScroll interval={4000} className="max-w-xl">
+                  {CAROUSEL_IMAGES.slice(0, 3).map((src, i) => (
+                    <div key={i} className="relative h-64 w-full overflow-hidden rounded-xl">
+                      <img src={src} className="h-full w-full object-cover" alt="Scroll Item" />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                        <h4 className="font-serif text-2xl text-white">Feature {i + 1}</h4>
                       </div>
-                   ))}
-                 </ScrollCarousel>
+                    </div>
+                  ))}
+                </ScrollCarousel>
               </div>
             </div>
 
-             {/* Simple Card Carousel */}
-             <div>
-              <h3 className="text-xl font-bold mb-6">Simple Card Carousel (Draggable)</h3>
+            {/* Simple Card Carousel */}
+            <div>
+              <h3 className="mb-6 text-xl font-bold">Simple Card Carousel (Draggable)</h3>
               <SimpleCardCarousel
                 items={MOCK_PROPERTIES}
                 renderItem={(item) => (
-                   <div className="w-full h-full bg-card border border-border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                      <div className="h-48 relative">
-                         <img src={item.image} alt={item.title} className="w-full h-full object-cover"/>
-                         <div className="absolute top-2 right-2 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded flex items-center gap-1">
-                            <Star size={10} /> {item.rating}
-                         </div>
+                  <div className="bg-card border-border h-full w-full overflow-hidden rounded-xl border shadow-sm transition-shadow hover:shadow-md">
+                    <div className="relative h-48">
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        className="h-full w-full object-cover"
+                      />
+                      <div className="absolute top-2 right-2 flex items-center gap-1 rounded bg-yellow-400 px-2 py-1 text-xs font-bold text-black">
+                        <Star size={10} /> {item.rating}
                       </div>
-                      <div className="p-4">
-                         <h4 className="font-bold text-lg truncate">{item.title}</h4>
-                         <p className="text-muted-foreground text-sm">{item.location}</p>
-                         <p className="text-accent font-bold mt-2">{item.price}</p>
-                      </div>
-                   </div>
+                    </div>
+                    <div className="p-4">
+                      <h4 className="truncate text-lg font-bold">{item.title}</h4>
+                      <p className="text-muted-foreground text-sm">{item.location}</p>
+                      <p className="text-accent mt-2 font-bold">{item.price}</p>
+                    </div>
+                  </div>
                 )}
               />
             </div>
 
             {/* General Carousel */}
             <div>
-               <h3 className="text-xl font-bold mb-6">General Carousel (Button Navigation)</h3>
-               <GeneralCarousel>
-                  {MOCK_PROPERTIES.map((prop) => (
-                    <div key={prop.id} className="w-80 h-96 bg-card border border-border rounded-2xl p-6 flex flex-col items-center justify-center text-center shadow-sm shrink-0">
-                       <div className="w-32 h-32 rounded-full overflow-hidden mb-4 relative">
-                          <Image src={prop.image} fill className="object-cover" alt={prop.title}/>
-                       </div>
-                       <h4 className="text-xl font-serif font-bold">{prop.title}</h4>
-                       <p className="text-muted-foreground text-sm mt-2">{prop.location}</p>
-                       <div className="flex gap-4 mt-6 text-sm text-foreground/70">
-                          <span className="flex items-center gap-1"><BedDouble size={14}/> {prop.beds}</span>
-                          <span className="flex items-center gap-1"><Bath size={14}/> {prop.baths}</span>
-                       </div>
+              <h3 className="mb-6 text-xl font-bold">General Carousel (Button Navigation)</h3>
+              <GeneralCarousel>
+                {MOCK_PROPERTIES.map((prop) => (
+                  <div
+                    key={prop.id}
+                    className="bg-card border-border flex h-96 w-80 shrink-0 flex-col items-center justify-center rounded-2xl border p-6 text-center shadow-sm"
+                  >
+                    <div className="relative mb-4 h-32 w-32 overflow-hidden rounded-full">
+                      <Image src={prop.image} fill className="object-cover" alt={prop.title} />
                     </div>
-                  ))}
-               </GeneralCarousel>
+                    <h4 className="font-serif text-xl font-bold">{prop.title}</h4>
+                    <p className="text-muted-foreground mt-2 text-sm">{prop.location}</p>
+                    <div className="text-foreground/70 mt-6 flex gap-4 text-sm">
+                      <span className="flex items-center gap-1">
+                        <BedDouble size={14} /> {prop.beds}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Bath size={14} /> {prop.baths}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </GeneralCarousel>
             </div>
-
           </div>
         </section>
 
@@ -428,25 +418,28 @@ export default function DemoPage() {
             SECTION: FEATURES & TOOLS
            ======================================================= */}
         <section>
-          <SectionHeader title="02. Calculators & Tools" description="Functional tools for real estate." />
+          <SectionHeader
+            title="02. Calculators & Tools"
+            description="Functional tools for real estate."
+          />
 
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-12">
-             <div className="space-y-8">
-                <h3 className="text-xl font-bold border-b pb-2">Mortgage Calculator</h3>
-                <MortgageCalculator />
-             </div>
-             <div className="space-y-8">
-                <h3 className="text-xl font-bold border-b pb-2">DSR Calculator</h3>
-                <DsrCalculatorLive />
-             </div>
+          <div className="grid grid-cols-1 gap-12 xl:grid-cols-2">
+            <div className="space-y-8">
+              <h3 className="border-b pb-2 text-xl font-bold">Mortgage Calculator</h3>
+              <MortgageCalculator />
+            </div>
+            <div className="space-y-8">
+              <h3 className="border-b pb-2 text-xl font-bold">DSR Calculator</h3>
+              <DsrCalculatorLive />
+            </div>
           </div>
 
           <div className="mt-20">
-             <h3 className="text-xl font-bold border-b pb-2 mb-8">Property Matcher</h3>
-             {/* Note: This component might manage its own height */}
-             <div className="min-h-[600px] border border-border rounded-3xl overflow-hidden">
-                <PropertyMatcher />
-             </div>
+            <h3 className="mb-8 border-b pb-2 text-xl font-bold">Property Matcher</h3>
+            {/* Note: This component might manage its own height */}
+            <div className="border-border min-h-[600px] overflow-hidden rounded-3xl border">
+              <PropertyMatcher />
+            </div>
           </div>
         </section>
 
@@ -457,106 +450,100 @@ export default function DemoPage() {
           <SectionHeader title="03. Complex UI" description="Advanced interface elements." />
 
           <div className="space-y-16">
-
             {/* Vertical Tabs */}
             <div>
-               <h3 className="text-xl font-bold mb-6">Vertical Tabs (Content Switcher)</h3>
-               <div className="bg-muted/10 rounded-3xl border border-border overflow-hidden">
-                 <VerticalTabs items={TAB_ITEMS} />
-               </div>
+              <h3 className="mb-6 text-xl font-bold">Vertical Tabs (Content Switcher)</h3>
+              <div className="bg-muted/10 border-border overflow-hidden rounded-3xl border">
+                <VerticalTabs items={TAB_ITEMS} />
+              </div>
             </div>
 
             {/* Feature Tabs (using VerticalTabs with RealEstateCard) */}
             <div>
-               <h3 className="text-xl font-bold mb-6">Real Estate Card Integration</h3>
-               <div className="bg-muted/10 rounded-3xl border border-border overflow-hidden p-4">
-                 <VerticalTabs items={FEATURED_COLLECTION_TABS} />
-               </div>
+              <h3 className="mb-6 text-xl font-bold">Real Estate Card Integration</h3>
+              <div className="bg-muted/10 border-border overflow-hidden rounded-3xl border p-4">
+                <VerticalTabs items={FEATURED_COLLECTION_TABS} />
+              </div>
             </div>
-
           </div>
         </section>
-
 
         {/* =======================================================
             SECTION: AUTH & SHARED
            ======================================================= */}
         <section>
-           <SectionHeader title="04. Auth & Shared" description="Authentication forms and utilities." />
+          <SectionHeader
+            title="04. Auth & Shared"
+            description="Authentication forms and utilities."
+          />
 
-           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-
-              {/* Isolated Auth Forms */}
-              <div className="space-y-6">
-                 <h3 className="text-xl font-bold">Sign In Form (Isolated)</h3>
-                 <div className="p-8 border border-border rounded-xl bg-card shadow-sm">
-                    <SignInForm />
-                 </div>
+          <div className="mb-16 grid grid-cols-1 gap-12 lg:grid-cols-2">
+            {/* Isolated Auth Forms */}
+            <div className="space-y-6">
+              <h3 className="text-xl font-bold">Sign In Form (Isolated)</h3>
+              <div className="border-border bg-card rounded-xl border p-8 shadow-sm">
+                <SignInForm />
               </div>
+            </div>
 
-              <div className="space-y-6">
-                 <h3 className="text-xl font-bold">Sign Up Form (Isolated)</h3>
-                 <div className="p-8 border border-border rounded-xl bg-card shadow-sm">
-                    <SignUpForm />
-                 </div>
+            <div className="space-y-6">
+              <h3 className="text-xl font-bold">Sign Up Form (Isolated)</h3>
+              <div className="border-border bg-card rounded-xl border p-8 shadow-sm">
+                <SignUpForm />
               </div>
-           </div>
+            </div>
+          </div>
 
-           {/* Interactive Triggers & Utilities */}
-           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-
-              {/* Login Modal Trigger */}
-              <div className="p-6 border border-border rounded-xl bg-card flex flex-col items-center justify-center text-center gap-4">
-                 <div className="p-4 bg-primary/10 text-primary rounded-full">
-                    <LogIn size={24} />
-                 </div>
-                 <h4 className="font-bold">Global Login Modal</h4>
-                 <p className="text-sm text-muted-foreground">
-                    Controlled via global theme store.
-                 </p>
-                 <Button onClick={() => setLoginOpen(true)}>Open Modal</Button>
-                 <Button
-                   variant="outline"
-                   size="sm"
-                   onClick={() => {
-                     useUIStore.getState().resetDismissed();
-                     alert("Login trigger reset! Refresh or scroll to test.");
-                   }}
-                 >
-                   Reset Trigger State
-                 </Button>
+          {/* Interactive Triggers & Utilities */}
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+            {/* Login Modal Trigger */}
+            <div className="border-border bg-card flex flex-col items-center justify-center gap-4 rounded-xl border p-6 text-center">
+              <div className="bg-primary/10 text-primary rounded-full p-4">
+                <LogIn size={24} />
               </div>
+              <h4 className="font-bold">Global Login Modal</h4>
+              <p className="text-muted-foreground text-sm">Controlled via global theme store.</p>
+              <Button onClick={() => setLoginOpen(true)}>Open Modal</Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  useUIStore.getState().resetDismissed();
+                  alert("Login trigger reset! Refresh or scroll to test.");
+                }}
+              >
+                Reset Trigger State
+              </Button>
+            </div>
 
-              {/* Collapsible Container Demo */}
-              <div className="col-span-1 md:col-span-2">
-                 <CollapsibleContainer title="Collapsible Utility" defaultOpen>
-                    <div className="p-4 space-y-4">
-                       <p className="text-sm text-muted-foreground">
-                          This container uses Framer Motion for smooth height transitions.
-                          It also includes a <code>DraggableScrollArea</code> inside.
-                       </p>
-                       <div className="h-32 bg-muted rounded-lg flex items-center justify-center border-2 border-dashed border-muted-foreground/20">
-                          Scrollable Content Area
-                       </div>
-                    </div>
-                 </CollapsibleContainer>
-              </div>
+            {/* Collapsible Container Demo */}
+            <div className="col-span-1 md:col-span-2">
+              <CollapsibleContainer title="Collapsible Utility" defaultOpen>
+                <div className="space-y-4 p-4">
+                  <p className="text-muted-foreground text-sm">
+                    This container uses Framer Motion for smooth height transitions. It also
+                    includes a <code>DraggableScrollArea</code> inside.
+                  </p>
+                  <div className="bg-muted border-muted-foreground/20 flex h-32 items-center justify-center rounded-lg border-2 border-dashed">
+                    Scrollable Content Area
+                  </div>
+                </div>
+              </CollapsibleContainer>
+            </div>
 
-              {/* Swipe Wrapper Demo */}
-              <div className="col-span-1 md:col-span-3">
-                 <SwipeWrapper
-                    className="bg-accent/10 p-12 rounded-xl text-center cursor-ew-resize border border-accent/20"
-                    onNext={() => alert("Swiped Next!")}
-                    onPrev={() => alert("Swiped Prev!")}
-                 >
-                    <p className="font-bold text-accent">Swipe Me (Left/Right)</p>
-                    <p className="text-xs text-muted-foreground mt-2">Uses useSwipe hook</p>
-                 </SwipeWrapper>
-              </div>
-
-           </div>
+            {/* Swipe Wrapper Demo */}
+            <div className="col-span-1 md:col-span-3">
+              <SwipeWrapper
+                className="bg-accent/10 border-accent/20 cursor-ew-resize rounded-xl border p-12 text-center"
+                onNext={() => alert("Swiped Next!")}
+                onPrev={() => alert("Swiped Prev!")}
+              >
+                <p className="text-accent font-bold">Swipe Me (Left/Right)</p>
+                <p className="text-muted-foreground mt-2 text-xs">Uses useSwipe hook</p>
+              </SwipeWrapper>
+            </div>
+          </div>
         </section>
-
       </div>
     </div>
   );
@@ -565,10 +552,10 @@ export default function DemoPage() {
 // --- Helper Components ---
 
 function SectionHeader({ title, description }: { title: string; description: string }) {
-   return (
-      <MotionSection className="mb-12 border-b border-border pb-6">
-         <h2 className="text-3xl md:text-4xl font-serif font-bold mb-2">{title}</h2>
-         <p className="text-muted-foreground text-lg">{description}</p>
-      </MotionSection>
-   );
+  return (
+    <MotionSection className="border-border mb-12 border-b pb-6">
+      <h2 className="mb-2 font-serif text-3xl font-bold md:text-4xl">{title}</h2>
+      <p className="text-muted-foreground text-lg">{description}</p>
+    </MotionSection>
+  );
 }

@@ -173,28 +173,34 @@ function SignInFormContent({ isModal = false }: SignInFormProps) {
   }
 
   return (
-    <div className={cn("flex flex-col flex-1 w-full", !isModal && "lg:w-1/2 overflow-y-auto no-scrollbar")}>
-      <div className="w-full max-w-md sm:pt-10 mx-auto mb-5 px-4">
+    <div
+      className={cn(
+        "flex w-full flex-1 flex-col",
+        !isModal && "no-scrollbar overflow-y-auto lg:w-1/2",
+      )}
+    >
+      <div className="mx-auto mb-5 w-full max-w-md px-4 sm:pt-10">
         {!isModal && (
-          <Link href="/" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground">
-            <ChevronLeft className="w-4 h-4 mr-1" /> Back to main
+          <Link
+            href="/"
+            className="text-muted-foreground hover:text-foreground inline-flex items-center text-sm"
+          >
+            <ChevronLeft className="mr-1 h-4 w-4" /> Back to main
           </Link>
         )}
       </div>
 
-      <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto px-4 pb-10">
+      <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-4 pb-10">
         <div className="mb-8">
-          <h1 className="mb-2 font-semibold text-foreground text-2xl">Sign In</h1>
-          <p className="text-sm text-muted-foreground">Sign in with your phone number.</p>
+          <h1 className="text-foreground mb-2 text-2xl font-semibold">Sign In</h1>
+          <p className="text-muted-foreground text-sm">Sign in with your phone number.</p>
         </div>
 
         <div className="space-y-5">
-          <GoogleSignInButton
-            onClick={handleGoogleSignIn}
-          />
+          <GoogleSignInButton onClick={handleGoogleSignIn} />
 
-          <div className="relative py-2 text-center text-sm text-muted-foreground">
-            <span className="bg-background px-2 relative z-10">Or with Phone</span>
+          <div className="text-muted-foreground relative py-2 text-center text-sm">
+            <span className="bg-background relative z-10 px-2">Or with Phone</span>
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t" />
             </div>
@@ -209,19 +215,21 @@ function SignInFormContent({ isModal = false }: SignInFormProps) {
                     name="country"
                     control={control}
                     render={({ field }) => (
-                      <CountrySelect className="h-11" value={field.value} onChange={field.onChange} />
+                      <CountrySelect
+                        className="h-11"
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
                     )}
                   />
                   <Input
                     type="tel"
-                    className="flex-1 h-11"
+                    className="h-11 flex-1"
                     {...register("phone")}
                     placeholder="Phone Number"
                   />
                 </div>
-                {errors.phone && (
-                  <p className="text-destructive text-xs">{errors.phone.message}</p>
-                )}
+                {errors.phone && <p className="text-destructive text-xs">{errors.phone.message}</p>}
               </div>
 
               <TermsCheckbox
@@ -244,26 +252,26 @@ function SignInFormContent({ isModal = false }: SignInFormProps) {
                 />
                 <Label
                   htmlFor="signin-remember"
-                  className="text-sm text-muted-foreground cursor-pointer font-normal"
+                  className="text-muted-foreground cursor-pointer text-sm font-normal"
                 >
                   Keep me logged in
                 </Label>
               </div>
 
               {error && (
-                <p className="text-destructive text-sm bg-destructive/10 p-2 rounded text-center">
+                <p className="text-destructive bg-destructive/10 rounded p-2 text-center text-sm">
                   {error}
                 </p>
               )}
 
-              <Button type="submit" className="w-full mt-2" disabled={isLoading}>
-                {isLoading && <Loader2 className="animate-spin mr-2 h-4 w-4" />}
+              <Button type="submit" className="mt-2 w-full" disabled={isLoading}>
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isLoading ? "Sending OTP..." : "Continue"}
               </Button>
             </div>
           </form>
 
-          <div className="text-center text-sm text-muted-foreground">
+          <div className="text-muted-foreground text-center text-sm">
             Don&apos;t have an account?{" "}
             {isModal ? (
               <button
@@ -286,7 +294,13 @@ function SignInFormContent({ isModal = false }: SignInFormProps) {
 
 export default function SignInForm(props: SignInFormProps) {
   return (
-    <Suspense fallback={<div className="flex justify-center p-8"><Loader2 className="animate-spin" /></div>}>
+    <Suspense
+      fallback={
+        <div className="flex justify-center p-8">
+          <Loader2 className="animate-spin" />
+        </div>
+      }
+    >
       <SignInFormContent {...props} />
     </Suspense>
   );

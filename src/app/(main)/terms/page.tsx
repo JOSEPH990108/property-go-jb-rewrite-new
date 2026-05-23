@@ -7,9 +7,9 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <div className="container max-w-3xl py-20 md:py-16 min-h-screen">
-      <h1 className="text-4xl font-serif font-bold tracking-tight mb-8">Terms of Service</h1>
-      <p className="text-sm text-muted-foreground mb-8">Last updated: 19 April 2026</p>
+    <div className="container min-h-screen max-w-3xl py-20 md:py-16">
+      <h1 className="mb-8 font-serif text-4xl font-bold tracking-tight">Terms of Service</h1>
+      <p className="text-muted-foreground mb-8 text-sm">Last updated: 19 April 2026</p>
 
       <div className="prose dark:prose-invert max-w-none space-y-8">
         <section>
@@ -52,9 +52,14 @@ export default function TermsPage() {
         <section>
           <h2>5. Referral Programme</h2>
           <ul>
-            <li>Referral rewards are subject to the programme rules in effect at the time of referral.</li>
+            <li>
+              Referral rewards are subject to the programme rules in effect at the time of referral.
+            </li>
             <li>We reserve the right to modify, suspend, or terminate the referral programme.</li>
-            <li>Fraudulent referral activity will result in forfeiture of rewards and account suspension.</li>
+            <li>
+              Fraudulent referral activity will result in forfeiture of rewards and account
+              suspension.
+            </li>
             <li>Rewards may be subject to verification and approval by our team.</li>
           </ul>
         </section>
@@ -62,8 +67,8 @@ export default function TermsPage() {
         <section>
           <h2>6. Appointments & Agent Interactions</h2>
           <p>
-            PropertyGoJB facilitates connections between users, agents, and developers. We are not
-            a party to any property transaction. Any agreements or disputes arising from property
+            PropertyGoJB facilitates connections between users, agents, and developers. We are not a
+            party to any property transaction. Any agreements or disputes arising from property
             viewings, purchases, or agent interactions are between the relevant parties.
           </p>
         </section>
@@ -101,24 +106,24 @@ export default function TermsPage() {
           <h2>10. Limitation of Liability</h2>
           <p>
             To the maximum extent permitted by Malaysian law, PropertyGoJB shall not be liable for
-            any indirect, incidental, special, or consequential damages arising from your use of
-            the Platform or reliance on information provided therein.
+            any indirect, incidental, special, or consequential damages arising from your use of the
+            Platform or reliance on information provided therein.
           </p>
         </section>
 
         <section>
           <h2>11. Governing Law</h2>
           <p>
-            These Terms shall be governed by the laws of Malaysia. Any disputes shall be subject
-            to the exclusive jurisdiction of the courts of Malaysia.
+            These Terms shall be governed by the laws of Malaysia. Any disputes shall be subject to
+            the exclusive jurisdiction of the courts of Malaysia.
           </p>
         </section>
 
         <section>
           <h2>12. Changes to Terms</h2>
           <p>
-            We may update these Terms from time to time. Continued use of the Platform after
-            changes constitutes acceptance of the revised terms.
+            We may update these Terms from time to time. Continued use of the Platform after changes
+            constitutes acceptance of the revised terms.
           </p>
         </section>
 
@@ -128,7 +133,8 @@ export default function TermsPage() {
             For questions about these Terms, contact us at{" "}
             <a href="mailto:legal@propertygojb.com" className="text-primary hover:underline">
               legal@propertygojb.com
-            </a>.
+            </a>
+            .
           </p>
         </section>
       </div>

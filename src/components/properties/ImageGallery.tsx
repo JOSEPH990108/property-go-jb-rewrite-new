@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Image from 'next/image';
-import { cn } from '@/lib/utils';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useState } from "react";
+import Image from "next/image";
+import { cn } from "@/lib/utils";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface ImageGalleryProps {
   images: { url: string; caption?: string | null }[];
@@ -17,9 +17,9 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
 
   if (images.length === 0) return null;
 
-  const navigate = (direction: 'prev' | 'next') => {
+  const navigate = (direction: "prev" | "next") => {
     setSelectedIndex((prev) => {
-      if (direction === 'prev') return prev === 0 ? images.length - 1 : prev - 1;
+      if (direction === "prev") return prev === 0 ? images.length - 1 : prev - 1;
       return prev === images.length - 1 ? 0 : prev + 1;
     });
   };
@@ -29,7 +29,7 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
       <div className="space-y-3">
         {/* Main image */}
         <div
-          className="relative aspect-[16/9] w-full overflow-hidden rounded-xl cursor-pointer group"
+          className="group relative aspect-[16/9] w-full cursor-pointer overflow-hidden rounded-xl"
           onClick={() => setIsLightboxOpen(true)}
         >
           <Image
@@ -39,9 +39,9 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
             className="object-cover transition-transform duration-300 group-hover:scale-105"
             priority
           />
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+          <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/10" />
           {images.length > 1 && (
-            <span className="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded-md">
+            <span className="absolute right-3 bottom-3 rounded-md bg-black/60 px-2 py-1 text-xs text-white">
               {selectedIndex + 1} / {images.length}
             </span>
           )}
@@ -55,10 +55,10 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
                 key={i}
                 onClick={() => setSelectedIndex(i)}
                 className={cn(
-                  'relative h-16 w-24 shrink-0 overflow-hidden rounded-md border-2 transition-all',
+                  "relative h-16 w-24 shrink-0 overflow-hidden rounded-md border-2 transition-all",
                   i === selectedIndex
-                    ? 'border-primary ring-1 ring-primary'
-                    : 'border-transparent opacity-70 hover:opacity-100',
+                    ? "border-primary ring-primary ring-1"
+                    : "border-transparent opacity-70 hover:opacity-100",
                 )}
               >
                 <Image
@@ -83,7 +83,7 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="absolute top-4 right-4 text-white hover:bg-white/20 z-10"
+            className="absolute top-4 right-4 z-10 text-white hover:bg-white/20"
             onClick={(e) => {
               e.stopPropagation();
               setIsLightboxOpen(false);
@@ -97,10 +97,10 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/20 z-10"
+                className="absolute top-1/2 left-4 z-10 -translate-y-1/2 text-white hover:bg-white/20"
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate('prev');
+                  navigate("prev");
                 }}
               >
                 <ChevronLeft className="h-8 w-8" />
@@ -108,10 +108,10 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/20 z-10"
+                className="absolute top-1/2 right-4 z-10 -translate-y-1/2 text-white hover:bg-white/20"
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate('next');
+                  navigate("next");
                 }}
               >
                 <ChevronRight className="h-8 w-8" />
@@ -120,7 +120,7 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
           )}
 
           <div
-            className="relative max-h-[85vh] max-w-[90vw] aspect-[16/9] w-full"
+            className="relative aspect-[16/9] max-h-[85vh] w-full max-w-[90vw]"
             onClick={(e) => e.stopPropagation()}
           >
             <Image
@@ -133,7 +133,7 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
           </div>
 
           {images[selectedIndex].caption && (
-            <p className="absolute bottom-6 text-white text-sm text-center max-w-lg">
+            <p className="absolute bottom-6 max-w-lg text-center text-sm text-white">
               {images[selectedIndex].caption}
             </p>
           )}

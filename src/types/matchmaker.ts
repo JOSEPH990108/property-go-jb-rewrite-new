@@ -1,6 +1,6 @@
 // src/types/matchmaker.ts
 
-export type PropertyType = 'Landed' | 'Apartment' | 'Condo' | 'SoHo' | 'Open';
+export type PropertyType = "Landed" | "Apartment" | "Condo" | "SoHo" | "Open";
 
 // Phase 2: User Inputs
 export interface MatchmakerState {
@@ -10,7 +10,7 @@ export interface MatchmakerState {
   propertyTypePreference: PropertyType; // 'Open' if they don't care
 
   // Q2 Purpose
-  purchasePurpose: 'Own Stay' | 'Investment' | 'Both' | null;
+  purchasePurpose: "Own Stay" | "Investment" | "Both" | null;
 
   // Path A: Own Stay
   householdSize?: number; // 1-2, 3-4, 5+
@@ -18,12 +18,12 @@ export interface MatchmakerState {
   idealBathrooms?: number;
 
   // Path B: Investment
-  targetTenant?: 'Student/Single' | 'Family';
-  investmentGoal?: 'Yield' | 'Appreciation';
+  targetTenant?: "Student/Single" | "Family";
+  investmentGoal?: "Yield" | "Appreciation";
 
   // Path C: Both
-  priority?: 'Resale Value' | 'Daily Comfort';
-  balconyPreference?: 'Must-have' | 'Okay without';
+  priority?: "Resale Value" | "Daily Comfort";
+  balconyPreference?: "Must-have" | "Okay without";
 }
 
 export interface LayoutScoreDetail {

@@ -4,8 +4,7 @@
 import React, { useRef, useState, MouseEvent } from "react";
 import { cn } from "@/lib/utils";
 
-interface DraggableScrollAreaProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+interface DraggableScrollAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   className?: string;
   width?: string | number;
@@ -62,22 +61,9 @@ export function DraggableScrollArea({
       onMouseUp={onMouseUp}
       onMouseMove={onMouseMove}
       className={cn(
-        `
-          overflow-auto
-          cursor-grab active:cursor-grabbing
-          touch-pan-x touch-pan-y
-          no-carousel-drag
-          rounded-md
-
-          /* Subtle surface cue */
-          bg-transparent
-          hover:bg-muted/30
-          dark:hover:bg-muted/20
-
-          transition-colors duration-200
-        `,
+        `no-carousel-drag /* Subtle surface cue */ hover:bg-muted/30 dark:hover:bg-muted/20 cursor-grab touch-pan-x touch-pan-y overflow-auto rounded-md bg-transparent transition-colors duration-200 active:cursor-grabbing`,
         isDragging && "select-none",
-        className
+        className,
       )}
       style={{
         ...style,

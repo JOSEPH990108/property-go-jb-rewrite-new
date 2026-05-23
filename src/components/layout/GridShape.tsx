@@ -7,13 +7,7 @@ export default function GridShape() {
       {/* Top Right Grid */}
       <div
         aria-hidden
-        className="
-          pointer-events-none
-          absolute right-0 top-0
-          z-0
-          w-full max-w-[240px] xl:max-w-[420px]
-          opacity-20 dark:opacity-10
-        "
+        className="pointer-events-none absolute top-0 right-0 z-0 w-full max-w-[240px] opacity-20 xl:max-w-[420px] dark:opacity-10"
       >
         <Image
           src="/images/shape/grid-01.svg"
@@ -21,27 +15,14 @@ export default function GridShape() {
           width={540}
           height={254}
           priority={false}
-          className="
-            select-none
-            filter
-            saturate-0
-            contrast-125
-            dark:brightness-75
-          "
+          className="contrast-125 saturate-0 filter select-none dark:brightness-75"
         />
       </div>
 
       {/* Bottom Left Grid */}
       <div
         aria-hidden
-        className="
-          pointer-events-none
-          absolute bottom-0 left-0
-          z-0
-          w-full max-w-[240px] xl:max-w-[420px]
-          rotate-180
-          opacity-20 dark:opacity-10
-        "
+        className="pointer-events-none absolute bottom-0 left-0 z-0 w-full max-w-[240px] rotate-180 opacity-20 xl:max-w-[420px] dark:opacity-10"
       >
         <Image
           src="/images/shape/grid-01.svg"
@@ -49,13 +30,7 @@ export default function GridShape() {
           width={540}
           height={254}
           priority={false}
-          className="
-            select-none
-            filter
-            saturate-0
-            contrast-125
-            dark:brightness-75
-          "
+          className="contrast-125 saturate-0 filter select-none dark:brightness-75"
         />
       </div>
     </>

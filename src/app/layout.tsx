@@ -27,7 +27,8 @@ export const metadata: Metadata = {
     default: "PropertyGoJB - Premier Johor Real Estate",
     template: "%s | PropertyGoJB",
   },
-  description: "Discover the finest properties in Johor Bahru. Search new launches, condos, and landed homes with real-time availability.",
+  description:
+    "Discover the finest properties in Johor Bahru. Search new launches, condos, and landed homes with real-time availability.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://propertygojb.com"),
   openGraph: {
     type: "website",
@@ -64,28 +65,23 @@ export default async function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="/images/logo/icon-192.png" />
       </head>
-      <body
-        className={cn(
-          "min-h-screen bg-background font-sans antialiased",
-          lato.variable
-        )}
-      >
+      <body className={cn("bg-background min-h-screen font-sans antialiased", lato.variable)}>
         <ThemeProvider>
           <TooltipProvider delayDuration={200}>
-          <SmoothScroll>
-            <CustomCursor />
-            <ScrollLoginTrigger />
+            <SmoothScroll>
+              <CustomCursor />
+              <ScrollLoginTrigger />
 
-            {children}
-            
-            <LoginModal />
-            <OnboardingModal />
-            <div className="fixed z-50 transition-all duration-300 bottom-32 right-6 md:bottom-6">
-              <ThemeTogglerTwo />
-            </div>
-            <Toaster />
-            <GlobalLoader />
-          </SmoothScroll>
+              {children}
+
+              <LoginModal />
+              <OnboardingModal />
+              <div className="fixed right-6 bottom-32 z-50 transition-all duration-300 md:bottom-6">
+                <ThemeTogglerTwo />
+              </div>
+              <Toaster />
+              <GlobalLoader />
+            </SmoothScroll>
           </TooltipProvider>
         </ThemeProvider>
         <Analytics />

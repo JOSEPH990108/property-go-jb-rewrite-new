@@ -25,35 +25,21 @@ function GlobalLoaderContent() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.4 }}
-          className="
-            fixed inset-0 z-[9999]
-            flex flex-col items-center justify-center
-            bg-background/90 dark:bg-background/95
-            backdrop-blur-xl
-          "
+          className="bg-background/90 dark:bg-background/95 fixed inset-0 z-[9999] flex flex-col items-center justify-center backdrop-blur-xl"
         >
           {/* Background: Radial Gradient for depth */}
           <div
             aria-hidden
-            className="
-              absolute inset-0 pointer-events-none
-              bg-[radial-gradient(circle_at_center,hsl(var(--accent)/0.06)_0%,transparent_70%)]
-              dark:bg-[radial-gradient(circle_at_center,hsl(var(--accent)/0.1)_0%,transparent_70%)]
-            "
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,hsl(var(--accent)/0.06)_0%,transparent_70%)] dark:bg-[radial-gradient(circle_at_center,hsl(var(--accent)/0.1)_0%,transparent_70%)]"
           />
 
           {/* --- LOADER WRAPPER --- */}
           <div className="relative mb-8 flex h-24 w-24 items-center justify-center">
-            
             {/* 1. OUTER SPINNER (Rotating) — DESIGN UNCHANGED */}
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
-              className="
-                absolute inset-0 rounded-full
-                border-t-4 border-accent
-                shadow-[0_0_30px_hsl(var(--accent)/0.35)]
-              "
+              className="border-accent absolute inset-0 rounded-full border-t-4 shadow-[0_0_30px_hsl(var(--accent)/0.35)]"
             />
 
             {/* 2. CENTER ICON (Breathing Effect — UNCHANGED) */}
@@ -66,11 +52,7 @@ function GlobalLoaderContent() {
               }}
               className="relative z-10 flex items-center justify-center"
             >
-              <Building2
-                className="size-10 text-accent"
-                strokeWidth={1.5}
-                aria-hidden
-              />
+              <Building2 className="text-accent size-10" strokeWidth={1.5} aria-hidden />
             </motion.div>
           </div>
 
@@ -84,10 +66,7 @@ function GlobalLoaderContent() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.3 }}
-                  className="
-                    text-3xl font-serif font-bold
-                    tracking-tight text-foreground
-                  "
+                  className="text-foreground font-serif text-3xl font-bold tracking-tight"
                 >
                   {title}
                 </motion.h3>
@@ -102,10 +81,7 @@ function GlobalLoaderContent() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.3, delay: 0.1 }}
-                  className="
-                    mt-3 text-sm font-medium uppercase tracking-widest
-                    text-muted-foreground
-                  "
+                  className="text-muted-foreground mt-3 text-sm font-medium tracking-widest uppercase"
                 >
                   {message}
                 </motion.p>

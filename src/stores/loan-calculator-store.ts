@@ -47,37 +47,35 @@ type LoanCalculatorState = {
  * - Default values for new calculations
  * - Setters make updating state super easy from any component.
  */
-export const useLoanCalculatorStore = create<LoanCalculatorState>(
-  (set, get) => ({
-    spaPrice: 500000,
-    downPaymentRate: 10,
-    interestRate: 4.5,
-    tenureYears: 30,
-    sinkRate: 0.33,
-    sqft: 1000,
-    rebateAmount: 0,
-    developerDiscounts: {
-      spaLegalFee: false,
-      spaStampDuty: false,
-      loanLegalFee: false,
-      loanStampDuty: false,
-      rebate: false,
-    },
+export const useLoanCalculatorStore = create<LoanCalculatorState>((set, get) => ({
+  spaPrice: 500000,
+  downPaymentRate: 10,
+  interestRate: 4.5,
+  tenureYears: 30,
+  sinkRate: 0.33,
+  sqft: 1000,
+  rebateAmount: 0,
+  developerDiscounts: {
+    spaLegalFee: false,
+    spaStampDuty: false,
+    loanLegalFee: false,
+    loanStampDuty: false,
+    rebate: false,
+  },
 
-    setSpaPrice: (value) => set({ spaPrice: value }),
-    setDownPaymentRate: (value) => set({ downPaymentRate: value }),
-    setInterestRate: (value) => set({ interestRate: value }),
-    setTenureYears: (value) => set({ tenureYears: value }),
-    setSinkRate: (value) => set({ sinkRate: value }),
-    setSqft: (value) => set({ sqft: value }),
-    setRebate: (value) => set({ rebateAmount: value }),
-    setDeveloperDiscounts: (value) => {
-      set({
-        developerDiscounts: {
-          ...get().developerDiscounts,
-          ...value,
-        },
-      });
-    },
-  })
-);
+  setSpaPrice: (value) => set({ spaPrice: value }),
+  setDownPaymentRate: (value) => set({ downPaymentRate: value }),
+  setInterestRate: (value) => set({ interestRate: value }),
+  setTenureYears: (value) => set({ tenureYears: value }),
+  setSinkRate: (value) => set({ sinkRate: value }),
+  setSqft: (value) => set({ sqft: value }),
+  setRebate: (value) => set({ rebateAmount: value }),
+  setDeveloperDiscounts: (value) => {
+    set({
+      developerDiscounts: {
+        ...get().developerDiscounts,
+        ...value,
+      },
+    });
+  },
+}));

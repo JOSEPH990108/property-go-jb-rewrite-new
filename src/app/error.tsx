@@ -17,22 +17,27 @@ export default function Error({
 
   return (
     <div className="flex min-h-[60vh] items-center justify-center p-4">
-      <div className="text-center space-y-6 max-w-md">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
-          <AlertTriangle className="h-7 w-7 text-destructive" />
+      <div className="max-w-md space-y-6 text-center">
+        <div className="bg-destructive/10 mx-auto flex h-14 w-14 items-center justify-center rounded-full">
+          <AlertTriangle className="text-destructive h-7 w-7" />
         </div>
         <div className="space-y-2">
           <h2 className="text-xl font-semibold">Something went wrong</h2>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             This page encountered an error. Please try again.
           </p>
         </div>
-        <div className="flex gap-3 justify-center">
+        <div className="flex justify-center gap-3">
           <Button onClick={reset} size="sm" className="gap-2">
             <RotateCcw className="h-4 w-4" />
             Retry
           </Button>
-          <Button onClick={() => (window.location.href = "/")} variant="outline" size="sm" className="gap-2">
+          <Button
+            onClick={() => (window.location.href = "/")}
+            variant="outline"
+            size="sm"
+            className="gap-2"
+          >
             <Home className="h-4 w-4" />
             Home
           </Button>

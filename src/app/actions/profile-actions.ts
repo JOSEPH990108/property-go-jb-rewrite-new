@@ -21,10 +21,12 @@ const preferencesSchema = z.object({
   theme: z.enum(["light", "dark", "system"]).optional(),
   language: z.string().optional(),
   currency: z.string().optional(),
-  notificationSettings: z.object({
-    email: z.boolean(),
-    whatsapp: z.boolean(),
-  }).optional(),
+  notificationSettings: z
+    .object({
+      email: z.boolean(),
+      whatsapp: z.boolean(),
+    })
+    .optional(),
 });
 
 export type ProfileFormValues = z.infer<typeof profileSchema>;

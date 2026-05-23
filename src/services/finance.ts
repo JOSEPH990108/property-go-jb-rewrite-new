@@ -1,9 +1,9 @@
 // src\services\finance.ts
-'use server';
+"use server";
 
-import { DEFAULT_SG_EXCHANGE_RATE } from '@/lib/dsr-logic';
+import { DEFAULT_SG_EXCHANGE_RATE } from "@/lib/dsr-logic";
 
-const API_URL = 'https://open.er-api.com/v6/latest/SGD';
+const API_URL = "https://open.er-api.com/v6/latest/SGD";
 
 interface ExchangeRateResponse {
   result: string;
@@ -18,18 +18,18 @@ export async function getSgExchangeRate(): Promise<number> {
     const res = await fetch(API_URL, { next: { revalidate: 3600 } }); // Cache for 1 hour
 
     if (!res.ok) {
-        throw new Error('Failed to fetch exchange rates');
+      throw new Error("Failed to fetch exchange rates");
     }
 
     const data: ExchangeRateResponse = await res.json();
 
     if (data.rates && data.rates.MYR) {
-        return data.rates.MYR;
+      return data.rates.MYR;
     }
 
     return DEFAULT_SG_EXCHANGE_RATE;
   } catch (error) {
-    console.error('Exchange rate fetch error:', error);
+    console.error("Exchange rate fetch error:", error);
     return DEFAULT_SG_EXCHANGE_RATE;
   }
 }

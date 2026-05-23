@@ -4,7 +4,7 @@ import SignUpForm from "@/components/auth/SignUpForm";
 
 export default function RegisterPage() {
   return (
-    <div className="w-full flex items-center justify-center px-6 py-16">
+    <div className="flex w-full items-center justify-center px-6 py-16">
       <SignUpForm />
     </div>
   );

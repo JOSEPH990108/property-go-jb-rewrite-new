@@ -15,7 +15,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 function ThemeContextInner({ children }: { children: React.ReactNode }) {
   const { setTheme, resolvedTheme } = useNextTheme();
-  
+
   const toggleTheme = () => {
     // If current is dark, go light, else dark
     const newTheme = resolvedTheme === "dark" ? "light" : "dark";
@@ -26,10 +26,10 @@ function ThemeContextInner({ children }: { children: React.ReactNode }) {
   const currentTheme = (resolvedTheme === "dark" ? "dark" : "light") as Theme;
 
   return (
-    <ThemeContext.Provider 
-      value={{ 
+    <ThemeContext.Provider
+      value={{
         theme: currentTheme,
-        toggleTheme, 
+        toggleTheme,
       }}
     >
       {children}
@@ -45,9 +45,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
       enableSystem
       disableTransitionOnChange
     >
-      <ThemeContextInner>
-        {children}
-      </ThemeContextInner>
+      <ThemeContextInner>{children}</ThemeContextInner>
     </NextThemesProvider>
   );
 };

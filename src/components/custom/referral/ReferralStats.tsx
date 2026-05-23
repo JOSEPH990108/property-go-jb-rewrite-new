@@ -1,8 +1,8 @@
 // src\components\custom\referral\ReferralStats.tsx
-'use client';
+"use client";
 
-import { Users, Trophy } from 'lucide-react';
-import { StatCard } from '@/components/shared/StatCard';
+import { Users, Trophy } from "lucide-react";
+import { StatCard } from "@/components/shared/StatCard";
 
 interface ReferralStatsProps {
   referralsCount: number;

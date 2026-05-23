@@ -49,11 +49,11 @@ export function AdminSidebarMenu({
     <div
       className={cn(
         "flex h-full flex-col rounded-[22px] border border-white/10 bg-[linear-gradient(180deg,#0b1020_0%,#090d1a_100%)] text-slate-100 shadow-[0_22px_60px_rgba(2,6,23,0.55)] transition-all",
-        collapsed ? "p-3 lg:p-2.5" : "p-5"
+        collapsed ? "p-3 lg:p-2.5" : "p-5",
       )}
     >
       <header className="flex items-center justify-between">
-        <div className={cn("flex items-center gap-3", collapsed && "lg:w-full lg:justify-center")}> 
+        <div className={cn("flex items-center gap-3", collapsed && "lg:w-full lg:justify-center")}>
           <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#3444ff,#54d5ff)] text-white shadow-[0_0_22px_rgba(84,213,255,0.3)]">
             <Sparkles className="h-4 w-4" />
           </span>
@@ -74,7 +74,14 @@ export function AdminSidebarMenu({
       <div className="mt-8 space-y-7">
         {sections.map((section) => (
           <section key={section.key}>
-            <p className={cn("mb-3 text-[11px] uppercase tracking-[0.22em] text-white/45", collapsed && "lg:hidden")}>{section.title}</p>
+            <p
+              className={cn(
+                "mb-3 text-[11px] tracking-[0.22em] text-white/45 uppercase",
+                collapsed && "lg:hidden",
+              )}
+            >
+              {section.title}
+            </p>
             <nav className="space-y-1.5">
               {section.items.map((item) => (
                 <MenuItem
@@ -102,8 +109,13 @@ export function AdminSidebarMenu({
         ))}
       </div>
 
-      <footer className={cn("mt-5 border-t border-white/10 pt-4", collapsed && "lg:pt-3")}> 
-        <div className={cn("flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-2.5", collapsed && "lg:justify-center lg:px-0")}> 
+      <footer className={cn("mt-5 border-t border-white/10 pt-4", collapsed && "lg:pt-3")}>
+        <div
+          className={cn(
+            "flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-2.5",
+            collapsed && "lg:justify-center lg:px-0",
+          )}
+        >
           <div className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-xs font-semibold text-white">
             {profile.avatarText}
           </div>
@@ -136,7 +148,7 @@ function MenuItem({
     collapsed && "lg:justify-center lg:px-2",
     isActive
       ? "border-white/15 bg-white/10 text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]"
-      : "border-transparent bg-transparent text-white/75 hover:border-white/10 hover:bg-white/6 hover:text-white"
+      : "border-transparent bg-transparent text-white/75 hover:border-white/10 hover:bg-white/6 hover:text-white",
   );
 
   const content = (
@@ -144,19 +156,19 @@ function MenuItem({
       <span
         className={cn(
           "inline-flex h-7 w-7 items-center justify-center rounded-lg border",
-          isActive ? "border-white/20 bg-white/8 text-white" : "border-white/10 text-white/65"
+          isActive ? "border-white/20 bg-white/8 text-white" : "border-white/10 text-white/65",
         )}
       >
         <Icon className="h-4 w-4" />
       </span>
       <span className={cn(collapsed && "lg:hidden")}>
-        <span className="block font-medium leading-5">{item.label}</span>
+        <span className="block leading-5 font-medium">{item.label}</span>
         {item.subtitle ? (
           <span className="block text-xs leading-4 text-white/50">{item.subtitle}</span>
         ) : null}
       </span>
       {collapsed ? (
-        <span className="pointer-events-none absolute left-[110%] top-1/2 hidden -translate-y-1/2 whitespace-nowrap rounded-md border border-white/15 bg-[#0f162a] px-2.5 py-1 text-xs text-white/90 shadow-lg group-hover:lg:block">
+        <span className="pointer-events-none absolute top-1/2 left-[110%] hidden -translate-y-1/2 rounded-md border border-white/15 bg-[#0f162a] px-2.5 py-1 text-xs whitespace-nowrap text-white/90 shadow-lg group-hover:lg:block">
           {item.label}
         </span>
       ) : null}

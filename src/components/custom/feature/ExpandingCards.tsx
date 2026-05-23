@@ -18,19 +18,19 @@ interface ExpandingCardsProps<T> {
   keyExtractor: (item: T) => string | number;
 }
 
-export default function ExpandingCards<T>({ 
-  items, 
-  renderItem, 
+export default function ExpandingCards<T>({
+  items,
+  renderItem,
   renderMobileItem,
   className,
-  keyExtractor 
+  keyExtractor,
 }: ExpandingCardsProps<T>) {
   const [hoveredId, setHoveredId] = useState<string | number | null>(null);
 
   return (
     <div className={cn("w-full", className)}>
       {/* Desktop View (md+) */}
-      <div className="hidden md:flex w-full h-[500px] gap-2">
+      <div className="hidden h-[500px] w-full gap-2 md:flex">
         {items.map((item) => {
           const id = keyExtractor(item);
           return (
@@ -49,11 +49,13 @@ export default function ExpandingCards<T>({
 
       {/* Mobile View (< md) */}
       <div className="md:hidden">
-         <SimpleCardCarousel
-            items={items}
-            // Use specific mobile render if provided, otherwise fallback to generic
-            renderItem={(item) => renderMobileItem ? renderMobileItem(item) : renderItem(item, true)} 
-         />
+        <SimpleCardCarousel
+          items={items}
+          // Use specific mobile render if provided, otherwise fallback to generic
+          renderItem={(item) =>
+            renderMobileItem ? renderMobileItem(item) : renderItem(item, true)
+          }
+        />
       </div>
     </div>
   );
@@ -78,8 +80,8 @@ function AccordionItem({
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
       className={cn(
-        "relative h-full cursor-pointer overflow-hidden rounded-xl border border-border bg-card transition-colors duration-300",
-        isHovered ? "border-accent/50 bg-muted" : "hover:bg-muted/50"
+        "border-border bg-card relative h-full cursor-pointer overflow-hidden rounded-xl border transition-colors duration-300",
+        isHovered ? "border-accent/50 bg-muted" : "hover:bg-muted/50",
       )}
       initial={{ flex: 1 }}
       animate={{
@@ -89,9 +91,7 @@ function AccordionItem({
       transition={{ type: "spring", stiffness: 200, damping: 25 }}
     >
       {/* Pass children through - styling is now handled by the consumer */}
-      <div className="relative h-full w-full">
-        {children}
-      </div>
+      <div className="relative h-full w-full">{children}</div>
     </motion.div>
   );
 }

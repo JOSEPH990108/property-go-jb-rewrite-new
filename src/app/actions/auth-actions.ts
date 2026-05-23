@@ -59,11 +59,7 @@ export async function canRequestSignInOtp(phoneNumber: string) {
 /**
  * Verifies a phone OTP and creates a session.
  */
-export async function verifyPhoneOtp(
-  phoneNumber: string,
-  otp: string,
-  rememberMe: boolean
-) {
+export async function verifyPhoneOtp(phoneNumber: string, otp: string, rememberMe: boolean) {
   return verifyPhoneOtpInternal(phoneNumber, otp, rememberMe, false);
 }
 
@@ -74,7 +70,7 @@ export async function verifyPhoneOtp(
 export async function verifyPhoneOtpForSignIn(
   phoneNumber: string,
   otp: string,
-  rememberMe: boolean
+  rememberMe: boolean,
 ) {
   return verifyPhoneOtpInternal(phoneNumber, otp, rememberMe, true);
 }
@@ -83,7 +79,7 @@ async function verifyPhoneOtpInternal(
   phoneNumber: string,
   otp: string,
   rememberMe: boolean,
-  requireExistingUser: boolean
+  requireExistingUser: boolean,
 ) {
   try {
     if (requireExistingUser) {
@@ -127,9 +123,7 @@ async function verifyPhoneOtpInternal(
       }
     }
 
-    const dbUserByPhone = !roleCode
-      ? await getUserByPhoneNumber(phoneNumber)
-      : null;
+    const dbUserByPhone = !roleCode ? await getUserByPhoneNumber(phoneNumber) : null;
 
     if (!roleCode && dbUserByPhone?.role?.code) {
       roleCode = dbUserByPhone.role.code;
@@ -138,7 +132,7 @@ async function verifyPhoneOtpInternal(
     const isNewUser = Boolean(
       !dbUserByPhone?.onboardingCompleted ||
       dbUserByPhone?.name?.startsWith("User +") ||
-      !dbUserByPhone?.name
+      !dbUserByPhone?.name,
     );
 
     await setRoleCookie(roleCode);
@@ -151,8 +145,7 @@ async function verifyPhoneOtpInternal(
       redirectTo: getRedirectByRole(roleCode),
     };
   } catch (err: unknown) {
-    const message =
-      err instanceof Error ? err.message : "Verification failed";
+    const message = err instanceof Error ? err.message : "Verification failed";
     return { success: false, error: message };
   }
 }
@@ -267,7 +260,8 @@ export async function unlinkGoogleAccount() {
     if (!hasOtherMethods && methodsRes.methods.google) {
       return {
         success: false,
-        error: "You cannot disconnect your only login method. Set up a password or verified phone first.",
+        error:
+          "You cannot disconnect your only login method. Set up a password or verified phone first.",
       };
     }
 
@@ -300,10 +294,7 @@ export async function deleteUserAccount() {
 /**
  * Updates user profile after signup (name + optional referral code).
  */
-export async function updateProfileAfterSignup(data: {
-  name: string;
-  referralCode?: string;
-}) {
+export async function updateProfileAfterSignup(data: { name: string; referralCode?: string }) {
   try {
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session?.user?.id) {
@@ -324,18 +315,14 @@ export async function updateProfileAfterSignup(data: {
       }
     }
 
-    await db
-      .update(user)
-      .set(updateData)
-      .where(eq(user.id, session.user.id));
+    await db.update(user).set(updateData).where(eq(user.id, session.user.id));
 
     const roleCode = await getUserRoleCode(session.user.id);
     await setRoleCookie(roleCode);
 
     return { success: true, redirectTo: getRedirectByRole(roleCode) };
   } catch (err: unknown) {
-    const message =
-      err instanceof Error ? err.message : "Failed to update profile";
+    const message = err instanceof Error ? err.message : "Failed to update profile";
     return { success: false, error: message };
   }
 }

@@ -13,11 +13,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { sortedCountries } from "@/lib/countries";
 
 interface CountrySelectProps {
@@ -30,8 +26,7 @@ export function CountrySelect({ value, onChange, className }: CountrySelectProps
   const [open, setOpen] = React.useState(false);
 
   const selected =
-    sortedCountries.find((c) => c.value === value) ??
-    sortedCountries.find((c) => c.value === "MY");
+    sortedCountries.find((c) => c.value === value) ?? sortedCountries.find((c) => c.value === "MY");
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -49,12 +44,10 @@ export function CountrySelect({ value, onChange, className }: CountrySelectProps
                 alt={selected.label}
                 width={20}
                 height={14}
-                className="w-5 h-3.5 rounded-[2px] object-cover"
+                className="h-3.5 w-5 rounded-[2px] object-cover"
               />
             )}
-            <span className="text-muted-foreground">
-              {selected?.code}
-            </span>
+            <span className="text-muted-foreground">{selected?.code}</span>
           </span>
           <ChevronsUpDown className="ml-1 h-4 w-4 opacity-50" />
         </Button>
@@ -81,20 +74,14 @@ export function CountrySelect({ value, onChange, className }: CountrySelectProps
                     alt={country.label}
                     width={20}
                     height={14}
-                    className="w-5 h-3.5 rounded-[2px] object-cover"
+                    className="h-3.5 w-5 rounded-[2px] object-cover"
                   />
-                  <span className="flex-1 truncate">
-                    {country.label}
-                  </span>
-                  <span className="text-muted-foreground text-sm">
-                    {country.code}
-                  </span>
+                  <span className="flex-1 truncate">{country.label}</span>
+                  <span className="text-muted-foreground text-sm">{country.code}</span>
                   <Check
                     className={cn(
                       "ml-auto h-4 w-4",
-                      value === country.value
-                        ? "opacity-100"
-                        : "opacity-0"
+                      value === country.value ? "opacity-100" : "opacity-0",
                     )}
                   />
                 </CommandItem>

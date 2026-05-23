@@ -2,6 +2,7 @@
 description: "Use when creating or editing server actions, API handlers, or backend logic. Covers action patterns, Zod validation, and auth checks."
 applyTo: "src/app/actions/**"
 ---
+
 # Server Actions Conventions
 
 - All server actions are in `src/app/actions/` — don't scatter them in component files

@@ -3,6 +3,7 @@
 ## Overview
 
 This folder demonstrates the **recommended hybrid bulk import approach** that combines:
+
 - **Tier 1 Reference Data** — Shared lookup tables (import once for the entire platform)
 - **Tier 2 Per-Project Bundles** — Complete project data (import independently per project)
 
@@ -33,26 +34,29 @@ paragon-signature-suite/    # Per-project bundle example
 These are **shared lookup tables** that don't change frequently and may be used across multiple projects.
 
 ### developers.csv
-| Field | Example | Notes |
-|-------|---------|-------|
-| action | create | create or update |
-| slug | developer-paragon | Unique identifier |
-| name | Paragon Development | Display name |
-| legalName | Paragon Development Holdings Sdn. Bhd. | Full legal entity |
-| description | Luxury residential developer | Optional notes |
-| isActive | true | Active status |
+
+| Field       | Example                                | Notes             |
+| ----------- | -------------------------------------- | ----------------- |
+| action      | create                                 | create or update  |
+| slug        | developer-paragon                      | Unique identifier |
+| name        | Paragon Development                    | Display name      |
+| legalName   | Paragon Development Holdings Sdn. Bhd. | Full legal entity |
+| description | Luxury residential developer           | Optional notes    |
+| isActive    | true                                   | Active status     |
 
 ### amenities.csv
-| Field | Example | Notes |
-|-------|---------|-------|
-| action | create | Create lookup record |
-| code | POOL | Unique code for referencing |
-| name | Swimming Pool | Display name |
-| category | Recreation | Category for grouping |
-| icon | swimming | Icon identifier |
-| sortOrder | 1 | Display order |
+
+| Field     | Example       | Notes                       |
+| --------- | ------------- | --------------------------- |
+| action    | create        | Create lookup record        |
+| code      | POOL          | Unique code for referencing |
+| name      | Swimming Pool | Display name                |
+| category  | Recreation    | Category for grouping       |
+| icon      | swimming      | Icon identifier             |
+| sortOrder | 1             | Display order               |
 
 **Import sequence for Tier 1:**
+
 1. `developers.csv`
 2. `amenities.csv`
 
@@ -65,6 +69,7 @@ Each project gets its own folder with **numbered CSVs** (01-, 02-, etc.) to esta
 ### Import Order for Per-Project Bundle
 
 **01-project.csv** (Project metadata)
+
 - Contains project header info
 - **New fields added:**
   - `landAreaAcres` — Total land area
@@ -76,6 +81,7 @@ Each project gets its own folder with **numbered CSVs** (01-, 02-, etc.) to esta
 **02-phases.csv** → **03-towers.csv** → **04-layouts.csv** (Structural hierarchy)
 
 **04-layouts.csv** (Unit types)
+
 - **New fields added:**
   - `isDualKey` — Dual-key unit indicator
   - `ceilingHeightM` — Ceiling height in meters
@@ -123,6 +129,7 @@ Each project gets its own folder with **numbered CSVs** (01-, 02-, etc.) to esta
 ## Import Workflow Example
 
 ### First Time Setup (Tier 1)
+
 ```
 1. Upload tier-1-reference-data/developers.csv
 2. Upload tier-1-reference-data/amenities.csv
@@ -130,6 +137,7 @@ Each project gets its own folder with **numbered CSVs** (01-, 02-, etc.) to esta
 ```
 
 ### Import Paragon Signature Suite Project
+
 ```
 1. Upload 01-project.csv              → Creates project "paragon-signature-suite"
 2. Upload 02-phases.csv               → Defines 3 phases
@@ -143,6 +151,7 @@ Each project gets its own folder with **numbered CSVs** (01-, 02-, etc.) to esta
 ```
 
 ### Import Another Project (e.g., M Grand Minori)
+
 ```
 1. Upload minori/01-project.csv
 2. Upload minori/02-phases.csv
@@ -161,22 +170,22 @@ Each project gets its own folder with **numbered CSVs** (01-, 02-, etc.) to esta
 ✅ **Maintainability** — Clear 8-step process per project  
 ✅ **Complete Coverage** — New schema tables (media, nearby, pricing) fully captured  
 ✅ **Historical Tracking** — Pricing snapshots maintain price evolution  
-✅ **Media Support** — Photos, floor plans, videos attached per project  
+✅ **Media Support** — Photos, floor plans, videos attached per project
 
 ---
 
 ## New Schema Fields Demonstrated
 
-| Field | Table | Purpose |
-|-------|-------|---------|
-| landAreaAcres | projects | Total project land size |
-| bookingFeeBumi | projects | Bumiputera-specific booking fee |
-| sinkingFundPerSqft | projects | Maintenance reserve fund |
-| isGatedCommunity | projects | Security/gated status |
-| greenCertification | projects | Environmental certification |
-| isDualKey | project_layouts | Flexible dual-key units |
-| ceilingHeightM | project_layouts | Ceiling height specification |
-| furnishingStatus | project_layouts | Furnishing level per type |
+| Field              | Table           | Purpose                         |
+| ------------------ | --------------- | ------------------------------- |
+| landAreaAcres      | projects        | Total project land size         |
+| bookingFeeBumi     | projects        | Bumiputera-specific booking fee |
+| sinkingFundPerSqft | projects        | Maintenance reserve fund        |
+| isGatedCommunity   | projects        | Security/gated status           |
+| greenCertification | projects        | Environmental certification     |
+| isDualKey          | project_layouts | Flexible dual-key units         |
+| ceilingHeightM     | project_layouts | Ceiling height specification    |
+| furnishingStatus   | project_layouts | Furnishing level per type       |
 
 ---
 

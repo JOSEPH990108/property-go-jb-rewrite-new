@@ -1,9 +1,9 @@
 // src\components\shared\SwipeWrapper.tsx
-'use client';
+"use client";
 
-import React, { useRef, useEffect, useCallback } from 'react';
-import { motion, PanInfo, useMotionValue, animate } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import React, { useRef, useEffect, useCallback } from "react";
+import { motion, PanInfo, useMotionValue, animate } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 interface SwipeWrapperProps {
   children: React.ReactNode;
@@ -11,7 +11,7 @@ interface SwipeWrapperProps {
   onPrev?: () => void;
   className?: string;
   enableVertical?: boolean;
-  sensitivity?: 'low' | 'medium' | 'high';
+  sensitivity?: "low" | "medium" | "high";
 }
 
 export function SwipeWrapper({
@@ -20,7 +20,7 @@ export function SwipeWrapper({
   onPrev,
   className,
   enableVertical = false,
-  sensitivity = 'medium'
+  sensitivity = "medium",
 }: SwipeWrapperProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const lastInteractionTime = useRef(0);
@@ -31,9 +31,12 @@ export function SwipeWrapper({
 
   const getThreshold = () => {
     switch (sensitivity) {
-      case 'low': return 100;
-      case 'high': return 30;
-      default: return 60;
+      case "low":
+        return 100;
+      case "high":
+        return 30;
+      default:
+        return 60;
     }
   };
 
@@ -43,15 +46,18 @@ export function SwipeWrapper({
     animate(y, 0, options);
   };
 
-  const handleInteraction = useCallback((type: 'next' | 'prev') => {
-    const now = Date.now();
-    // Debounce
-    if (now - lastInteractionTime.current < 300) return;
-    lastInteractionTime.current = now;
+  const handleInteraction = useCallback(
+    (type: "next" | "prev") => {
+      const now = Date.now();
+      // Debounce
+      if (now - lastInteractionTime.current < 300) return;
+      lastInteractionTime.current = now;
 
-    if (type === 'next') onNext?.();
-    else onPrev?.();
-  }, [onNext, onPrev]);
+      if (type === "next") onNext?.();
+      else onPrev?.();
+    },
+    [onNext, onPrev],
+  );
 
   // Wheel Logic
   useEffect(() => {
@@ -59,30 +65,30 @@ export function SwipeWrapper({
     if (!element) return;
 
     const handleWheel = (e: WheelEvent) => {
-       e.preventDefault();
-       e.stopPropagation();
+      e.preventDefault();
+      e.stopPropagation();
 
-       const now = Date.now();
-       if (now - lastInteractionTime.current < 300) return;
+      const now = Date.now();
+      if (now - lastInteractionTime.current < 300) return;
 
-       if (e.deltaY > 0) {
-         handleInteraction('next');
-       } else if (e.deltaY < 0) {
-         handleInteraction('prev');
-       }
+      if (e.deltaY > 0) {
+        handleInteraction("next");
+      } else if (e.deltaY < 0) {
+        handleInteraction("prev");
+      }
     };
 
-    element.addEventListener('wheel', handleWheel, { passive: false });
-    return () => element.removeEventListener('wheel', handleWheel);
+    element.addEventListener("wheel", handleWheel, { passive: false });
+    return () => element.removeEventListener("wheel", handleWheel);
   }, [handleInteraction]);
 
   // Pan Logic
   const onPan = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-      // Direct 1:1 movement feedback
-        x.set(info.offset.x);
-      if (enableVertical) {
-        y.set(info.offset.y);
-      }
+    // Direct 1:1 movement feedback
+    x.set(info.offset.x);
+    if (enableVertical) {
+      y.set(info.offset.y);
+    }
   };
 
   const onPanEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
@@ -91,23 +97,23 @@ export function SwipeWrapper({
     const absX = Math.abs(finalX);
     const absY = Math.abs(finalY);
 
-      // Prioritize larger axis
+    // Prioritize larger axis
     if (absX > absY) {
       if (absX > threshold) {
         // Horizontal
         if (finalX < 0) {
-            handleInteraction('next'); // Swipe Left -> Next
+          handleInteraction("next"); // Swipe Left -> Next
         } else {
-            handleInteraction('prev'); // Swipe Right -> Prev
+          handleInteraction("prev"); // Swipe Right -> Prev
         }
       }
     } else {
       if (enableVertical && absY > threshold) {
         // Vertical
         if (finalY < 0) {
-             handleInteraction('next'); // Swipe Up -> Next
+          handleInteraction("next"); // Swipe Up -> Next
         } else {
-             handleInteraction('prev'); // Swipe Down -> Prev
+          handleInteraction("prev"); // Swipe Down -> Prev
         }
       }
     }
@@ -121,13 +127,13 @@ export function SwipeWrapper({
     <motion.div
       ref={containerRef}
       className={cn(
-        "relative touch-none overscroll-contain outline-none cursor-grab active:cursor-grabbing",
-        className
+        "relative cursor-grab touch-none overscroll-contain outline-none active:cursor-grabbing",
+        className,
       )}
       style={{
-          touchAction: 'none',
-          x,
-          y: enableVertical ? y : 0
+        touchAction: "none",
+        x,
+        y: enableVertical ? y : 0,
       }}
       onPan={onPan}
       onPanEnd={onPanEnd}

@@ -1,7 +1,6 @@
 // src\components\auth\LoginModal.tsx
 "use client";
 
-
 import * as Dialog from "@radix-ui/react-dialog";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
@@ -14,10 +13,14 @@ export default function LoginModal() {
   const { isLoginOpen, setLoginOpen, dismissModal, authMode } = useUIStore();
 
   return (
-    <Dialog.Root open={isLoginOpen} onOpenChange={(open) => {
-      if (!open) dismissModal(); // Handle clicks outside or ESC key
-      else setLoginOpen(true);
-    }}>
+    <Dialog.Root
+      open={isLoginOpen}
+      onOpenChange={(open) => {
+        if (!open)
+          dismissModal(); // Handle clicks outside or ESC key
+        else setLoginOpen(true);
+      }}
+    >
       <AnimatePresence>
         {isLoginOpen && (
           <Dialog.Portal forceMount>
@@ -26,7 +29,7 @@ export default function LoginModal() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 z-100 bg-background/80 backdrop-blur-md"
+                className="bg-background/80 fixed inset-0 z-100 backdrop-blur-md"
               />
             </Dialog.Overlay>
 
@@ -37,7 +40,7 @@ export default function LoginModal() {
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: 20 }}
                   transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                  className="relative flex w-full max-w-[850px] overflow-hidden rounded-2xl tech-popup min-h-[500px] shadow-tech-xl"
+                  className="tech-popup shadow-tech-xl relative flex min-h-[500px] w-full max-w-[850px] overflow-hidden rounded-2xl"
                 >
                   {/* Accessibility: Fixes the 'DialogTitle' error */}
                   <Dialog.Title className="sr-only">
@@ -49,7 +52,7 @@ export default function LoginModal() {
                       : "Fill in the details to create your new account."}
                   </Dialog.Description>
 
-                  <div className="flex-1 p-8 sm:p-12 overflow-y-auto no-scrollbar max-h-[90vh]">
+                  <div className="no-scrollbar max-h-[90vh] flex-1 overflow-y-auto p-8 sm:p-12">
                     {authMode === "signin" ? (
                       <SignInForm isModal={true} />
                     ) : (
@@ -64,12 +67,12 @@ export default function LoginModal() {
                       fill
                       className="object-cover brightness-75"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-accent/30" />
+                    <div className="from-primary/30 to-accent/30 absolute inset-0 bg-gradient-to-br" />
                   </div>
 
-                  <button 
+                  <button
                     onClick={dismissModal} // Specifically uses dismissModal logic
-                    className="absolute top-4 right-4 rounded-lg p-2 text-muted-foreground hover:bg-secondary hover:text-foreground transition-all duration-200 z-10"
+                    className="text-muted-foreground hover:bg-secondary hover:text-foreground absolute top-4 right-4 z-10 rounded-lg p-2 transition-all duration-200"
                   >
                     <X size={20} />
                   </button>
