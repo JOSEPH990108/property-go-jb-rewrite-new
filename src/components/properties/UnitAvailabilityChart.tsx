@@ -1,7 +1,9 @@
 "use client";
 
+import type { ComponentProps } from "react";
 import { useState, useCallback } from "react";
 import { Building2, X, Info, ChevronDown, ChevronUp } from "lucide-react";
+import { StatusBadge } from "@/components/shared/StatusBadge";
 import { cn } from "@/lib/utils";
 import { formatPrice } from "@/lib/format";
 import type {
@@ -28,10 +30,12 @@ const STATUS_SELECTED_RING: Record<UnitStatus, string> = {
   sold: "ring-2 ring-rose-500 ring-offset-1",
 };
 
-const STATUS_BADGE: Record<UnitStatus, string> = {
-  available: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200",
-  reserved: "bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-200",
-  sold: "bg-rose-100 text-rose-700 dark:bg-rose-900/60 dark:text-rose-300",
+type UnitStatusTone = NonNullable<ComponentProps<typeof StatusBadge>["tone"]>;
+
+const STATUS_BADGE_TONE: Record<UnitStatus, UnitStatusTone> = {
+  available: "success",
+  reserved: "warning",
+  sold: "danger",
 };
 
 const STATUS_LABEL: Record<UnitStatus, string> = {
@@ -281,14 +285,12 @@ function UnitDetailPanel({ unit, onClose }: { unit: SelectedUnit; onClose: () =>
             {unit.towerName} · Floor {unit.floor}
           </p>
           <h4 className="text-foreground mt-1 text-2xl font-semibold">Unit {unit.unitNo}</h4>
-          <span
-            className={cn(
-              "mt-2 inline-block rounded-full px-3 py-1 text-xs font-semibold tracking-wide uppercase",
-              STATUS_BADGE[unit.status],
-            )}
-          >
-            {STATUS_LABEL[unit.status]}
-          </span>
+          <StatusBadge
+            status={unit.status}
+            label={STATUS_LABEL[unit.status]}
+            tone={STATUS_BADGE_TONE[unit.status]}
+            className="mt-2 px-3 py-1 text-xs tracking-wide uppercase"
+          />
         </div>
 
         <button
