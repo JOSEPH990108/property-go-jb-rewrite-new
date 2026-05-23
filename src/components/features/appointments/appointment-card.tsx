@@ -2,32 +2,33 @@
 
 // src/components/features/appointments/appointment-card.tsx
 
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, User, Phone } from "lucide-react";
 import { format } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { cn } from "@/lib/utils";
+import { StatusBadge } from "@/components/shared/StatusBadge";
 import { Appointment } from "@/types/appointment";
+import type { ComponentProps } from "react";
 
-// Module-level constant — reusable across any component that needs appointment status colours.
-export const APPOINTMENT_STATUS_COLORS: Record<string, string> = {
-  CONFIRMED: "bg-green-500/15 text-green-500 border-green-500/20",
-  PENDING: "bg-yellow-500/15 text-yellow-500 border-yellow-500/20",
-  COMPLETED: "bg-blue-500/15 text-blue-500 border-blue-500/20",
-  CANCELLED: "bg-red-500/15 text-red-500 border-red-500/20",
-  NO_SHOW: "bg-orange-500/15 text-orange-500 border-orange-500/20",
+type AppointmentStatusTone = NonNullable<ComponentProps<typeof StatusBadge>["tone"]>;
+
+export const APPOINTMENT_STATUS_TONES: Record<string, AppointmentStatusTone> = {
+  CONFIRMED: "success",
+  PENDING: "warning",
+  COMPLETED: "info",
+  CANCELLED: "danger",
+  NO_SHOW: "warning",
 };
 
-const DEFAULT_STATUS_COLOR = "bg-gray-500/15 text-gray-500 border-gray-500/20";
+const DEFAULT_STATUS_TONE: AppointmentStatusTone = "neutral";
 
 interface AppointmentCardProps {
   appointment: Appointment;
 }
 
 export function AppointmentCard({ appointment }: AppointmentCardProps) {
-  const statusColor = APPOINTMENT_STATUS_COLORS[appointment.status.code] ?? DEFAULT_STATUS_COLOR;
+  const statusTone = APPOINTMENT_STATUS_TONES[appointment.status.code] ?? DEFAULT_STATUS_TONE;
 
   return (
     <Card className="group border-border/50 bg-card/50 hover:bg-card hover:border-primary/20 overflow-hidden backdrop-blur-sm transition-all duration-300">
@@ -52,12 +53,12 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
               </h3>
             </div>
           </div>
-          <Badge
-            variant="outline"
-            className={cn("px-2 py-0.5 text-xs whitespace-nowrap capitalize", statusColor)}
-          >
-            {appointment.status.name}
-          </Badge>
+          <StatusBadge
+            status={appointment.status.code.toLowerCase()}
+            label={appointment.status.name}
+            tone={statusTone}
+            className="px-2 py-0.5 text-xs whitespace-nowrap"
+          />
         </div>
 
         {/* Location */}
