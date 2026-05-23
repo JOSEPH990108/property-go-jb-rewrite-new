@@ -3,7 +3,7 @@
 
 import { useCallback, useEffect, useState, useTransition } from "react";
 import { flexRender, getCoreRowModel, useReactTable, type ColumnDef } from "@tanstack/react-table";
-import { ChevronLeft, ChevronRight, Loader2, Plus, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -19,6 +19,7 @@ import {
   type ColumnMeta,
 } from "@/app/actions/admin-crud-actions";
 import { AdminRowActions } from "@/components/admin/shared/AdminRowActions";
+import { AdminTableToolbar } from "@/components/admin/shared/AdminTableToolbar";
 import { TABLE_REGISTRY } from "@/lib/admin-table-registry";
 import {
   Dialog,
@@ -432,37 +433,14 @@ export function AdminCrudPage({ tableName }: AdminCrudPageProps) {
     <>
       {/* ── Data Table ─────────────────────────────────────────────────── */}
       <section className="border-border bg-card/95 rounded-[28px] border p-5 shadow-[0_20px_60px_rgba(15,23,42,0.1)] backdrop-blur-md">
-        {/* Header */}
-        <div className="border-border flex flex-col gap-4 border-b pb-5 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <p className="text-primary/80 text-xs tracking-[0.24em] uppercase">CRUD Table</p>
-            <h2 className="text-foreground mt-2 text-2xl font-semibold">{config.label}</h2>
-            {config.description && (
-              <p className="text-foreground/70 mt-1 text-sm">{config.description}</p>
-            )}
-          </div>
-
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <button
-              type="button"
-              onClick={openCreate}
-              className="border-primary/20 from-primary to-accent text-primary-foreground inline-flex items-center justify-center gap-2 rounded-2xl border bg-gradient-to-r px-4 py-3 text-sm font-semibold shadow-[0_0_32px_hsl(var(--primary)/0.3)] transition hover:shadow-[0_0_40px_hsl(var(--primary)/0.4)]"
-            >
-              <Plus className="h-4 w-4" />
-              Add New
-            </button>
-
-            <label className="border-border bg-background text-foreground/70 flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm">
-              <Search className="text-primary h-4 w-4" />
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search records..."
-                className="text-foreground placeholder:text-foreground/45 w-full bg-transparent text-sm outline-none sm:min-w-64"
-              />
-            </label>
-          </div>
-        </div>
+        <AdminTableToolbar
+          eyebrow="CRUD Table"
+          title={config.label}
+          description={config.description}
+          searchValue={search}
+          onSearchChange={setSearch}
+          onCreate={openCreate}
+        />
 
         {/* Table */}
         <div className="border-border bg-background mt-5 overflow-hidden rounded-[24px] border">

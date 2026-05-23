@@ -9,7 +9,10 @@ import {
   type ColumnDef,
 } from "@tanstack/react-table";
 import { AnimatePresence, motion } from "framer-motion";
-import { Plus, Search, X } from "lucide-react";
+import { X } from "lucide-react";
+
+import { AdminTableToolbar } from "@/components/admin/shared/AdminTableToolbar";
+
 type DynamicDataTableProps<TData extends Record<string, unknown>> = {
   data: TData[];
   columns: ColumnDef<TData>[];
@@ -56,36 +59,15 @@ export function DynamicDataTable<TData extends Record<string, unknown>>({
   return (
     <>
       <section className="border-border bg-card/95 rounded-[28px] border p-5 shadow-[0_20px_60px_rgba(15,23,42,0.1)] backdrop-blur-md">
-        <div className="border-border flex flex-col gap-4 border-b pb-5 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <p className="text-primary/80 text-xs tracking-[0.24em] uppercase">
-              Reusable CRUD table
-            </p>
-            <h2 className="text-foreground mt-2 text-2xl font-semibold">{title}</h2>
-            <p className="text-foreground/70 mt-1 text-sm">{description}</p>
-          </div>
-
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <button
-              type="button"
-              onClick={onAddNew}
-              className="border-primary/20 from-primary to-accent text-primary-foreground inline-flex items-center justify-center gap-2 rounded-2xl border bg-gradient-to-r px-4 py-3 text-sm font-semibold shadow-[0_0_32px_hsl(var(--primary)/0.3)] transition hover:shadow-[0_0_40px_hsl(var(--primary)/0.4)]"
-            >
-              <Plus className="h-4 w-4" />
-              {addLabel}
-            </button>
-
-            <label className="border-border bg-background text-foreground/70 flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm">
-              <Search className="text-primary h-4 w-4" />
-              <input
-                value={globalFilter}
-                onChange={(event) => setGlobalFilter(event.target.value)}
-                placeholder="Search records..."
-                className="text-foreground placeholder:text-foreground/45 w-full bg-transparent text-sm outline-none sm:min-w-64"
-              />
-            </label>
-          </div>
-        </div>
+        <AdminTableToolbar
+          eyebrow="Reusable CRUD table"
+          title={title}
+          description={description}
+          searchValue={globalFilter}
+          onSearchChange={setGlobalFilter}
+          createLabel={addLabel}
+          onCreate={onAddNew}
+        />
 
         <div className="border-border bg-background mt-5 overflow-hidden rounded-[24px] border">
           <div className="overflow-x-auto">
