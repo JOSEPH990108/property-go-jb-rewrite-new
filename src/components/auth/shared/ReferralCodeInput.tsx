@@ -11,6 +11,7 @@ import { ValidationStatus } from "@/components/shared/ValidationStatus";
 import type { ReferralStatus } from "@/types/auth.types";
 
 interface ReferralCodeInputProps {
+  label?: string;
   /** react-hook-form or plain register result spread onto the input. */
   inputProps: React.InputHTMLAttributes<HTMLInputElement>;
   /** Current value of the referral code field (to disable Apply when empty). */
@@ -18,18 +19,21 @@ interface ReferralCodeInputProps {
   onApply: () => void;
   isLoading?: boolean;
   status?: ReferralStatus | null;
+  error?: string;
 }
 
 export function ReferralCodeInput({
+  label = "Referral Code (Optional)",
   inputProps,
   value,
   onApply,
   isLoading = false,
   status,
+  error,
 }: ReferralCodeInputProps) {
   return (
     <div className="space-y-1.5">
-      <Label>Referral Code (Optional)</Label>
+      <Label>{label}</Label>
       <div className="flex gap-2">
         <Input
           {...inputProps}
@@ -42,6 +46,7 @@ export function ReferralCodeInput({
       </div>
 
       {status && <ValidationStatus valid={status.valid} message={status.message} />}
+      {error && <p className="text-destructive text-xs">{error}</p>}
     </div>
   );
 }

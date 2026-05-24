@@ -1,15 +1,14 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import type { ReactNode } from "react";
 import { describe, expect, it, vi } from "vitest";
 
 import { OTPStep } from "@/components/auth/shared/OTPStep";
 
-class ResizeObserverStub {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-}
-
-global.ResizeObserver = ResizeObserverStub;
+vi.mock("@/components/ui/input-otp", () => ({
+  InputOTP: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+  InputOTPGroup: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+  InputOTPSlot: ({ index }: { index: number }) => <span>Slot {index}</span>,
+}));
 
 describe("OTPStep", () => {
   it("renders OTP copy and keeps submit disabled until the code is complete", () => {
