@@ -4,7 +4,7 @@
 // Reusable Terms of Service acceptance checkbox.
 // Used by both SignInForm and SignUpForm.
 
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -38,7 +38,7 @@ export function TermsCheckbox({
 
   // Callback ref: fires when the scrollable div actually mounts inside the dialog.
   // At that point we can reliably measure whether the content overflows.
-  const termsRefCallback = (node: HTMLDivElement | null) => {
+  const termsRefCallback = useCallback((node: HTMLDivElement | null) => {
     termsContainerRef.current = node;
     if (!node) return;
 
@@ -51,7 +51,7 @@ export function TermsCheckbox({
         setHasReachedEnd(false);
       }
     });
-  };
+  }, []);
 
   const handleDialogOpenChange = (open: boolean) => {
     setIsDialogOpen(open);
@@ -110,6 +110,7 @@ export function TermsCheckbox({
 
           <div
             ref={termsRefCallback}
+            aria-label="Terms content"
             onScroll={handleTermsScroll}
             className="border-border/60 bg-background/40 text-muted-foreground max-h-[45vh] space-y-4 overflow-y-auto rounded-md border p-4 text-sm"
           >
