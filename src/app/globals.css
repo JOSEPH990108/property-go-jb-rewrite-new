@@ -341,6 +341,20 @@ html {
    HIGH-TECH UTILITY CLASSES
 ================================ */
 @layer utilities {
+  /* ===== SCROLL CONTAINMENT ===== */
+  .scroll-contained,
+  .overflow-auto,
+  .overflow-x-auto,
+  .overflow-y-auto,
+  .overflow-scroll,
+  .overflow-x-scroll,
+  .overflow-y-scroll,
+  [data-scroll-contained],
+  [data-lenis-prevent],
+  [data-lenis-prevent-wheel] {
+    overscroll-behavior: contain;
+  }
+
   /* ===== PREMIUM SURFACE STYLES ===== */
   .surface-base {
     background: var(--surface-base);

@@ -6,6 +6,23 @@ import Lenis from "lenis";
 
 const LenisContext = createContext<Lenis | null>(null);
 
+const containedScrollSelector = [
+  "[data-scroll-contained]",
+  "[data-lenis-prevent]",
+  "[data-lenis-prevent-wheel]",
+  ".scroll-contained",
+  ".overflow-auto",
+  ".overflow-x-auto",
+  ".overflow-y-auto",
+  ".overflow-scroll",
+  ".overflow-x-scroll",
+  ".overflow-y-scroll",
+].join(", ");
+
+function shouldPreventSmoothScroll(node: HTMLElement) {
+  return Boolean(node.closest(containedScrollSelector));
+}
+
 export function useLenis() {
   return useContext(LenisContext);
 }
@@ -22,6 +39,7 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
       allowNestedScroll: true,
       smoothWheel: true,
       touchMultiplier: 2,
+      prevent: shouldPreventSmoothScroll,
     });
 
     const instanceFrame = requestAnimationFrame(() => setLenisInstance(lenis));

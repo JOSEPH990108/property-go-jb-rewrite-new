@@ -60,8 +60,11 @@ export function DraggableScrollArea({
       onMouseLeave={onMouseUp}
       onMouseUp={onMouseUp}
       onMouseMove={onMouseMove}
+      data-scroll-contained
+      data-lenis-prevent
+      data-lenis-prevent-wheel
       className={cn(
-        `no-carousel-drag /* Subtle surface cue */ hover:bg-muted/30 dark:hover:bg-muted/20 cursor-grab touch-pan-x touch-pan-y overflow-auto rounded-md bg-transparent transition-colors duration-200 active:cursor-grabbing`,
+        `no-carousel-drag /* Subtle surface cue */ hover:bg-muted/30 dark:hover:bg-muted/20 cursor-grab touch-pan-x touch-pan-y overflow-auto overscroll-contain rounded-md bg-transparent transition-colors duration-200 active:cursor-grabbing`,
         isDragging && "select-none",
         className,
       )}
