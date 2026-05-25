@@ -16,6 +16,9 @@ describe("TermsCheckbox", () => {
 
     fireEvent.click(screen.getByRole("checkbox", { name: /terms of service/i }));
 
+    expect(document.body.style.overflow).toBe("hidden");
+    expect(document.documentElement.style.overflow).toBe("hidden");
+
     const termsContent = screen.getByLabelText("Terms content");
     expect(termsContent.classList.contains("overscroll-contain")).toBe(true);
     expect(termsContent.hasAttribute("data-lenis-prevent-wheel")).toBe(true);
