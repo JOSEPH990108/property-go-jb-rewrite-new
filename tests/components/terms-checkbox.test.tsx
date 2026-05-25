@@ -17,6 +17,9 @@ describe("TermsCheckbox", () => {
     fireEvent.click(screen.getByRole("checkbox", { name: /terms of service/i }));
 
     const termsContent = screen.getByLabelText("Terms content");
+    expect(termsContent.classList.contains("overscroll-contain")).toBe(true);
+    expect(termsContent.hasAttribute("data-lenis-prevent-wheel")).toBe(true);
+
     Object.defineProperty(termsContent, "clientHeight", { configurable: true, value: 200 });
     Object.defineProperty(termsContent, "scrollHeight", { configurable: true, value: 600 });
 

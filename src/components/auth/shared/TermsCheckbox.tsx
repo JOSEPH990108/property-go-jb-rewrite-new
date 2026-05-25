@@ -111,8 +111,11 @@ export function TermsCheckbox({
           <div
             ref={termsRefCallback}
             aria-label="Terms content"
+            data-scroll-contained
+            data-lenis-prevent
+            data-lenis-prevent-wheel
             onScroll={handleTermsScroll}
-            className="border-border/60 bg-background/40 text-muted-foreground max-h-[45vh] space-y-4 overflow-y-auto rounded-md border p-4 text-sm"
+            className="border-border/60 bg-background/40 text-muted-foreground max-h-[45vh] space-y-4 overflow-y-auto overscroll-contain rounded-md border p-4 text-sm"
           >
             <p>
               1. Service Scope: This platform provides property listing, comparison, and

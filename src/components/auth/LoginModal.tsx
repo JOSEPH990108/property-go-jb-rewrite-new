@@ -52,7 +52,12 @@ export default function LoginModal() {
                       : "Fill in the details to create your new account."}
                   </Dialog.Description>
 
-                  <div className="no-scrollbar max-h-[90vh] flex-1 overflow-y-auto p-8 sm:p-12">
+                  <div
+                    data-scroll-contained
+                    data-lenis-prevent
+                    data-lenis-prevent-wheel
+                    className="no-scrollbar max-h-[90vh] flex-1 overflow-y-auto overscroll-contain p-8 sm:p-12"
+                  >
                     {authMode === "signin" ? (
                       <SignInForm isModal={true} />
                     ) : (
