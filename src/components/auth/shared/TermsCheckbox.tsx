@@ -16,6 +16,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { useModalScrollLock } from "@/hooks/useModalScrollLock";
 
 interface TermsCheckboxProps {
   id: string;
@@ -35,6 +36,8 @@ export function TermsCheckbox({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [hasReachedEnd, setHasReachedEnd] = useState(false);
   const termsContainerRef = useRef<HTMLDivElement | null>(null);
+
+  useModalScrollLock(isDialogOpen);
 
   // Callback ref: fires when the scrollable div actually mounts inside the dialog.
   // At that point we can reliably measure whether the content overflows.

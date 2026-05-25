@@ -7,10 +7,13 @@ import { X } from "lucide-react";
 import SignInForm from "./SignInForm";
 import SignUpForm from "./SignUpForm";
 import Image from "next/image";
+import { useModalScrollLock } from "@/hooks/useModalScrollLock";
 import { useUIStore } from "@/stores/ui-store";
 
 export default function LoginModal() {
   const { isLoginOpen, setLoginOpen, dismissModal, authMode } = useUIStore();
+
+  useModalScrollLock(isLoginOpen);
 
   return (
     <Dialog.Root
